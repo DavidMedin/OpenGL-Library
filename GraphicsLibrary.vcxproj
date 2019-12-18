@@ -91,13 +91,13 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;GRAPHICSLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\david\Documents\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\glfw-3.3.bin.WIN32\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\glMath\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>C:\Users\david\Documents\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\david\Documents\glfw-3.3.bin.WIN32\glfw-3.3.bin.WIN32\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3dll.lib;glew32.lib;glew32s.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -110,11 +110,14 @@
       <PreprocessorDefinitions>_DEBUG;GRAPHICSLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glMath\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

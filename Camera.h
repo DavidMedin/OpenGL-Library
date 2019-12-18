@@ -27,6 +27,7 @@ public:
 	void Rotate(float angle,const vec3& axis);
 	void Rotate(float angle,vec3* axis);
 	void UpdateViewMatrix();
+	void UpdateViewMatrix(mat4& rotation);
 	void PrintTransform();
 	vec3 GetRightAxis();
 	vec3 GetForwardAxis();

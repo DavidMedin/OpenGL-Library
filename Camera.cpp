@@ -23,18 +23,30 @@ Camera::Camera(vec3* pos) {
 }
 void Camera::UpdateViewMatrix() {
 	delete viewMat;
-	/*mat4* T = new mat4(translate(identity<mat4>(),vec3( -(*transform)[3][0], -(*transform)[3][1], -(*transform)[3][2])));*/
-	mat4* T = new mat4(identity<mat4>());
+	mat4* T = new mat4(translate(identity<mat4>(),vec3( -(*transform)[3][0], -(*transform)[3][1], -(*transform)[3][2])));
+	//mat4* T = new mat4(identity<mat4>());
 
-	mat4* R = new mat4(mat4_cast(angleAxis(-angle(*orien),axis(*orien))));
-
+	//mat4* R = new mat4(mat4_cast(angleAxis(-angle(*orien),axis(*orien))));
+	mat4* R = new mat4(glm::transpose(mat4_cast(*orien)));
 
 	//mat4* R = new mat4(mat4_cast(*orien));
 	mat4* eyeTmp = new mat4(*R * *T);
 	delete R;
+	delete T;
 	viewMat = eyeTmp;
 }
+void Camera::UpdateViewMatrix(mat4& rotation) {
+	delete viewMat;
+	mat4* T = new mat4(translate(identity<mat4>(), vec3(-(*transform)[3][0], -(*transform)[3][1], -(*transform)[3][2])));
+	//mat4* T = new mat4(identity<mat4>());
 
+	//mat4* R = new mat4(mat4_cast(angleAxis(-angle(*orien),axis(*orien))));
+
+	//mat4* R = new mat4(mat4_cast(*orien));
+	mat4* eyeTmp = new mat4(rotation * *T);
+	delete T;
+	viewMat = eyeTmp;
+}
 void Camera::Translate(const vec3& offset) {
 
 	mat4* tmpMat = transform;
