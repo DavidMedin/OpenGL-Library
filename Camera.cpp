@@ -25,7 +25,6 @@ void Camera::UpdateViewMatrix() {
 	delete viewMat;
 	mat4* T = new mat4(translate(identity<mat4>(),vec3( -(*transform)[3][0], -(*transform)[3][1], -(*transform)[3][2])));
 	//mat4* T = new mat4(identity<mat4>());
-
 	//mat4* R = new mat4(mat4_cast(angleAxis(-angle(*orien),axis(*orien))));
 	mat4* R = new mat4(glm::transpose(mat4_cast(*orien)));
 

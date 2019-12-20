@@ -18,8 +18,24 @@ GRAPHICSLIBRARY_API void Translate(mat4* matrix, vec3* offset)
 GRAPHICSLIBRARY_API mat4* NewProjection(double fov, double nearRange, double farRange) {
 	int height, width;
 	glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
-	/*mat4* matrix = new mat4(perspectiveFov<double>(fov, width, height, nearRange, farRange));*/
-	mat4* matrix = new mat4(perspective<double>(fov, double(width/height), nearRange, farRange));
+	//mat4* matrix = new mat4(perspectiveFov<double>(radians(fov), width, height, nearRange, farRange));
+	//double right = tan(fov) * nearRange * 0.5f; //not used
+	//double top = tan(fov) * nearRange * 0.5f * (height/width);
+	//double angleTop = atan2(top, nearRange);
+	//mat4* matrix = new mat4(perspective<double>(angleTop, double(width/height), nearRange, farRange));
+	double aspect = (double)height / (double)width;
+	double range = tan((double)fov)*0.5 * nearRange;
+	double Sx = (2 * nearRange) / (range * aspect + range * aspect);
+	double Sy = nearRange / range;
+	double Sz = -(farRange + nearRange) / (farRange - nearRange);
+	double Pz = -(2 * farRange * nearRange) / (farRange - nearRange);
+	double data[] = {
+		Sx,0,0,0,
+		0,Sy,0,0,
+		0,0,Sz,-1,
+		0,0,Pz,0
+	};
+	mat4* matrix = new mat4(make_mat4(data));
 	return matrix;
 }
 GRAPHICSLIBRARY_API vec3 GetRightAxis(quat* quater) {

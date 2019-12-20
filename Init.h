@@ -11,6 +11,8 @@
 #define GLFW_DLL
 #include <glfw3.h>
 #include "GlCall.h"
+void WindowSizeCallback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 using namespace std;
 #else
 #define GRAPHICSLIBRARY_API __declspec(dllimport)

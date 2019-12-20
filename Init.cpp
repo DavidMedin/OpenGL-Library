@@ -10,6 +10,14 @@ std::list<GLFWwindow*>* windowList;
 
 
 
+void WindowSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glfwSetWindowSize(window, width, height);
+}
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
 int init(int width, int height, string name) {
 	if (!glfwInit()) {
 		NewError("glfwInit didn't start correctly\n");
@@ -42,6 +50,8 @@ int init(int width, int height, string name) {
 	glfwSetKeyCallback(glfwGetCurrentContext(), Key);
 	glfwSetCursorPosCallback(glfwGetCurrentContext(), Mouse);
 	glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
+	glfwSetWindowSizeCallback(glfwGetCurrentContext(), WindowSizeCallback);
+	glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), framebuffer_size_callback);
 	return 1;
 }
 
