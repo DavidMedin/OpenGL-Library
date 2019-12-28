@@ -9,6 +9,7 @@ private:
 public:
 	IndexBuffer(const unsigned int* data, unsigned int count);
 	IndexBuffer(const unsigned int* data, unsigned int count, const unsigned int offset);
+	IndexBuffer();
 	~IndexBuffer();
 
 	void Bind();

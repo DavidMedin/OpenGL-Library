@@ -24,6 +24,8 @@ class GRAPHICSLIBRARY_API Mesh {
 private:
 	unsigned int indexCount; //called 'elements'
 	VertexBuffer* vertecies;
+	VertexBuffer* textureUV;
+	VertexBuffer* normalVectors;
 	VertexArray* VA;
 	IndexBuffer* vertexIndex;
 	mat4* transform;

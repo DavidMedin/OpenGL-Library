@@ -28,13 +28,15 @@ Mesh::Mesh(string path)
 	}
 	transform = new mat4(1.0f);
 	vertecies = new VertexBuffer(attrib.vertices.data(), attrib.vertices.size()*sizeof(float));
+	textureUV = !attrib.texcoords.empty() ? new VertexBuffer(attrib.texcoords.data(), attrib.texcoords.size() * sizeof(float)) : new VertexBuffer();
+	normalVectors = !attrib.texcoords.empty() ? new VertexBuffer(attrib.normals.data(), attrib.normals.size() * sizeof(float)) : new VertexBuffer();
 	VA = new VertexArray();
 	VA->BindVertexBuffer(vertecies, 3, GL_FLOAT, false);
+	VA->BindVertexBuffer(textureUV, 2, GL_FLOAT, false);
+	VA->BindVertexBuffer(normalVectors, 3, GL_FLOAT, false);
 	//might need more than one vertexIndex object for more than one shapes per mesh in the future
-	//need to perform increment pointer arithetic in order to jump to next vertex index
-	vertexIndex = new IndexBuffer((unsigned int *)&shapes.front().mesh.indices.front().vertex_index, shapes.front().mesh.indices.size()*3);
-	//this->indexCount = indexCount;
-	indexCount = shapes.front().mesh.indices.size() * 3;
+	vertexIndex = new IndexBuffer((unsigned int *)shapes.front().mesh.indices.data(), shapes.front().mesh.indices.size()*3);
+	indexCount = shapes.front().mesh.indices.size();
 }
 
 
@@ -47,7 +49,7 @@ void Mesh::Draw()
 	}
 	VA->Bind();
 	vertexIndex->Bind();
-	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, shapes.front().mesh.indices.data()));
 }
 void Mesh::Draw(Shader* shad)
 {
