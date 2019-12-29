@@ -16,27 +16,27 @@ Mesh::Mesh(float* data, unsigned int size, const unsigned int* indexData, unsign
 
 Mesh::Mesh(string path)
 {
-	string warn;
-	string err;
+	//string warn;
+	//string err;
 
-	tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
-	if (!warn.empty()) {
-		NewError(warn);
-	}
-	if (!err.empty()) {
-		NewError(err);
-	}
-	transform = new mat4(1.0f);
-	vertecies = new VertexBuffer(attrib.vertices.data(), attrib.vertices.size()*sizeof(float));
-	textureUV = !attrib.texcoords.empty() ? new VertexBuffer(attrib.texcoords.data(), attrib.texcoords.size() * sizeof(float)) : new VertexBuffer();
-	normalVectors = !attrib.texcoords.empty() ? new VertexBuffer(attrib.normals.data(), attrib.normals.size() * sizeof(float)) : new VertexBuffer();
-	VA = new VertexArray();
-	VA->BindVertexBuffer(vertecies, 3, GL_FLOAT, false);
-	VA->BindVertexBuffer(textureUV, 2, GL_FLOAT, false);
-	VA->BindVertexBuffer(normalVectors, 3, GL_FLOAT, false);
-	//might need more than one vertexIndex object for more than one shapes per mesh in the future
-	vertexIndex = new IndexBuffer((unsigned int *)shapes.front().mesh.indices.data(), shapes.front().mesh.indices.size()*3);
-	indexCount = shapes.front().mesh.indices.size();
+	//tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+	//if (!warn.empty()) {
+	//	NewError(warn);
+	//}
+	//if (!err.empty()) {
+	//	NewError(err);
+	//}
+	//transform = new mat4(1.0f);
+	//vertecies = new VertexBuffer(attrib.vertices.data(), attrib.vertices.size()*sizeof(float));
+	//textureUV = !attrib.texcoords.empty() ? new VertexBuffer(attrib.texcoords.data(), attrib.texcoords.size() * sizeof(float)) : new VertexBuffer();
+	//normalVectors = !attrib.texcoords.empty() ? new VertexBuffer(attrib.normals.data(), attrib.normals.size() * sizeof(float)) : new VertexBuffer();
+	//VA = new VertexArray();
+	//VA->BindVertexBuffer(vertecies, 3, GL_FLOAT, false);
+	//VA->BindVertexBuffer(textureUV, 2, GL_FLOAT, false);
+	//VA->BindVertexBuffer(normalVectors, 3, GL_FLOAT, false);
+	////might need more than one vertexIndex object for more than one shapes per mesh in the future
+	//vertexIndex = new IndexBuffer((unsigned int *)shapes.front().mesh.indices.data(), shapes.front().mesh.indices.size()*3);
+	//indexCount = shapes.front().mesh.indices.size();
 }
 
 
