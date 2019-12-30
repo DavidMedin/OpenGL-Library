@@ -1,8 +1,14 @@
 #pragma once
 #ifdef GRAPHICSLIBRARY_EXPORTS
 #define GRAPHICSLIBRARY_API __declspec(dllexport)
+//assimp
+#include <assImp/Importer.hpp>
+#include <assImp/scene.h>
+#include <assimp/postprocess.h>
+//glm
 #include <glm.hpp>
 #include <ext.hpp>
+//glew
 #include <glew.h>
 using namespace glm;
 
@@ -14,6 +20,7 @@ using namespace glm;
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Error.h"
+#include <vector>
 
 
 
@@ -21,9 +28,10 @@ using namespace glm;
 class GRAPHICSLIBRARY_API Mesh {
 private:
 	unsigned int indexCount; //called 'elements'
-	VertexBuffer* vertecies;
-	VertexBuffer* textureUV;
-	VertexBuffer* normalVectors;
+	unsigned int pointCount;
+	VertexBuffer* vertices;
+	//VertexBuffer* textureUV;
+	VertexBuffer* normalBuffer;
 	VertexArray* VA;
 	IndexBuffer* vertexIndex;
 	mat4* transform;

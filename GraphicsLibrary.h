@@ -1,6 +1,6 @@
 #pragma once
 //#define TINYOBJLOADER_IMPLEMENTATION
-#include "Dependancies/Tiny-Obj-Loader/tiny_obj_loader.h"
+//#include "Dependancies/Tiny-Obj-Loader/tiny_obj_loader.h"
 #include <stdio.h>
 #include <string>
 #include "Shader.h"

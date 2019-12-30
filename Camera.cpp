@@ -81,10 +81,11 @@ void Camera::PrintTransform() {
 	cout << glm::to_string(*transform) << "\n";
 }
 vec3 Camera::GetRightAxis() {
-	UpdateViewMatrix();
-	mat4 mat = mat4_cast(*orien);
-	vec3 tmpVec = vec3(mat[0][0], mat[1][0], mat[2][0]);
-	return tmpVec;
+	//UpdateViewMatrix();
+	vec3 forward = *viewMat * vec4(0,0,-1,1);
+	vec3 right = cross(forward, vec3(0, 1, 0));
+	right = normalize(right);
+	return right;
 }
 vec3 Camera::GetForwardAxis() {
 	UpdateViewMatrix();

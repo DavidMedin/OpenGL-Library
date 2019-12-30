@@ -2,4 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
+//By David Medin
+#define NOMINMAX
+//end By David Medin
 #include <windows.h>

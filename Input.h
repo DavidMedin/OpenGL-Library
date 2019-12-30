@@ -17,7 +17,10 @@ void MouseButton(GLFWwindow* window,int button, int action, int mods);
 	D_KEY,
 	S_KEY,
 	Q_KEY,
-	E_KEY
+	E_KEY,
+	ESC_KEY,
+	CTRL_KEY,
+	SPACE_KEY
 };
  enum mouseButton {
 	 MIDDLE_KEY,
@@ -27,3 +30,4 @@ void MouseButton(GLFWwindow* window,int button, int action, int mods);
 GRAPHICSLIBRARY_API bool GetKey(keys key);
 GRAPHICSLIBRARY_API bool GetMouseButton(mouseButton button);
 GRAPHICSLIBRARY_API void GetMousePos(float* xpos, float* ypos);
+GRAPHICSLIBRARY_API void SetDisabledMouse(bool disabled);
