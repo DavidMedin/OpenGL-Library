@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;GRAPHICSLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include\assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

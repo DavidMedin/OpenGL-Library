@@ -99,3 +99,11 @@ vec3 Camera::GetUpAxis() {
 	vec3 tmpVec = vec3(mat[0][1], mat[1][1], mat[2][1]);
 	return tmpVec;
 }
+
+float Camera::GetY()
+{
+	vec3 flatDir = *orien * vec3(0,0,-1);
+	flatDir.y = 0;
+	flatDir = normalize(flatDir);
+	return degrees(atan2(flatDir.z,flatDir.x));
+}

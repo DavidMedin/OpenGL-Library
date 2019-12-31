@@ -30,6 +30,11 @@ public:
 	void UpdateViewMatrix(mat4& rotation);
 	void PrintTransform();
 	vec3 GetRightAxis();
+	//might not work
 	vec3 GetForwardAxis();
+	//might not work
 	vec3 GetUpAxis();
+	float GetX();
+	float GetY();
+	float GetZ();
 };
