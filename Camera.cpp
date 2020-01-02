@@ -26,7 +26,7 @@ void Camera::UpdateViewMatrix() {
 	mat4* T = new mat4(translate(identity<mat4>(),vec3( -(*transform)[3][0], -(*transform)[3][1], -(*transform)[3][2])));
 	//mat4* T = new mat4(identity<mat4>());
 	//mat4* R = new mat4(mat4_cast(angleAxis(-angle(*orien),axis(*orien))));
-	mat4* R = new mat4(glm::transpose(mat4_cast(*orien)));
+	mat4* R = new mat4(glm::transpose(mat4_cast(normalize(*orien))));
 
 	//mat4* R = new mat4(mat4_cast(*orien));
 	mat4* eyeTmp = new mat4(*R * *T);
@@ -61,15 +61,10 @@ void Camera::Translate(vec3* offset) {
 void Camera::Rotate(float angle,const vec3& axis) {
 
 
-	quat* newRot = new quat(angleAxis(radians(angle), axis));
-	quat* tmpOrien = orien;
-	orien = new quat((*orien) * (*newRot));
-	delete tmpOrien;
-	delete newRot;
-	tmpOrien = orien;
-	orien = new quat(normalize(*orien));
-	delete tmpOrien;
-
+	quat newRot = angleAxis(radians(angle), axis);
+	//newRot = normalize(newRot);
+	orien = new quat(newRot * (*orien));
+	//orien = new quat(normalize(*orien));
 }
 void Camera::Rotate(float angle,vec3* axis) {
 	/*quat* tmpQuat = orien;
@@ -82,8 +77,9 @@ void Camera::PrintTransform() {
 }
 vec3 Camera::GetRightAxis() {
 	//UpdateViewMatrix();
-	vec3 forward = *viewMat * vec4(0,0,-1,1);
-	vec3 right = cross(forward, vec3(0, 1, 0));
+	vec3 forward = *orien * vec3(0,0,-1);
+	forward = vec3(forward.x, 0, forward.z);
+	vec3 right = cross(forward,vec3(0,1,0));
 	right = normalize(right);
 	return right;
 }

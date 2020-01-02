@@ -20,6 +20,7 @@ using namespace glm;
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Error.h"
+#include "texture.h"
 #include <vector>
 
 
@@ -29,16 +30,21 @@ class GRAPHICSLIBRARY_API Mesh {
 private:
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
-	VertexBuffer* vertices;
-	//VertexBuffer* textureUV;
+	VertexBuffer* vertexBuffer;
+	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
 	VertexArray* VA;
-	IndexBuffer* vertexIndex;
+	IndexBuffer* index;
 	mat4* transform;
 
-	
+	Texture texList[32];
+
+	float* vertices;
+	float* normals;
+	float* textureUVs;
+	unsigned int* indices;
 public:
-	Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
+	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
 	Mesh(string path);
 	void Draw();
 	void Draw(Shader* shad);
