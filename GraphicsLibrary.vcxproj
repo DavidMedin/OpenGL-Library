@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;GRAPHICSLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include;C:\Users\david\Documents\Dependancies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,7 +176,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="GraphicsLibrary.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="texture.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,7 +195,6 @@
     </ClCompile>
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Init.cpp" />
-    <ClCompile Include="texture.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>

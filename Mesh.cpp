@@ -3,6 +3,42 @@
 #define GRAPHICSLIBRARY_EXPORTS 1
 #include "Init.h"
 
+
+Texture::Texture(unsigned int slot, float* data, unsigned int w, unsigned int h) {
+	openglID = NULL;
+	GLCall(glGenTextures(1, &openglID));
+	Bind(slot);
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+
+	this->data = data;
+	height = h;
+	width = w;
+}
+
+Texture::Texture() {
+	openglID = NULL;
+	data = nullptr;
+	height = NULL;
+	width = NULL;
+}
+void Texture::Bind(unsigned int slot) {
+	//will need a system for slot management for any given object
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, openglID));
+
+	openglID = NULL;
+	data = nullptr;
+	height = NULL;
+	width = NULL;
+}
+
+
+
 //Mesh::Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount) {
 //	/*transform = new DataTransform();
 //	((DataTransform*)transform)->matrix = new mat4(1.0);*/
@@ -95,7 +131,7 @@ Mesh::Mesh(string path)
 	}
 	normalBuffer = new VertexBuffer(normals, point_count*3 * sizeof(float));
 	VA->BindVertexBuffer(normalBuffer, 3, GL_FLOAT, false);
-	
+	this->normals = normals;
 
 	//texture UVs
 	float* UVs = nullptr;
@@ -118,7 +154,27 @@ Mesh::Mesh(string path)
 
 	//texture loading
 	unsigned int num_textures = scene->mNumTextures;
-	
+	unsigned int num_material = scene->mNumMaterials;
+	aiMaterial* material= nullptr;
+	vector<aiTexture*> diffuseTextures;
+	aiString textureName;
+	if (scene->HasMaterials()) {
+		material = scene->mMaterials[mesh->mMaterialIndex];
+
+		unsigned int diffuseNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+		printf("Diffuse Textures : %d\n", diffuseNum);
+		for (int i = 0; i < diffuseNum; i++) {
+			material->GetTexture(aiTextureType_DIFFUSE, i, &textureName);
+			printf("	|-> %s\n", textureName.C_Str());
+		}
+
+		unsigned int specularNum = material->GetTextureCount(aiTextureType_SPECULAR);
+		printf("Specular Textures : %d\n", specularNum);
+		for (int i = 0; i < specularNum; i++) {
+			material->GetTexture(aiTextureType_SPECULAR, i, &textureName);
+			printf("	|-> %s\n", textureName.C_Str());
+		}
+	}
 
 
 

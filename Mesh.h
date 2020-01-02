@@ -5,6 +5,10 @@
 #include <assImp/Importer.hpp>
 #include <assImp/scene.h>
 #include <assimp/postprocess.h>
+
+//stb
+#include <stb_image.h>
+
 //glm
 #include <glm.hpp>
 #include <ext.hpp>
@@ -20,10 +24,18 @@ using namespace glm;
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Error.h"
-#include "texture.h"
 #include <vector>
 
-
+class GRAPHICSLIBRARY_API Texture {
+private:
+	unsigned int openglID;
+	unsigned int height, width;
+	float* data;
+public:
+	Texture(unsigned int slot, float* data, unsigned int w, unsigned int h);
+	Texture();
+	void Bind(unsigned int slot = 0);
+};
 
 
 class GRAPHICSLIBRARY_API Mesh {
