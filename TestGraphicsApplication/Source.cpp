@@ -5,7 +5,11 @@ int main(int argv, char* argc[]) {
 	
 
 
-	Mesh* mesh = new Mesh("../Models/Skull/skulllow.dae");
+	//Mesh* mesh = new Mesh("../Models/Skull/skulllow.dae");
+	//Mesh* plane = new Mesh("../Models/Plane/Plane.dae");
+	Object* skull = new Object("../Models/Skull/skullLow.dae");
+	Object* plane = new Object("../Models/Plane/Plane.dae");
+
 	Shader* shad = new Shader("../Default.vert", "../Default.frag", true);
 	mat4* projection = NewProjection(60, .1, 100);
 
@@ -64,8 +68,8 @@ int main(int argv, char* argc[]) {
 			error = PollError();
 		}
 		
-		mesh->Draw();
-
+		skull->Draw();
+		plane->Draw();
 
 		PollEvents();
 		DrawWindow();

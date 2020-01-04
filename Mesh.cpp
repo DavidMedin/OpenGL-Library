@@ -4,10 +4,10 @@
 #include "Init.h"
 
 
-Texture::Texture(unsigned int slot, float* data, unsigned int w, unsigned int h) {
+Texture::Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned int h) {
 	openglID = NULL;
 	GLCall(glGenTextures(1, &openglID));
-	Bind(slot);
+	this->slot = slot;
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
 
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -20,6 +20,28 @@ Texture::Texture(unsigned int slot, float* data, unsigned int w, unsigned int h)
 	width = w;
 }
 
+Texture::Texture(unsigned int slot, std::string path) {
+	stbi_set_flip_vertically_on_load(true);
+	int x, y, n;
+	unsigned char* data = stbi_load(path.c_str(), &x, &y, &n, STBI_rgb_alpha);
+	if (data == nullptr) {
+		printf("Path to %s not found!\n", path.c_str());
+	}
+	this->data = data;
+	height = y;
+	width = x;
+	openglID = NULL;
+	GLCall(glGenTextures(1, &openglID));
+	this->slot = slot;
+	Bind(slot);
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->data));
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+}
+
 Texture::Texture() {
 	openglID = NULL;
 	data = nullptr;
@@ -28,15 +50,17 @@ Texture::Texture() {
 }
 void Texture::Bind(unsigned int slot) {
 	//will need a system for slot management for any given object
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, openglID));
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 
-	openglID = NULL;
-	data = nullptr;
-	height = NULL;
-	width = NULL;
+	//openglID = NULL;
+	//data = nullptr;
+	//height = NULL;
+	//width = NULL;
 }
-
+Texture::~Texture() {
+	stbi_image_free(this->data);
+}
 
 
 //Mesh::Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount) {
@@ -156,16 +180,32 @@ Mesh::Mesh(string path)
 	unsigned int num_textures = scene->mNumTextures;
 	unsigned int num_material = scene->mNumMaterials;
 	aiMaterial* material= nullptr;
-	vector<aiTexture*> diffuseTextures;
+	Texture* diffuseTexture;
 	aiString textureName;
+
+	size_t lastChar = path.find_last_of("/\\")+1;
+	string pathTo = path.erase(lastChar);
+
+	for (int i = 0; i < 32; i++) {
+		texList[i] = nullptr;
+	}
+
+
 	if (scene->HasMaterials()) {
 		material = scene->mMaterials[mesh->mMaterialIndex];
 
 		unsigned int diffuseNum = material->GetTextureCount(aiTextureType_DIFFUSE);
 		printf("Diffuse Textures : %d\n", diffuseNum);
 		for (int i = 0; i < diffuseNum; i++) {
+			if (diffuseNum == 1) {
 			material->GetTexture(aiTextureType_DIFFUSE, i, &textureName);
 			printf("	|-> %s\n", textureName.C_Str());
+			diffuseTexture = new Texture(DIFFUSE_SLOT,pathTo + string(textureName.C_Str()));
+			texList[DIFFUSE_SLOT] = diffuseTexture;
+			}
+			else {
+				NewError("Too many Diffuse Textures!\n");
+			}
 		}
 
 		unsigned int specularNum = material->GetTextureCount(aiTextureType_SPECULAR);
@@ -192,6 +232,15 @@ void Mesh::Draw()
 	}
 	VA->Bind();
 	index->Bind();
+	for (int i = 0; i < 32; i++) {
+		if (texList[i] != nullptr) {
+			texList[i]->Bind(i);
+
+		}
+		else {
+			break;
+		}
+	}
 	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT,nullptr));
 	//GLCall(glDrawArrays(GL_TRIANGLES, 0, pointCount));
 }

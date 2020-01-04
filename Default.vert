@@ -1,11 +1,16 @@
-#version 410
+#version 420
 
-in vec3 vp;
-in vec3 normals;
-uniform vec3 color;
-uniform mat4 proj,view;
-out vec3 outColor;
+layout (location=0) in vec3 vp;
+layout (location=1) in vec3 normals;
+layout (location=2) in vec2 texCoords;
+
+uniform mat4 proj,view,model;
+
+out vec3 outNormals;
+out vec2 outTexCoords;
 void main() {
 	gl_Position = proj * view * vec4(vp,1.0);
-	outColor = normals;
+	outNormals = normals;
+	outTexCoords = texCoords;
+
 }

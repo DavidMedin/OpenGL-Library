@@ -7,6 +7,7 @@
 #include <assimp/postprocess.h>
 
 //stb
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 //glm
@@ -26,14 +27,21 @@ using namespace glm;
 #include "Error.h"
 #include <vector>
 
+#define DIFFUSE_SLOT 0
+#define SPECULAR_SLOT 1
+
+
 class GRAPHICSLIBRARY_API Texture {
 private:
 	unsigned int openglID;
 	unsigned int height, width;
-	float* data;
+	unsigned char* data;
+	unsigned int slot;
 public:
-	Texture(unsigned int slot, float* data, unsigned int w, unsigned int h);
+	Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned int h);
+	Texture(unsigned int slot, std::string path);
 	Texture();
+	~Texture();
 	void Bind(unsigned int slot = 0);
 };
 
@@ -49,7 +57,7 @@ private:
 	IndexBuffer* index;
 	mat4* transform;
 
-	Texture texList[32];
+	Texture* texList[32];
 
 	float* vertices;
 	float* normals;
