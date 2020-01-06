@@ -106,7 +106,7 @@ void Shader::UseShader()
 //	}
 //}
 
-void Shader::UniformMatrix(string uniform_Name, mat4* matrix) {
+void Shader::UniformMatrix(string uniform_Name, mat4* matrix,unsigned int type) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
 	UseShader();
 	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));

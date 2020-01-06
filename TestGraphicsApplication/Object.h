@@ -11,6 +11,7 @@ public:
 	Object();
 	Object(string path);
 	//will want to add a variadic function to take in as many shaders as mesh objects
-	void Draw(Shader* shad);
-	void Draw();
+	void Draw(Shader* shad,Camera* cam);
+	void Draw(Camera* cam);
+	void Translate(vec3 vector);
 };

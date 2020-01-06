@@ -19,6 +19,12 @@ using namespace glm;
 
 #define MATRIX4 1
 #define VEC3F 2
+#define TYPE_NULL 0
+#define TYPE_PROJECTION 1
+#define TYPE_MODEL 2
+#define TYPE_VIEW 3
+
+
 class GRAPHICSLIBRARY_API Shader {
 private:
 	unsigned int shader_Program;
@@ -33,7 +39,7 @@ public:
 	//void UniformEquals(const char* uniform_Name, unsigned int type, float* value);
 	/*void UniformMatrix(string uniform_Name,Matrix4* matrix);
 	void UniformVector(string uniform_Name, Vector3* vec);*/
-	void UniformMatrix(string uniform_Name,mat4* matrix);
+	void UniformMatrix(string uniform_Name,mat4* matrix,unsigned int type);
 	void UniformVector(string uniform_Name, vec3* vec);
 };
 extern Shader* defaultShader;

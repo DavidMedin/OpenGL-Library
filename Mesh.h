@@ -26,7 +26,7 @@ using namespace glm;
 #include "Shader.h"
 #include "Error.h"
 #include <vector>
-
+#include "Camera.h"
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
 
@@ -66,7 +66,7 @@ private:
 public:
 	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
 	Mesh(string path);
-	void Draw();
-	void Draw(Shader* shad);
+	void Draw(Camera* cam);
+	void Draw(Shader* shad,Camera* cam);
 };
 

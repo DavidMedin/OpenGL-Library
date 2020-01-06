@@ -13,6 +13,13 @@ std::list<GLFWwindow*>* windowList;
 void WindowSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glfwSetWindowSize(window, width, height);
+	list<Camera*>* camList = GetCameraList();
+	/*for (list<Camera*>::iterator i = camList->begin(); i != camList->end(); i++) {
+		i._Ptr->_Myval->RecalculateProjection();
+	}*/
+	for (Camera* i : *camList) {
+		i->RecalculateProjection();
+	}
 }
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {

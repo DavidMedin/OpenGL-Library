@@ -1,25 +1,45 @@
 #include "pch.h"
 #include "Camera.h"
 
+std::list<Camera*> camList;
 
-Camera::Camera(std::initializer_list<float> pos) {
-
-	transform = new mat4(1.0f);
-	//printf("%f\n", (*(transform))[3][1]);
-	orien = new quat(glm::identity<quat>());
-	viewMat = new mat4(1);
-	//printf("%f,%f,%f\n",*pos.begin(),*(pos.begin()+1),*(pos.begin()+2));
-	//translate<float>(*transform, vec3(*pos.begin(), *(pos.begin() + 1), *(pos.begin() + 2)));
-	/*Translate(transform, { *pos.begin(),*(pos.begin() + 1),*(pos.begin() + 2) });*/
-	mat4* tmpMat = transform;
-	transform = new mat4(translate(*tmpMat, vec3( *pos.begin(),*(pos.begin() + 1),*(pos.begin() + 2) )));
-	delete tmpMat;
-}
 Camera::Camera(vec3* pos) {
 	transform = new mat4(1);
+	mat4* tmpMat = transform;
+
 	orien = new quat(angleAxis<float>(0,vec3(0,1,0)));
-	translate<float>(*transform, *pos);
+	transform = new mat4(translate<float>(*transform, *pos));
 	delete pos;
+	delete tmpMat;
+	camList.push_back(this);
+	projectionMatrix = nullptr;
+	fov = NULL;
+	nearRange = NULL;
+	farRange = NULL;
+	viewMat = nullptr;
+}
+Camera::Camera(vec3 pos) {
+	transform = new mat4(1);
+	mat4* tmpMat = transform;
+	orien = new quat(angleAxis<float>(0, vec3(0, 1, 0)));
+
+	transform = new mat4( translate<float>(*transform, pos));
+	delete tmpMat;
+	camList.push_back(this);
+	
+	projectionMatrix = nullptr;
+	fov = NULL;
+	nearRange = NULL;
+	farRange = NULL;
+	viewMat = nullptr;
+}
+Camera::~Camera() {
+	for (list<Camera*>::iterator i = camList.begin(); i != camList.end(); i++) {
+		if (*i == this) {
+			camList.erase(i);
+			break;
+		}
+	}
 }
 void Camera::UpdateViewMatrix() {
 	delete viewMat;
@@ -62,11 +82,12 @@ void Camera::Rotate(float angle,const vec3& axis) {
 
 
 	quat newRot = angleAxis(radians(angle), axis);
-	//newRot = normalize(newRot);
+	quat* tmpQuat = orien;
 	orien = new quat(newRot * (*orien));
-	//orien = new quat(normalize(*orien));
+	delete tmpQuat;
 }
 void Camera::Rotate(float angle,vec3* axis) {
+	NewError("rotate is broken\n");
 	/*quat* tmpQuat = orien;
 	orien = new quat(rotate<float>(*tmpQuat, radians(angle), *axis));
 	delete tmpQuat;*/
@@ -102,4 +123,40 @@ float Camera::GetY()
 	flatDir.y = 0;
 	flatDir = normalize(flatDir);
 	return degrees(atan2(flatDir.z,flatDir.x));
+}
+
+
+void Camera::RecalculateProjection() {
+	NewProjection(fov, nearRange, farRange);
+	//delete projectionMatrix;
+	//projectionMatrix = new mat4(translate(identity<mat4>(),vec3(1,0,0)));
+	
+}
+void Camera::NewProjection(double fov, double nearRange, double farRange) {
+	int height, width;
+	glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
+
+	double aspect = (double)width / (double)height;
+	double range = tan((double)fov) * 0.5 * nearRange;
+	double Sx = (2 * nearRange) / (range * aspect + range * aspect);
+	double Sy = nearRange / range;
+	double Sz = -(farRange + nearRange) / (farRange - nearRange);
+	double Pz = -(2 * farRange * nearRange) / (farRange - nearRange);
+	double data[] = {
+		Sx,0,0,0,
+		0,Sy,0,0,
+		0,0,Sz,-1,
+		0,0,Pz,0
+	};
+	mat4* matrix = new mat4(make_mat4(data));
+
+	if (projectionMatrix != nullptr) delete projectionMatrix;
+	//projectionMatrix = new mat4(perspectiveFov<double>(fov, width, height, nearRange, farRange));
+	projectionMatrix = matrix;
+	this->fov = fov;
+	this->nearRange = nearRange;
+	this->farRange = farRange;
+}
+GRAPHICSLIBRARY_API list<Camera*>* GetCameraList() {
+	return &camList;
 }

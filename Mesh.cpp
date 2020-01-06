@@ -223,13 +223,15 @@ Mesh::Mesh(string path)
 }
 
 
-void Mesh::Draw()
+void Mesh::Draw(Camera* cam)
 {
 	if (defaultShader != nullptr) defaultShader->UseShader();
 	else {
 		NewError("Default Shader is Null, create new shader with Shader(const char* vertexPath, const char* fragmentPath,true)");
 		return;
 	}
+	defaultShader->UniformMatrix("proj", cam->projectionMatrix, TYPE_PROJECTION);
+	defaultShader->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
 	VA->Bind();
 	index->Bind();
 	for (int i = 0; i < 32; i++) {
@@ -242,13 +244,21 @@ void Mesh::Draw()
 		}
 	}
 	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT,nullptr));
-	//GLCall(glDrawArrays(GL_TRIANGLES, 0, pointCount));
 }
-void Mesh::Draw(Shader* shad)
+void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
+	shad->UniformMatrix("proj", cam->projectionMatrix, TYPE_PROJECTION);
+	shad->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
 	VA->Bind();
-	//vertexIndex->Bind();
-	//GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+	index->Bind();
+	for (int i = 0; i < 32; i++) {
+		if (texList[i] != nullptr) {
+			texList[i]->Bind(i);
+		}
+		else {
+			break;
+		}
+	}
+	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
 }
