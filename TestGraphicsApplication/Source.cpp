@@ -41,10 +41,10 @@ int main(int argv, char* argc[]) {
 		}
 		float x, y;
 		GetMousePos(&x, &y);
-		if (GetMouseButton(mouseButton::MIDDLE_KEY)) {
+		if (GetKey(keys::Q_KEY)) {
 			SetDisabledMouse(true);
-			cam->Rotate(-dt * x, vec3(0, 1, 0));
-			cam->Rotate(-dt * y, cam->GetRightAxis());
+			cam->Rotate(10*-dt * x, vec3(0, 1, 0));
+			cam->Rotate(10*-dt * y, cam->GetRightAxis());
 		}
 		else {
 			SetDisabledMouse(false);

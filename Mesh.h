@@ -45,7 +45,7 @@ public:
 	void Bind(unsigned int slot = 0);
 };
 
-
+//needs to belong to a sceneNode, or a class or struct that contains a "list<void*> attributeList;" in it
 class GRAPHICSLIBRARY_API Mesh {
 private:
 	unsigned int indexCount; //called 'elements'
@@ -57,12 +57,16 @@ private:
 	IndexBuffer* index;
 	mat4* transform;
 
-	Texture* texList[32];
+	//shouldn't belong to Mesh, rather be somewhere in the AttributeList
+	//Texture* texList[32];
 
 	float* vertices;
 	float* normals;
 	float* textureUVs;
 	unsigned int* indices;
+
+
+
 public:
 	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
 	Mesh(string path);
