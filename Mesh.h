@@ -27,11 +27,12 @@ using namespace glm;
 #include "Error.h"
 #include <vector>
 #include "Camera.h"
+#include "SceneTree.h"
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
 
 
-class GRAPHICSLIBRARY_API Texture {
+class GRAPHICSLIBRARY_API Texture : Attribute {
 private:
 	unsigned int openglID;
 	unsigned int height, width;
@@ -46,7 +47,7 @@ public:
 };
 
 //needs to belong to a sceneNode, or a class or struct that contains a "list<void*> attributeList;" in it
-class GRAPHICSLIBRARY_API Mesh {
+class GRAPHICSLIBRARY_API Mesh : Attribute {
 private:
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
@@ -58,7 +59,7 @@ private:
 	mat4* transform;
 
 	//shouldn't belong to Mesh, rather be somewhere in the AttributeList
-	//Texture* texList[32];
+	Texture* texList[32];
 
 	float* vertices;
 	float* normals;

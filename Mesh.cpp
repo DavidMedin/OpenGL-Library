@@ -18,6 +18,7 @@ Texture::Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned
 	this->data = data;
 	height = h;
 	width = w;
+	type = ATTRIBUTE_TEXTURE;
 }
 
 Texture::Texture(unsigned int slot, std::string path) {
@@ -40,6 +41,8 @@ Texture::Texture(unsigned int slot, std::string path) {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	type = ATTRIBUTE_TEXTURE;
+
 }
 
 Texture::Texture() {
@@ -47,6 +50,8 @@ Texture::Texture() {
 	data = nullptr;
 	height = NULL;
 	width = NULL;
+	type = ATTRIBUTE_TEXTURE;
+
 }
 void Texture::Bind(unsigned int slot) {
 	//will need a system for slot management for any given object
@@ -219,7 +224,7 @@ Mesh::Mesh(string path)
 
 
 	importer.FreeScene();
-	
+	type = ATTRIBUTE_MESH;
 }
 
 
