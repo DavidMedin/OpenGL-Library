@@ -6,15 +6,37 @@ int main(int argv, char* argc[]) {
 
 
 
-	Object* skull = new Object("../Models/Skull/skullLow.dae");
-	Object* plane = new Object("../Models/Plane/Plane.dae");
-	plane->Translate(vec3(0, -.055f, 0));
+	//Object* skull = new Object("../Models/Skull/skullLow.dae");
+	//Mesh* skullMesh = new Mesh("../Models/Skull/skullLow.dae");
+	SceneNode* scene = new SceneNode("../Models/Scene.dae");
+	//mat4* skullTransform = new mat4(identity<mat4>());
+	//mat4* skullMeshTransform = new mat4(translate(identity<mat4>(), vec3(0.2f, 0, 0)));
 
+	/*for (SceneNode* i : scene->childNodes) {
+		printf("|\n");
+		for (Attribute* a : i->attributeList) {
+			switch (a->type) {
+				case 10: {
+					printf("-> Attribute_Mesh\n");
+					break;
+				}
+				case 11: {
+					printf("-> Attribute_Texture\n");
+					break;
+				}
+				case 12: {
+					printf("-> Attribute_Tranform\n");
+					break;
+				}
+			}
+		}
+		printf("___\n");
+	}*/
 
 	Shader* shad = new Shader("../Default.vert", "../Default.frag", true);
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
-	cam->NewProjection(60, .1f, 100);
+	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 	while (!ShouldCloseWindow()) {
 		float dt = GetDeltaTime();
@@ -50,6 +72,11 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
+		//render all the objects in the scene
+		//still need to find the model matrix in assimp
+		for (SceneNode* i : scene->childNodes) {
+			i->Draw(shad, cam);
+		}
 		
 
 		cam->UpdateViewMatrix();
@@ -61,9 +88,6 @@ int main(int argv, char* argc[]) {
 			cout << error << "\n";
 			error = PollError();
 		}
-
-		skull->Draw(shad,cam);
-		plane->Draw(shad,cam);
 
 		PollEvents();
 		DrawWindow();

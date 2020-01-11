@@ -6,9 +6,7 @@
 #include <assImp/scene.h>
 #include <assimp/postprocess.h>
 
-//stb
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+
 
 //glm
 #include <glm.hpp>
@@ -27,9 +25,19 @@ using namespace glm;
 #include "Error.h"
 #include <vector>
 #include "Camera.h"
-#include "SceneTree.h"
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
+
+#define ATTRIBUTE_MESH 10
+#define ATTRIBUTE_TEXTURE 11
+#define ATTRIBUTE_TRANSFORM 12
+
+class GRAPHICSLIBRARY_API Attribute {
+public:
+	unsigned int type;
+	Attribute(unsigned int type);
+	Attribute();
+};
 
 
 class GRAPHICSLIBRARY_API Texture : Attribute {
@@ -43,14 +51,12 @@ public:
 	Texture(unsigned int slot, std::string path);
 	Texture();
 	~Texture();
-	void Bind(unsigned int slot = 0);
+	void Bind(unsigned int slot = NULL);
 };
 
 //needs to belong to a sceneNode, or a class or struct that contains a "list<void*> attributeList;" in it
 class GRAPHICSLIBRARY_API Mesh : Attribute {
 private:
-	unsigned int indexCount; //called 'elements'
-	unsigned int pointCount;
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
@@ -69,9 +75,16 @@ private:
 
 
 public:
+	unsigned int indexCount; //called 'elements'
+	unsigned int pointCount;
 	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
 	Mesh(string path);
+	//must be a pointer to a aiMesh!!
+	//not recommended for the user of the Library unless you include AssiImp
+	Mesh(void* mesh);
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
+
+	void Bind();
 };
 
