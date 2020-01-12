@@ -12,12 +12,13 @@ SceneNode::SceneNode() {
 
 }
 
-void Attribute_AddMesh(SceneNode* node,aiScene* scene,unsigned int meshIndex) {
+void Attribute_AddMesh(SceneNode* node,const aiScene* scene,unsigned int meshIndex) {
 		SceneNode* currentNode = new SceneNode;
 		node->childNodes.push_back(currentNode);
-
-		aiMesh* aiTmpMesh = scene->mMeshes[i];
-		Mesh* mesh = new Mesh(scene->mMeshes[i]);
+		//SceneNode* currentNode = node;
+		
+		aiMesh* aiTmpMesh = scene->mMeshes[meshIndex];
+		Mesh* mesh = new Mesh(aiTmpMesh);
 		currentNode->attributeList.push_back((Attribute*)mesh);
 		
 		//texture loading
@@ -44,7 +45,7 @@ void Attribute_AddMesh(SceneNode* node,aiScene* scene,unsigned int meshIndex) {
 					//printf("	|-> %s\n", textureName.C_Str());
 					diffuseTexture = new Texture(DIFFUSE_SLOT, pathTo + string(textureName.C_Str()));
 					currentNode->attributeList.push_back((Attribute*)diffuseTexture);
- 				}
+				}
 				else {
 					NewError("Too many Diffuse Textures!\n");
 				}
@@ -68,10 +69,26 @@ SceneNode::SceneNode(std::string path) {
 		return;
 	}
 	this->path = path;
-	aiNode* currentNode = scene->mRootNode;
-	for (int i = 0; i < currentNode->mNumChildren; i++) {
+	vector<aiNode*> returnStack;
 
-	}
+	SceneNode* currentScene = this;
+	aiNode* currentNode = scene->mRootNode;
+	returnStack.push_back(currentNode);
+	do {
+		currentNode = returnStack.back();
+		returnStack.pop_back();
+		for (int i = 0; i < currentNode->mNumChildren; i++) {
+			if (currentNode->mChildren[i]->mNumChildren > 0) {
+				returnStack.push_back(currentNode->mChildren[i]);
+			}
+			//process attributes
+			SceneNode* tmpNode = new SceneNode;
+			currentScene->childNodes.push_back(tmpNode);
+			for (int q = 0; q < currentNode->mNumMeshes; q++) {
+				Attribute_AddMesh(tmpNode, scene, currentNode->mMeshes[q]);
+			}
+		}
+	} while (returnStack.size() != 0);
 }
 
 
@@ -92,6 +109,7 @@ void SceneNode::RemoveAttribute(Attribute* data/*some way of identification*/) {
 }
 
 void SceneNode::Draw(Shader* shad, Camera* cam) {
+	//will load all textures in attributes
 	for (Attribute* i : attributeList) {
 		if (i->type == ATTRIBUTE_TEXTURE) {
 			Texture* tmpTex = (Texture*)i;

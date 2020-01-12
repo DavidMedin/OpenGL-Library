@@ -74,11 +74,11 @@ int main(int argv, char* argc[]) {
 
 		//render all the objects in the scene
 		//still need to find the model matrix in assimp
-		for (SceneNode* i : scene->childNodes) {
+		/*for (SceneNode* i : scene->childNodes) {
 			i->Draw(shad, cam);
 		}
-		
-
+		*/
+		scene->childNodes.back()->Draw(shad, cam);
 		cam->UpdateViewMatrix();
 		
 		

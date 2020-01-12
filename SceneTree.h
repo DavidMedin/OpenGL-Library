@@ -10,8 +10,6 @@
 #include <assImp/scene.h>
 #include <assimp/postprocess.h>
 
-void Attribute_AddMesh(aiScene* scene,unsigned int meshIndex);
-
 #else
 #define GRAPHICSLIBRARY_API __declspec(dllimport)
 #endif
@@ -41,3 +39,8 @@ public:
 
 	void Draw(Shader* shad,Camera* cam);
 };
+
+#ifdef GRAPHICSLIBRARY_EXPORTS
+
+void Attribute_AddMesh(SceneNode* node, const aiScene* scene, unsigned int meshIndex);
+#endif
