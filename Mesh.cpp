@@ -21,7 +21,7 @@ Texture::Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned
 	this->data = data;
 	height = h;
 	width = w;
-	type = ATTRIBUTE_TEXTURE;
+	//type = ATTRIBUTE_TEXTURE;
 }
 
 Texture::Texture(unsigned int slot, std::string path) {
@@ -44,7 +44,7 @@ Texture::Texture(unsigned int slot, std::string path) {
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	GLCall(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	type = ATTRIBUTE_TEXTURE;
+	//type = ATTRIBUTE_TEXTURE;
 
 }
 
@@ -54,7 +54,7 @@ Texture::Texture() {
 	data = nullptr;
 	height = NULL;
 	width = NULL;
-	type = ATTRIBUTE_TEXTURE;
+	//type = ATTRIBUTE_TEXTURE;
 
 }
 void Texture::Bind(unsigned int slot) {
@@ -177,7 +177,7 @@ Mesh::Mesh(void* mesh) {
 	VA->BindVertexBuffer(textureUVBuffer, 2, GL_FLOAT, false);
 	this->textureUVs = UVs;
 
-	type = ATTRIBUTE_MESH;
+	//type = ATTRIBUTE_MESH;
 }
 
 
@@ -329,7 +329,7 @@ Mesh::Mesh(string path)
 
 
 	importer.FreeScene();
-	type = ATTRIBUTE_MESH;
+	//type = ATTRIBUTE_MESH;
 }
 
 
@@ -375,4 +375,16 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 void Mesh::Bind() {
 	VA->Bind();
 	index->Bind();
+}
+
+Transform::Transform()
+{
+	//type = ATTRIBUTE_TRANSFORM;
+	data = new mat4(identity<mat4>());
+}
+
+Transform::Transform(mat4* transform)
+{
+	data = transform;
+	//type = ATTRIBUTE_TRANSFORM;
 }

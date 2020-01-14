@@ -6,9 +6,9 @@ int main(int argv, char* argc[]) {
 
 
 
-	//Object* skull = new Object("../Models/Skull/skullLow.dae");
-	//Mesh* skullMesh = new Mesh("../Models/Skull/skullLow.dae");
-	SceneNode* scene = new SceneNode("../Models/Scene.dae");
+	Object* skull = new Object("../Models/Skull/skullLow.dae");
+	Mesh* skullMesh = new Mesh("../Models/Skull/skullLow.dae");
+	//SceneNode* scene = new SceneNode("../Models/Scene.dae");
 	//mat4* skullTransform = new mat4(identity<mat4>());
 	//mat4* skullMeshTransform = new mat4(translate(identity<mat4>(), vec3(0.2f, 0, 0)));
 
@@ -72,13 +72,12 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		//render all the objects in the scene
-		//still need to find the model matrix in assimp
-		/*for (SceneNode* i : scene->childNodes) {
-			i->Draw(shad, cam);
-		}
-		*/
-		scene->childNodes.back()->Draw(shad, cam);
+		//for (SceneNode* node : scene->childNodes) {
+		//	node->Draw(shad, cam);
+		//}
+		skull->Draw(shad, cam);
+		
+
 		cam->UpdateViewMatrix();
 		
 		

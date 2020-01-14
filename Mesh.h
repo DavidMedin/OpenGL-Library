@@ -32,15 +32,26 @@ using namespace glm;
 #define ATTRIBUTE_TEXTURE 11
 #define ATTRIBUTE_TRANSFORM 12
 
-class GRAPHICSLIBRARY_API Attribute {
+//class GRAPHICSLIBRARY_API Attribute {
+//public:
+//	unsigned int type;
+//	Attribute(unsigned int type);
+//	Attribute();
+////};
+
+class GRAPHICSLIBRARY_API Transform /*: Attribute*/ {
+private:
+
 public:
-	unsigned int type;
-	Attribute(unsigned int type);
-	Attribute();
+	mat4* data;
+
+	Transform();
+	Transform(mat4* transform);
+
 };
 
 
-class GRAPHICSLIBRARY_API Texture : Attribute {
+class GRAPHICSLIBRARY_API Texture /*: Attribute*/ {
 private:
 	unsigned int openglID;
 	unsigned int height, width;
@@ -55,7 +66,7 @@ public:
 };
 
 //needs to belong to a sceneNode, or a class or struct that contains a "list<void*> attributeList;" in it
-class GRAPHICSLIBRARY_API Mesh : Attribute {
+class GRAPHICSLIBRARY_API Mesh /*: Attribute*/ {
 private:
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
@@ -64,8 +75,6 @@ private:
 	IndexBuffer* index;
 	mat4* transform;
 
-	//shouldn't belong to Mesh, rather be somewhere in the AttributeList
-	Texture* texList[32];
 
 	float* vertices;
 	float* normals;
@@ -75,6 +84,10 @@ private:
 
 
 public:
+	//A reference to the textures, should also be in attributes
+	Texture* texList[32];
+
+
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
 	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
