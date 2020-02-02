@@ -34,6 +34,7 @@ private:
 	unsigned int CreateShaderProgram(const string& vertexShader, const string& fragmentShader);
 public:
 	Shader(const char* vertexPath, const char* fragmentPath,bool makeDefault);
+	Shader(const char* shaderPath, bool makeDefault);
 	~Shader();
 	void UseShader();
 	//void UniformEquals(const char* uniform_Name, unsigned int type, float* value);

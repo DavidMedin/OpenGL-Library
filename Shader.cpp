@@ -13,7 +13,7 @@ string Shader::ReadShader(const char* path) {
 	while (!shaderFile.eof()) {
 		getline(shaderFile, input);
 		if (input.find("uniform") != string::npos) {
-			
+
 		}
 		tmp.append(input);
 		input.clear();
@@ -42,7 +42,17 @@ unsigned int Shader::CompileShader(unsigned int type, const string& source) {
 		GLCall(glGetShaderInfoLog(id, length, &length, error));
 		printf("failed to compile %s shader: ", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
 		char* nError = nullptr;
-		sprintf_s(nError,30, "failed to compile %s shader: ", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
+		//sprintf_s(nError,30, "failed to compile %s shader: ", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
+		if (type == GL_VERTEX_SHADER) {
+			sprintf_s(nError, 30, "failed to compile %s shader: vertex", 1);
+		}
+		else if (type == GL_FRAGMENT_SHADER) {
+			sprintf_s(nError, 30, "failed to compile %s shader: fragment", 1);
+		}
+		else if (type == GL_GEOMETRY_SHADER) {
+			sprintf_s(nError, 30, "failed to compile %s shader: geometry", 1);
+		}
+
 		NewError(nError);
 		free(nError);
 		printf("%s\n", error);
@@ -67,9 +77,71 @@ unsigned int Shader::CreateShaderProgram(const string& vertexShader, const strin
 }
 
 
-Shader::Shader(const char* vertexPath,const char* fragmentPath, bool makeDefault) {
+Shader::Shader(const char* vertexPath, const char* fragmentPath, bool makeDefault) {
 	shader_Program = CreateShaderProgram(ReadShader(vertexPath), ReadShader(fragmentPath));
 	if (makeDefault) defaultShader = this;
+	GLCall(glUseProgram(shader_Program));
+}
+
+Shader::Shader(const char* shaderPath, bool makeDefault) {
+	//read and find identifiers
+	// -> @vertex,@fragment,@geometry
+	//add to flag var
+	char flags = 0;
+
+	//parse the file for identifiers
+	string tmp;
+	ifstream shaderFile;
+	shaderFile.open(shaderPath, ios::in);
+	string input;
+
+	string vertexText;
+	string fragmentText;
+	string geometryText;
+
+	while (!shaderFile.eof()) {
+		getline(shaderFile, input);
+		if (input.find("uniform") != string::npos) {
+
+		}
+
+		if (input.find("@vertex") != string::npos) {//should be after the vertex shader
+			vertexText = tmp;
+			tmp.clear();
+			//might clear VertexText
+			continue;
+		}
+		else if (input.find("@fragment") != string::npos) {
+			fragmentText = tmp;
+			tmp.clear();
+			continue;
+		}
+		else if (input.find("@geometry") != string::npos) {
+			geometryText = tmp;
+			tmp.clear();
+			continue;
+		}
+
+		tmp.append(input);
+		input.clear();
+		tmp.append("\n");
+	}
+	//compiling shaders
+	shader_Program = glCreateProgram();
+	GLuint vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexText);
+	GLuint fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentText);
+	//GLuint geometry_shader = CompileShader(GL_GEOMETRY_SHADER, geometryText);
+	//combine shaders
+	GLCall(glAttachShader(shader_Program, vertex_shader));
+	GLCall(glAttachShader(shader_Program, fragment_shader));
+	//GLCall(glAttachShader(shader_Program, geometry_shader));
+	GLCall(glLinkProgram(shader_Program));
+	GLCall(glValidateProgram(shader_Program));
+	GLCall(glDeleteShader(vertex_shader));
+	GLCall(glDeleteShader(fragment_shader));
+	//GLCall(glDeleteShader(geometry_shader));
+	if (makeDefault) defaultShader = this;
+
 	GLCall(glUseProgram(shader_Program));
 }
 
@@ -106,7 +178,7 @@ void Shader::UseShader()
 //	}
 //}
 
-void Shader::UniformMatrix(string uniform_Name, mat4* matrix,unsigned int type) {
+void Shader::UniformMatrix(string uniform_Name, mat4* matrix, unsigned int type) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
 	UseShader();
 	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));

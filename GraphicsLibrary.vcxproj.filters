@@ -106,5 +106,8 @@
     <None Include="Default.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Shader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
