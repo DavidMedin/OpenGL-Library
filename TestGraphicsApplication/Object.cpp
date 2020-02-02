@@ -15,6 +15,11 @@ void Object::Draw(Shader* shad,Camera* cam) {
 	shad->UseShader();
 	shad->UniformMatrix("model", modelMatrix,TYPE_MODEL);
 	for (Mesh* tmpMesh : meshList) {
+		for (int i = 0; i < 32; i++) {
+			if (tmpMesh->texList[i] != nullptr) {
+				tmpMesh->texList[i]->Bind();
+			}
+		}
 		tmpMesh->Draw(shad,cam);
 	}
 }

@@ -7,31 +7,8 @@ int main(int argv, char* argc[]) {
 
 
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
-	Mesh* skullMesh = new Mesh("../Models/Skull/skullLow.dae");
-	//SceneNode* scene = new SceneNode("../Models/Scene.dae");
-	//mat4* skullTransform = new mat4(identity<mat4>());
-	//mat4* skullMeshTransform = new mat4(translate(identity<mat4>(), vec3(0.2f, 0, 0)));
-
-	/*for (SceneNode* i : scene->childNodes) {
-		printf("|\n");
-		for (Attribute* a : i->attributeList) {
-			switch (a->type) {
-				case 10: {
-					printf("-> Attribute_Mesh\n");
-					break;
-				}
-				case 11: {
-					printf("-> Attribute_Texture\n");
-					break;
-				}
-				case 12: {
-					printf("-> Attribute_Tranform\n");
-					break;
-				}
-			}
-		}
-		printf("___\n");
-	}*/
+	Object* plane = new Object("../Models/Plane/plane.dae");
+	plane->Translate(vec3(0, -.1f, 0));
 
 	Shader* shad = new Shader("../Default.vert", "../Default.frag", true);
 
@@ -72,11 +49,9 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		//for (SceneNode* node : scene->childNodes) {
-		//	node->Draw(shad, cam);
-		//}
-		skull->Draw(shad, cam);
 		
+		skull->Draw(shad, cam);
+		plane->Draw(shad, cam);
 
 		cam->UpdateViewMatrix();
 		

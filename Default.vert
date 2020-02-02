@@ -9,7 +9,7 @@ uniform mat4 proj,view,model;
 out vec3 outNormals;
 out vec2 outTexCoords;
 void main() {
-	gl_Position = proj * view * vec4(vp,1.0);
+	gl_Position = proj * view * model * vec4(vp,1.0);
 	outNormals = normals;
 	outTexCoords = texCoords;
 

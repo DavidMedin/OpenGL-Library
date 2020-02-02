@@ -2,8 +2,10 @@
 #include <glm.hpp>
 #include <stdlib.h>
 #include <GraphicsLibrary.h>
+
 class Object {
 private:
+
 public:	
 	glm::mat4* modelMatrix;
 	glm::quat* orien;
