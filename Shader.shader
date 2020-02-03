@@ -8,30 +8,37 @@ uniform mat4 proj,view,model;
 
 out vec3 outNormals;
 out vec2 outTexCoords;
+out vec2 XY;
 void main() {
 	gl_Position = proj * view * model * vec4(vp,1.0);
 	outNormals = normals;
 	outTexCoords = texCoords;
-
+	XY = vec2(gl_Position.xy);
 }
 //@vertex
+
+#version 420
+layout(points) in;
+layout(triangle_strip,max_vertices  = 6) out;
+void main(){
+	//assume only points
+	
+
+}
+//@geometry
 
 #version 420
 
  in vec3 outNormals;
  in vec2 outTexCoords;
+ in vec2 XY;
 
 layout (binding = 0) uniform sampler2D diffuse;
 
 out vec4 frag_colour;
 void main() {
 	frag_colour = texture(diffuse,outTexCoords);
-//    frag_colour = vec4(1,1,1,1);
+	
+
 }
 //@fragment
-
-
-
-
-
-//@geometry
