@@ -6,10 +6,14 @@ layout (location=2) in vec2 texCoords;
 
 uniform mat4 proj,view,model;
 
-out vec3 outNormals;
-out vec2 outTexCoords;
+//struct vData{
+//	vec3 normals;
+//	vec2 texCoords;
+//};
+//
+out vec2 outData;
 void main() {
 	gl_Position = proj * view * model * vec4(vp,1.0);
-	outNormals = normals;
-	outTexCoords = texCoords;
+//	outData.normals = normals;
+	outData= texCoords;
 }
