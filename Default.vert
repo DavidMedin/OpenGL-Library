@@ -12,5 +12,4 @@ void main() {
 	gl_Position = proj * view * model * vec4(vp,1.0);
 	outNormals = normals;
 	outTexCoords = texCoords;
-
 }

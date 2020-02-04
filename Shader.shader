@@ -22,7 +22,9 @@ layout(points) in;
 layout(triangle_strip,max_vertices  = 6) out;
 void main(){
 	//assume only points
-	
+	if (gl_in.length() == 1) {
+		Gl_position = 
+	}
 
 }
 //@geometry

@@ -10,8 +10,8 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae");
 	plane->Translate(vec3(0, -.1f, 0));
 
-	//Shader* shad = new Shader("../Default.vert", "../Default.frag", true);
-	Shader* shad = new Shader("../Shader.shader", true);
+	Shader* shad = new Shader("../Default.vert", "../Default.frag", "../Default.geom", true);
+	//Shader* shad = new Shader("../Shader.shader", true);
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);

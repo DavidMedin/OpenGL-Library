@@ -106,10 +106,10 @@
     <None Include="Default.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Default.geo">
+    <None Include="Shader.shader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Shader.shader">
+    <None Include="Default.geom">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

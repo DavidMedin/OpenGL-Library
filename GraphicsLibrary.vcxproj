@@ -201,7 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Default.frag" />
-    <None Include="Default.geo" />
+    <None Include="Default.geom" />
     <None Include="Default.vert" />
     <None Include="Shader.shader" />
   </ItemGroup>

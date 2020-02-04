@@ -19,11 +19,16 @@ string Shader::ReadShader(const char* path) {
 		input.clear();
 		tmp.append("\n");
 	}
+	//const char* C_String = (const char*)malloc(tmp.length());
+	//if (C_String != nullptr) {
+	//	memcpy((void*)C_String, (void*)tmp.c_str(), tmp.length());
+	//	return C_String;
+	//}
 	return tmp;
 }
-unsigned int Shader::CompileShader(unsigned int type, const string& source) {
+unsigned int Shader::CompileShader(unsigned int type, const char* source) {
 	GLuint id = glCreateShader(type);
-	const char* src = source.c_str();
+	const char* src = source;
 	GLCall(glShaderSource(id, 1, &src, nullptr));
 	GLCall(glCompileShader(id));
 
@@ -32,30 +37,29 @@ unsigned int Shader::CompileShader(unsigned int type, const string& source) {
 	if (!result) {
 		int length;
 		GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
-		char* error = (char*)malloc(sizeof(char) * length + 1);
-		if (error != nullptr) {
-			/*for (int i = 0; i < length + 1; i++) {
-				error[i] = '\0';
-			}*/
-			error[length + 1] = '\0';
-		}
+		char* error = (char*)malloc(sizeof(char) * length);
 		GLCall(glGetShaderInfoLog(id, length, &length, error));
-		printf("failed to compile %s shader: ", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
-		char* nError = nullptr;
-		//sprintf_s(nError,30, "failed to compile %s shader: ", type == GL_VERTEX_SHADER ? "vertex" : "fragment");
-		if (type == GL_VERTEX_SHADER) {
-			sprintf_s(nError, 30, "failed to compile %s shader: vertex", 1);
+		const char* message = nullptr;
+		switch (type) {
+			case GL_VERTEX_SHADER: {
+				message = "vertex";
+				break;
+			}
+			case GL_FRAGMENT_SHADER: {
+				message = "fragment";
+				break;
+			}
+			case GL_GEOMETRY_SHADER: {
+				message = "geometry";
+				break;
+			}
+			default: {
+				message = "unknown shader";
+			}
 		}
-		else if (type == GL_FRAGMENT_SHADER) {
-			sprintf_s(nError, 30, "failed to compile %s shader: fragment", 1);
-		}
-		else if (type == GL_GEOMETRY_SHADER) {
-			sprintf_s(nError, 30, "failed to compile %s shader: geometry", 1);
-		}
-
-		NewError(nError);
-		free(nError);
-		printf("%s\n", error);
+		printf("failed to compile %s shader: ", message);
+		cout << error << "\n";
+		
 		free(error);
 		GLCall(glDeleteShader(id));
 	}
@@ -63,22 +67,36 @@ unsigned int Shader::CompileShader(unsigned int type, const string& source) {
 	return id;
 }
 
-unsigned int Shader::CreateShaderProgram(const string& vertexShader, const string& fragmentShader) {
+unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* fragmentShader,const char* geometryShader) {
 	GLuint shader_program = glCreateProgram();
 	GLuint vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	GLuint fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	GLuint geometry_shader;
+	if (geometryShader != nullptr) {
+		geometry_shader = CompileShader(GL_GEOMETRY_SHADER, geometryShader);
+	}
 	GLCall(glAttachShader(shader_program, vertex_shader));
 	GLCall(glAttachShader(shader_program, fragment_shader));
+	if (geometryShader != nullptr) {
+		GLCall(glAttachShader(shader_program, geometry_shader));
+	}
 	GLCall(glLinkProgram(shader_program));
 	GLCall(glValidateProgram(shader_program));
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
+	if (geometryShader != nullptr) {
+		GLCall(glDeleteShader(geometry_shader));
+	}
 	return shader_program;
 }
 
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, bool makeDefault) {
-	shader_Program = CreateShaderProgram(ReadShader(vertexPath), ReadShader(fragmentPath));
+Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath, bool makeDefault) {
+	if (geomPath != nullptr) { shader_Program = CreateShaderProgram(ReadShader(vertexPath).c_str(), ReadShader(fragmentPath).c_str(), ReadShader(geomPath).c_str()); }
+	else
+	{
+		shader_Program = CreateShaderProgram(ReadShader(vertexPath).c_str(), ReadShader(fragmentPath).c_str(),NULL);
+	}
 	if (makeDefault) defaultShader = this;
 	GLCall(glUseProgram(shader_Program));
 }
@@ -128,8 +146,8 @@ Shader::Shader(const char* shaderPath, bool makeDefault) {
 	}
 	//compiling shaders
 	shader_Program = glCreateProgram();
-	GLuint vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexText);
-	GLuint fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentText);
+	GLuint vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexText.c_str());
+	GLuint fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentText.c_str());
 	//GLuint geometry_shader = CompileShader(GL_GEOMETRY_SHADER, geometryText);
 	//combine shaders
 	GLCall(glAttachShader(shader_Program, vertex_shader));

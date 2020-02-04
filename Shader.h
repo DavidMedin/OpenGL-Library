@@ -30,10 +30,10 @@ private:
 	unsigned int shader_Program;
 	//list<string> inputTypes;
 	string ReadShader(const char* path);
-	unsigned int CompileShader(unsigned int type, const string& source);
-	unsigned int CreateShaderProgram(const string& vertexShader, const string& fragmentShader);
+	unsigned int CompileShader(unsigned int type, const char* source);
+	unsigned int CreateShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
 public:
-	Shader(const char* vertexPath, const char* fragmentPath,bool makeDefault);
+	Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath,bool makeDefault);
 	Shader(const char* shaderPath, bool makeDefault);
 	~Shader();
 	void UseShader();
