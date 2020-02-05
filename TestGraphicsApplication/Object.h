@@ -7,6 +7,7 @@ class Object {
 private:
 
 public:	
+	glm::mat4* translate;
 	glm::mat4* modelMatrix;
 	glm::quat* orien;
 	std::list<Mesh*> meshList;
@@ -16,4 +17,6 @@ public:
 	void Draw(Shader* shad,Camera* cam);
 	void Draw(Camera* cam);
 	void Translate(vec3 vector);
+	void Rotate(vec3 axis, float angle);
+	void UpdateModelMatrix();
 };

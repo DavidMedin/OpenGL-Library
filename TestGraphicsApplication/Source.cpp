@@ -1,6 +1,6 @@
 #include "Source.h"
 int main(int argv, char* argc[]) {
-	init(1900, 1200, "Default");
+	init(1500, 1100, "Default");
 
 	
 
@@ -9,9 +9,12 @@ int main(int argv, char* argc[]) {
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
 	Object* plane = new Object("../Models/Plane/plane.dae");
 	plane->Translate(vec3(0, -.1f, 0));
+	plane->Rotate(vec3(1, 0, 0), 180);
 
-	Shader* shad = new Shader("../Default.vert", "../Default.frag", "../Default.geom", true);
-	//Shader* shad = new Shader("../Shader.shader", true);
+	Object* isosphere = new Object("../Models/Icosphere.dae");
+
+	Shader* meshShad = new Shader("../Mesh.shader", true);
+	Shader* pointShad = new Shader("../Cube.shader", false);
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
@@ -50,9 +53,17 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		
-		skull->Draw(shad, cam);
-		plane->Draw(shad, cam);
+		meshShad->UseShader();
+		skull->Draw(meshShad, cam);
+		plane->Draw(meshShad, cam);
+
+		DrawFlags(DRAWFLAG_TRIANGLE);
+		pointShad->UseShader();
+		SetGraphicsFlag(GRAPHICS_FLAG_CULL);
+		isosphere->Draw(pointShad, cam);
+		SetGraphicsFlag(GRAPHICS_FLAG_CULL);
+		DrawFlags(DRAWFLAG_TRIANGLE);
+
 
 		cam->UpdateViewMatrix();
 		

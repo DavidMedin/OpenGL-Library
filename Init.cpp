@@ -8,7 +8,7 @@ Threads */
 //using namespace std;
 std::list<GLFWwindow*>* windowList;
 
-
+int graphicsFlag = 1;
 
 void WindowSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -24,6 +24,14 @@ void WindowSizeCallback(GLFWwindow* window, int width, int height)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+void GRAPHICSLIBRARY_API SetGraphicsFlag(int flag)
+{
+	graphicsFlag = graphicsFlag^flag;
+}
+bool GRAPHICSLIBRARY_API GetGraphicsFlag(int flag)
+{
+	return graphicsFlag&flag;
 }
 int init(int width, int height, string name) {
 	if (!glfwInit()) {
@@ -48,6 +56,8 @@ int init(int width, int height, string name) {
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 

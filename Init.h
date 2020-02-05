@@ -18,6 +18,11 @@ using namespace std;
 #else
 #define GRAPHICSLIBRARY_API __declspec(dllimport)
 #endif
+
+#define GRAPHICS_FLAG_CULL 1
+void GRAPHICSLIBRARY_API SetGraphicsFlag(int flag);
+bool GRAPHICSLIBRARY_API GetGraphicsFlag(int flag);
+
 int GRAPHICSLIBRARY_API init(int width, int height, string name);
 void GRAPHICSLIBRARY_API PollEvents();
 void GRAPHICSLIBRARY_API ClearWindow();

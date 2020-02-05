@@ -32,12 +32,9 @@ using namespace glm;
 #define ATTRIBUTE_TEXTURE 11
 #define ATTRIBUTE_TRANSFORM 12
 
-//class GRAPHICSLIBRARY_API Attribute {
-//public:
-//	unsigned int type;
-//	Attribute(unsigned int type);
-//	Attribute();
-////};
+#define DRAWFLAG_TRIANGLE 1
+//00000000
+//       ^-draw triangles; else points
 
 class GRAPHICSLIBRARY_API Transform /*: Attribute*/ {
 private:
@@ -51,7 +48,7 @@ public:
 };
 
 
-class GRAPHICSLIBRARY_API Texture /*: Attribute*/ {
+class GRAPHICSLIBRARY_API Texture {
 private:
 	unsigned int openglID;
 	unsigned int height, width;
@@ -65,8 +62,10 @@ public:
 	void Bind(unsigned int slot = NULL);
 };
 
-//needs to belong to a sceneNode, or a class or struct that contains a "list<void*> attributeList;" in it
-class GRAPHICSLIBRARY_API Mesh /*: Attribute*/ {
+GRAPHICSLIBRARY_API void DrawFlags(int flag/*toggle*/);
+GRAPHICSLIBRARY_API bool GetDrawFlags(int flag/*toggle*/);
+
+class GRAPHICSLIBRARY_API Mesh {
 private:
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;

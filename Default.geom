@@ -1,22 +1,26 @@
 #version 420
-//struct vData{
-//	vec3 normals;
-//	vec2 texCoords;
-//};
-//
-layout(triangles) in;
-in vec2 inData[];
 
-out vec2 outData;
+layout(triangles) in;
+
+in vData{
+	vec3 normals;
+	vec2 texCoords;
+}v_geom[];
+
+out fData{
+	vec3 normals;
+	vec2 texCoords;
+}v_frag;
+
 layout(triangle_strip,max_vertices  = 6) out;
 void main(){
-	//assume only points
 	for(int i = 0;i < gl_in.length();i++){
+		v_frag.texCoords = v_geom[i].texCoords;
+		v_frag.normals = v_geom[i].normals;
 		gl_Position = gl_in[i].gl_Position;
 		EmitVertex();
-//		outData.normals = inData[i].normals;
-		outData = inData[i];
-		EndPrimitive();
+
 
 	}
+		EndPrimitive();
 }

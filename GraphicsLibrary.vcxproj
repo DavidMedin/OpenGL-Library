@@ -200,10 +200,11 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Cube.shader" />
     <None Include="Default.frag" />
     <None Include="Default.geom" />
     <None Include="Default.vert" />
-    <None Include="Shader.shader" />
+    <None Include="Mesh.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

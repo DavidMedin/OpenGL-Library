@@ -7,6 +7,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+int drawFlags = 1;
+
+
 Texture::Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned int h) {
 	openglID = NULL;
 	GLCall(glGenTextures(1, &openglID));
@@ -362,6 +365,9 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
 	VA->Bind();
 	index->Bind();
+	if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
+
+	}
 	//for (int i = 0; i < 32; i++) {
 	//	if (texList[i] != nullptr) {
 	//		texList[i]->Bind(i);
@@ -370,7 +376,12 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	//		break;
 	//	}
 	//}
-	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
+	if (drawFlags & DRAWFLAG_TRIANGLE) {
+		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
+	}
+	else {
+		GLCall(glDrawElements(GL_POINTS, indexCount, GL_UNSIGNED_INT, nullptr));
+	}
 }
 void Mesh::Bind() {
 	VA->Bind();
@@ -387,4 +398,14 @@ Transform::Transform(mat4* transform)
 {
 	data = transform;
 	//type = ATTRIBUTE_TRANSFORM;
+}
+
+GRAPHICSLIBRARY_API void DrawFlags(int flag)
+{
+	drawFlags = drawFlags^ flag;
+}
+
+GRAPHICSLIBRARY_API bool GetDrawFlags(int flag)
+{
+	return drawFlags&flag;
 }
