@@ -5,6 +5,8 @@ layout(location = 0) in vec3 vp;
 
 uniform mat4 proj, view, model;
 
+
+
 out vData{
 	mat4 out_view;
 }v_data;
@@ -17,20 +19,20 @@ void main() {
 #version 420
 
 layout(points) in;
-out vData{
+in vData{
 	mat4 out_view;
-}v_data;
+}v_data[];
 
 layout(triangle_strip, max_vertices = 6) out;
 void main() {
 	for (int i = 0; i < gl_in.length(); i++) {		
 		//emit cube
 		
+		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(0, 1, -1, 1));
+		EmitVertex();
 		gl_Position = vec4(gl_in[i].gl_Position);
 		EmitVertex();
-		gl_Position = gl_in[i].gl_Position + (v_data.out_view * vec4(0,0,-1,1));
-		EmitVertex();
-		gl_Position = gl_in[i].gl_Position + (v_data.out_view * vec4(0, 1, -1, 1));
+		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(0,0,-1,1));
 		EmitVertex();
 	}
 	EndPrimitive();

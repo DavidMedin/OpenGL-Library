@@ -97,6 +97,7 @@ public:
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
 
+	void BindCustomData(VertexBuffer* data, unsigned int slot);
 	void Bind();
 };
 

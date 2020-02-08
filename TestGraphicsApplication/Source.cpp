@@ -3,7 +3,9 @@ int main(int argv, char* argc[]) {
 	init(1500, 1100, "Default");
 
 	
-
+	//todo
+	//1.) force buffer to slot location (will be used for custom data buffers)
+	//2.) bind uniforms to appropriate shader (maybe track the MatrixUniform function to go through and bind them)
 
 
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
@@ -58,9 +60,9 @@ int main(int argv, char* argc[]) {
 		plane->Draw(meshShad, cam);
 
 		DrawFlags(DRAWFLAG_TRIANGLE);
-		pointShad->UseShader();
-		SetGraphicsFlag(GRAPHICS_FLAG_CULL);
-		isosphere->Draw(pointShad, cam);
+		//pointShad->UseShader();
+		SetGraphicsFlag(GRAPHICS_FLAG_CULL); //no culling for the cubes
+		//isosphere->Draw(pointShad, cam);
 		SetGraphicsFlag(GRAPHICS_FLAG_CULL);
 		DrawFlags(DRAWFLAG_TRIANGLE);
 

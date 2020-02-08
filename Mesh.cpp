@@ -366,8 +366,9 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	VA->Bind();
 	index->Bind();
 	if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
-
+		glEnable(GL_CULL_FACE);
 	}
+	else glDisable(GL_CULL_FACE);
 	//for (int i = 0; i < 32; i++) {
 	//	if (texList[i] != nullptr) {
 	//		texList[i]->Bind(i);
