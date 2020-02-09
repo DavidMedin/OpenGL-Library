@@ -33,6 +33,7 @@ VertexArray::VertexArray(){
 	GLCall(glGenVertexArrays(1, &m_RendererID));
 	Bind();
 	nextIndex = 0;
+	nextCustomIndex = 0;
 }
 void VertexArray::Bind() {
 	GLCall(glBindVertexArray(m_RendererID));
@@ -44,4 +45,13 @@ void VertexArray::BindVertexBuffer(VertexBuffer* buffer, unsigned int vecX, unsi
 	GLCall(glEnableVertexAttribArray(nextIndex));
 	GLCall(glVertexAttribPointer(nextIndex, vecX, type, normalize, 0, NULL));
 	nextIndex++;
+}
+
+void VertexArray::BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize)
+{
+	buffer->Bind();
+	Bind();
+	GLCall(glEnableVertexAttribArray(nextCustomIndex+MANDNUM));
+	GLCall(glVertexAttribPointer(nextCustomIndex + MANDNUM, vecX, type, normalize, 0, NULL));
+	nextCustomIndex++;
 }

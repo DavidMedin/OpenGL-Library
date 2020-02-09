@@ -70,10 +70,10 @@ private:
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
+	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
 	VertexArray* VA;
 	IndexBuffer* index;
 	mat4* transform;
-
 
 	float* vertices;
 	float* normals;
@@ -96,8 +96,8 @@ public:
 	Mesh(void* mesh);
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
-
-	void BindCustomData(VertexBuffer* data, unsigned int slot);
+	//untested!!!
+	void BindCustomData(VertexBuffer* data, unsigned int type, unsigned int vecX); //untested
 	void Bind();
 };
 

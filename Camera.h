@@ -50,6 +50,7 @@ public:
 
 	void RecalculateProjection();
 	void NewProjection(double fov, double nearRange, double farRange);
+	vec3 GetTranslateVec();
 };
 
 //GRAPHICSLIBRARY_API mat4* GetCurrentProjection();

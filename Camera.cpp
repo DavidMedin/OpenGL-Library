@@ -3,6 +3,11 @@
 
 std::list<Camera*> camList;
 
+
+vec3 Camera::GetTranslateVec() {
+	return vec3((*transform)[3][0], (*transform)[3][1], (*transform)[3][2]);
+}
+
 Camera::Camera(vec3* pos) {
 	transform = new mat4(1);
 	mat4* tmpMat = transform;

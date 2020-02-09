@@ -384,6 +384,10 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 		GLCall(glDrawElements(GL_POINTS, indexCount, GL_UNSIGNED_INT, nullptr));
 	}
 }
+void Mesh::BindCustomData(VertexBuffer* data, unsigned int type,unsigned int vecX) {
+	VA->BindCustomBuffer(data, vecX, type, false);
+}
+
 void Mesh::Bind() {
 	VA->Bind();
 	index->Bind();

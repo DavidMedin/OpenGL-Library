@@ -28,11 +28,11 @@ void main() {
 	for (int i = 0; i < gl_in.length(); i++) {		
 		//emit cube
 		
-		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(0, 1, -1, 1));
+		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(.25, .25, -.25, 1));
 		EmitVertex();
-		gl_Position = vec4(gl_in[i].gl_Position);
+		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(-.25, -.25, -.15, 1));
 		EmitVertex();
-		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(0,0,-1,1));
+		gl_Position = gl_in[i].gl_Position + (v_data[i].out_view * vec4(-.25,.25,-.15,1));
 		EmitVertex();
 	}
 	EndPrimitive();

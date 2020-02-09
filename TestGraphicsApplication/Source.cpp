@@ -4,8 +4,7 @@ int main(int argv, char* argc[]) {
 
 	
 	//todo
-	//1.) force buffer to slot location (will be used for custom data buffers)
-	//2.) bind uniforms to appropriate shader (maybe track the MatrixUniform function to go through and bind them)
+	//1.) bind uniforms to appropriate shader (maybe track the MatrixUniform function to go through and bind them)
 
 
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
@@ -13,15 +12,19 @@ int main(int argv, char* argc[]) {
 	plane->Translate(vec3(0, -.1f, 0));
 	plane->Rotate(vec3(1, 0, 0), 180);
 
+	//skull->Translate(vec3(0, 1, 0));
+
 	Object* isosphere = new Object("../Models/Icosphere.dae");
 
-	Shader* meshShad = new Shader("../Mesh.shader", true);
-	Shader* pointShad = new Shader("../Cube.shader", false);
+	//Shader* meshShad = new Shader("../Mesh.shader", true);
+	//Shader* pointShad = new Shader("../Cube.shader", false);
+	Shader* voxelizeShad = new Shader("../Voxelize.shader", false);
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 	while (!ShouldCloseWindow()) {
+		//meshShad->UniformVector("camLoc", &cam->GetTranslateVec());
 		float dt = GetDeltaTime();
 		ClearWindow();
 
@@ -55,17 +58,14 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		meshShad->UseShader();
-		skull->Draw(meshShad, cam);
-		plane->Draw(meshShad, cam);
+		skull->Draw(voxelizeShad, cam);
+		plane->Draw(voxelizeShad, cam);
 
-		DrawFlags(DRAWFLAG_TRIANGLE);
-		//pointShad->UseShader();
-		SetGraphicsFlag(GRAPHICS_FLAG_CULL); //no culling for the cubes
+		//DrawFlags(DRAWFLAG_TRIANGLE);
+		//SetGraphicsFlag(GRAPHICS_FLAG_CULL); //no culling for the cubes
 		//isosphere->Draw(pointShad, cam);
-		SetGraphicsFlag(GRAPHICS_FLAG_CULL);
-		DrawFlags(DRAWFLAG_TRIANGLE);
-
+		//SetGraphicsFlag(GRAPHICS_FLAG_CULL);
+		//DrawFlags(DRAWFLAG_TRIANGLE);
 
 		cam->UpdateViewMatrix();
 		

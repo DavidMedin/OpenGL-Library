@@ -205,6 +205,7 @@
     <None Include="Default.geom" />
     <None Include="Default.vert" />
     <None Include="Mesh.shader" />
+    <None Include="Voxelize.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

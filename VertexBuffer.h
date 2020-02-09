@@ -4,6 +4,8 @@
 //temp
 #include "Error.h"
 #include <string>
+
+#define MANDNUM 3
 class VertexBuffer {
 private:
 	unsigned int m_RendererID;
@@ -19,9 +21,21 @@ public:
 class VertexArray {
 private:
 	unsigned int m_RendererID;
-	unsigned int nextIndex;
+	unsigned int nextIndex;//mand index
+	unsigned int nextCustomIndex;
 public:
 	void Bind();
 	VertexArray();
 	void BindVertexBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
+	void BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
+};
+
+class FrameBuffer {
+private:
+	unsigned int m_RendererID;
+	unsigned int nextIndex;
+public:
+	FrameBuffer();
+
+
 };

@@ -148,16 +148,21 @@ Shader::Shader(const char* shaderPath, bool makeDefault) {
 	shader_Program = glCreateProgram();
 	GLuint vertex_shader = CompileShader(GL_VERTEX_SHADER, vertexText.c_str());
 	GLuint fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragmentText.c_str());
-	GLuint geometry_shader = CompileShader(GL_GEOMETRY_SHADER, geometryText.c_str());
+	GLuint geometry_shader = NULL;
 	//combine shaders
 	GLCall(glAttachShader(shader_Program, vertex_shader));
 	GLCall(glAttachShader(shader_Program, fragment_shader));
-	GLCall(glAttachShader(shader_Program, geometry_shader));
+	if (!geometryText.empty()) {
+		geometry_shader = CompileShader(GL_GEOMETRY_SHADER, geometryText.c_str());
+		GLCall(glAttachShader(shader_Program, geometry_shader));
+	}
 	GLCall(glLinkProgram(shader_Program));
 	GLCall(glValidateProgram(shader_Program));
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
-	GLCall(glDeleteShader(geometry_shader));
+	if (geometry_shader != NULL) {
+		GLCall(glDeleteShader(geometry_shader));
+	}
 	if (makeDefault) defaultShader = this;
 
 	GLCall(glUseProgram(shader_Program));
