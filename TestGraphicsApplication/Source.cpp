@@ -4,14 +4,6 @@
 
 
 
-void ImGuiFunc() {
-	ImGui::Begin("Hello, World!");
-	ImGui::Text("Text!");
-	//printf("Hello");
-	ImGui::End();
-}
-
-
 
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
@@ -44,19 +36,6 @@ int main(int argv, char* argc[]) {
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 
-	////Imgui stuff
-	//ImGui::CreateContext();
-
-	//ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-	//ImGui::StyleColorsDark();
-
-	//ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
-	//ImGui_ImplOpenGL3_Init("#version 140");
-
-
-
-	ImGuiDefineFunc(ImGuiFunc);
 	while (!ShouldCloseWindow()) {
 
 		float dt = GetDeltaTime();
@@ -70,10 +49,11 @@ int main(int argv, char* argc[]) {
 		//ImGui_ImplOpenGL3_NewFrame();
 		//ImGui_ImplGlfw_NewFrame();
 		//ImGui::NewFrame();
+		ImGuiNewFrame();
 
-		//ImGui::Begin("Hello, World!");
-		//ImGui::Text("Text!");
-		//ImGui::End();
+		ImGui::Begin("Hello, World!");
+		ImGui::Text("Text!");
+		ImGui::End();
 	
 		if (GetKey(keys::A_KEY)) {
 			cam->Translate(vec3(cos(-radians(cam->GetY()) + radians(90.0f)) * dt, 0.0f, -sin(-radians(cam->GetY()) + radians(90.0f)) * dt));

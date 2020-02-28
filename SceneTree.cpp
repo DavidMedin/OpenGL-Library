@@ -1,4 +1,4 @@
-#include "pch.h"
+ 
 //#include "SceneTree.h"
 //
 //Attribute::Attribute(unsigned int type) {

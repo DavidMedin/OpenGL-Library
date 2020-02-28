@@ -1,16 +1,11 @@
-/*New Things in this project
-library functionality, no window, but will be used for debugging
-lua/c/c++ controllability
-Threads */
-#define GRAPHICSLIBRARY_EXPORTS 1
-#include "pch.h"
+
+ 
 #include "Init.h"
 //using namespace std;
 ;
 int graphicsFlag = 1;
 
 
-void (*ImGuiFuncVar)(void);
 
 
 static void glfw_error_callback(int error, const char* description)
@@ -35,11 +30,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
-void GRAPHICSLIBRARY_API SetGraphicsFlag(int flag)
+void  SetGraphicsFlag(int flag)
 {
 	graphicsFlag = graphicsFlag^flag;
 }
-bool GRAPHICSLIBRARY_API GetGraphicsFlag(int flag)
+bool  GetGraphicsFlag(int flag)
 {
 	return graphicsFlag&flag;
 }
@@ -129,10 +124,10 @@ void ImGuiNewFrame() {
 	ImGui::NewFrame();
 }
 void ImGuiRender() {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-	ImGuiFuncVar();
+	//ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplGlfw_NewFrame();
+	//ImGui::NewFrame();
+	//ImGuiFuncVar();
 	//ImGui::Begin("Hello, World!");
 	//ImGui::Text("Text!");
 	//ImGui::End();
@@ -143,8 +138,4 @@ void ImGuiRender() {
 	//glViewport(0, 0, display_w, display_h);
 	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void ImGuiDefineFunc(void (*func)(void)) {
-	ImGuiFuncVar = func;
 }

@@ -1,6 +1,5 @@
 #pragma once
-#ifdef GRAPHICSLIBRARY_EXPORTS
-#define GRAPHICSLIBRARY_API __declspec(dllexport)
+ 
 //assimp
 #include <assImp/Importer.hpp>
 #include <assImp/scene.h>
@@ -14,9 +13,7 @@
 #include <glew.h>
 using namespace glm;
 
-#else
-#define GRAPHICSLIBRARY_API __declspec(dllimport)
-#endif
+ 
 #include "Maths.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -35,7 +32,7 @@ using namespace glm;
 //00000000
 //       ^-draw triangles; else points
 
-class GRAPHICSLIBRARY_API Transform /*: Attribute*/ {
+class Transform /*: Attribute*/ {
 private:
 
 public:
@@ -47,7 +44,7 @@ public:
 };
 
 
-class GRAPHICSLIBRARY_API Texture {
+class Texture {
 private:
 	unsigned int openglID;
 	unsigned int height, width;
@@ -61,10 +58,10 @@ public:
 	void Bind(unsigned int slot = NULL);
 };
 
-GRAPHICSLIBRARY_API void DrawFlags(int flag/*toggle*/);
-GRAPHICSLIBRARY_API bool GetDrawFlags(int flag/*toggle*/);
+ void DrawFlags(int flag/*toggle*/);
+ bool GetDrawFlags(int flag/*toggle*/);
 
-class GRAPHICSLIBRARY_API Mesh {
+class Mesh {
 private:
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
@@ -100,7 +97,7 @@ public:
 	void Bind();
 };
 
-class GRAPHICSLIBRARY_API Light {
+class Light {
 private:
 
 public:

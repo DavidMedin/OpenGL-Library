@@ -1,8 +1,7 @@
 #pragma once
 
 
-#ifdef GRAPHICSLIBRARY_EXPORTS
-#define GRAPHICSLIBRARY_API __declspec(dllexport)
+ 
 #include <glew.h>
 #include <glfw3.h>
 //assimp importer
@@ -10,9 +9,7 @@
 #include <assImp/scene.h>
 #include <assimp/postprocess.h>
 
-#else
-#define GRAPHICSLIBRARY_API __declspec(dllimport)
-#endif
+ 
 #include <list>
 #include <iostream>
 #include <string>
@@ -40,7 +37,7 @@
 //	void Draw(Shader* shad,Camera* cam);
 //};
 //
-//#ifdef GRAPHICSLIBRARY_EXPORTS
+// 
 //
 //void Attribute_AddMesh(SceneNode* node, const aiScene* scene, unsigned int meshIndex);
 //#endif

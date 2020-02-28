@@ -1,6 +1,6 @@
-// dear imgui, v1.75
+// dear imgui, v1.76 WIP
 // (main code and documentation)
-#include "pch.h"
+
 // Help:
 // - Read FAQ at http://dearimgui.org/faq
 // - Newcomers, read 'Programmer guide' below for notes on how to setup Dear ImGui in your codebase.
@@ -3254,6 +3254,9 @@ void ImGui::StartMouseMovingWindow(ImGuiWindow* window)
 
 // Handle mouse moving window
 // Note: moving window with the navigation keys (Square + d-pad / CTRL+TAB + Arrows) are processed in NavUpdateWindowing()
+// FIXME: We don't have strong guarantee that g.MovingWindow stay synched with g.ActiveId == g.MovingWindow->MoveId.
+// This is currently enforced by the fact that BeginDragDropSource() is setting all g.ActiveIdUsingXXXX flags to inhibit navigation inputs,
+// but if we should more thoroughly test cases where g.ActiveId or g.MovingWindow gets changed and not the other.
 void ImGui::UpdateMouseMovingWindowNewFrame()
 {
     ImGuiContext& g = *GImGui;
@@ -3380,7 +3383,7 @@ static void ImGui::UpdateMouseInputs()
                 ImVec2 delta_from_click_pos = IsMousePosValid(&g.IO.MousePos) ? (g.IO.MousePos - g.IO.MouseClickedPos[i]) : ImVec2(0.0f, 0.0f);
                 if (ImLengthSqr(delta_from_click_pos) < g.IO.MouseDoubleClickMaxDist * g.IO.MouseDoubleClickMaxDist)
                     g.IO.MouseDoubleClicked[i] = true;
-                g.IO.MouseClickedTime[i] = -FLT_MAX;    // so the third click isn't turned into a double-click
+                g.IO.MouseClickedTime[i] = -DBL_MAX;    // so the third click isn't turned into a double-click
             }
             else
             {
@@ -3620,6 +3623,7 @@ void ImGui::NewFrame()
     g.FrameCount += 1;
     g.TooltipOverrideCount = 0;
     g.WindowsActiveCount = 0;
+    g.MenusIdSubmittedThisFrame.resize(0);
 
     // Setup current font and draw list shared data
     g.IO.Fonts->Locked = true;
@@ -3675,8 +3679,8 @@ void ImGui::NewFrame()
     g.ActiveIdHasBeenEditedThisFrame = false;
     g.ActiveIdPreviousFrameIsAlive = false;
     g.ActiveIdIsJustActivated = false;
-    if (g.TempInputTextId != 0 && g.ActiveId != g.TempInputTextId)
-        g.TempInputTextId = 0;
+    if (g.TempInputId != 0 && g.ActiveId != g.TempInputId)
+        g.TempInputId = 0;
     if (g.ActiveId == 0)
     {
         g.ActiveIdUsingNavDirMask = g.ActiveIdUsingNavInputMask = 0;
@@ -3911,6 +3915,7 @@ void ImGui::Shutdown(ImGuiContext* context)
     g.ShrinkWidthBuffer.clear();
 
     g.PrivateClipboard.clear();
+    g.MenusIdSubmittedThisFrame.clear();
     g.InputTextState.ClearFreeMemory();
 
     g.SettingsWindows.clear();
@@ -4159,7 +4164,7 @@ void ImGui::Render()
     g.FrameCountRendered = g.FrameCount;
     g.IO.MetricsRenderWindows = 0;
     g.DrawDataBuilder.Clear();
-    
+
     // Add background ImDrawList
     if (!g.BackgroundDrawList.VtxBuffer.empty())
         AddDrawListToDrawData(&g.DrawDataBuilder.Layers[0], &g.BackgroundDrawList);
@@ -5841,19 +5846,15 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         window->DC.ParentLayoutType = parent_window ? parent_window->DC.LayoutType : ImGuiLayoutType_Vertical;
         window->DC.FocusCounterRegular = window->DC.FocusCounterTabStop = -1;
 
-        window->DC.ItemFlags = parent_window ? parent_window->DC.ItemFlags : ImGuiItemFlags_Default_;
         window->DC.ItemWidth = window->ItemWidthDefault;
         window->DC.TextWrapPos = -1.0f; // disabled
         window->DC.ItemFlagsStack.resize(0);
         window->DC.ItemWidthStack.resize(0);
         window->DC.TextWrapPosStack.resize(0);
         window->DC.GroupStack.resize(0);
-
-        if ((flags & ImGuiWindowFlags_ChildWindow) && (window->DC.ItemFlags != parent_window->DC.ItemFlags))
-        {
-            window->DC.ItemFlags = parent_window->DC.ItemFlags;
+        window->DC.ItemFlags = parent_window ? parent_window->DC.ItemFlags : ImGuiItemFlags_Default_;
+        if (parent_window)
             window->DC.ItemFlagsStack.push_back(window->DC.ItemFlags);
-        }
 
         if (window->AutoFitFramesX > 0)
             window->AutoFitFramesX--;
@@ -8999,6 +9000,11 @@ bool ImGui::BeginDragDropSource(ImGuiDragDropFlags flags)
             return false;
         source_parent_id = window->IDStack.back();
         source_drag_active = IsMouseDragging(mouse_button);
+
+        // Disable navigation and key inputs while dragging
+        g.ActiveIdUsingNavDirMask = ~(ImU32)0;
+        g.ActiveIdUsingNavInputMask = ~(ImU32)0;
+        g.ActiveIdUsingKeyInputMask = ~(ImU64)0;
     }
     else
     {

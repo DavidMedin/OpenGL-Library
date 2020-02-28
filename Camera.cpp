@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Camera.h"
 
 std::list<Camera*> camList;
@@ -162,6 +161,6 @@ void Camera::NewProjection(double fov, double nearRange, double farRange) {
 	this->nearRange = nearRange;
 	this->farRange = farRange;
 }
-GRAPHICSLIBRARY_API list<Camera*>* GetCameraList() {
+ list<Camera*>* GetCameraList() {
 	return &camList;
 }

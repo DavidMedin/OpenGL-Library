@@ -1,4 +1,4 @@
-#include "pch.h"
+ 
 #include "Shader.h"
 #define GRAPHICSLIBRARY_EXPORTS 1
 using namespace std;

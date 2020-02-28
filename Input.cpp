@@ -1,4 +1,4 @@
-#include "pch.h"
+ 
 #include "Input.h"
 
 namespace DataKeys {
@@ -90,7 +90,7 @@ void MouseButton(GLFWwindow* window, int button, int action, int mods) {
 	}
 }
 
-GRAPHICSLIBRARY_API bool GetKey(keys key) {
+ bool GetKey(keys key) {
 	switch (key) {
 		case keys::A_KEY: {
 			return DataKeys::A_KEY;
@@ -124,7 +124,7 @@ GRAPHICSLIBRARY_API bool GetKey(keys key) {
 		}
 	}
 }
-GRAPHICSLIBRARY_API bool GetMouseButton(mouseButton button) {
+ bool GetMouseButton(mouseButton button) {
 	switch (button) {
 		case mouseButton::MIDDLE_KEY: {
 			return DataMouseButton::MIDDLE_KEY;
@@ -136,7 +136,7 @@ GRAPHICSLIBRARY_API bool GetMouseButton(mouseButton button) {
 	}
 }
 
-GRAPHICSLIBRARY_API void GetMousePos(float* xpos, float* ypos) {
+ void GetMousePos(float* xpos, float* ypos) {
 	static float prev_x = mouseX;
 	static float prev_y = mouseY;
 	//printf("%f\n", prev_x);
@@ -146,7 +146,7 @@ GRAPHICSLIBRARY_API void GetMousePos(float* xpos, float* ypos) {
 	prev_y = mouseY;
 }
 
-GRAPHICSLIBRARY_API void SetDisabledMouse(bool disabled)
+ void SetDisabledMouse(bool disabled)
 {
 	if (disabled){
 	glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);

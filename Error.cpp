@@ -1,4 +1,4 @@
-#include "pch.h"
+ 
 #include "Error.h"
 list<string*> errorList;
 string PollError() {

@@ -1,6 +1,5 @@
-#include "pch.h"
+ 
 #include "Mesh.h"
-#define GRAPHICSLIBRARY_EXPORTS 1
 #include "Init.h"
 
 //stb
@@ -405,12 +404,12 @@ Transform::Transform(mat4* transform)
 	//type = ATTRIBUTE_TRANSFORM;
 }
 
-GRAPHICSLIBRARY_API void DrawFlags(int flag)
+ void DrawFlags(int flag)
 {
 	drawFlags = drawFlags^ flag;
 }
 
-GRAPHICSLIBRARY_API bool GetDrawFlags(int flag)
+ bool GetDrawFlags(int flag)
 {
 	return drawFlags&flag;
 }

@@ -1,6 +1,6 @@
-// dear imgui, v1.75
+// dear imgui, v1.76 WIP
 // (widgets code)
-#include "pch.h"
+
 /*
 
 Index of this file:
@@ -2109,7 +2109,7 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
 
     // Tabbing or CTRL-clicking on Drag turns it into an input box
     const bool hovered = ItemHoverable(frame_bb, id);
-    bool temp_input_is_active = TempInputTextIsActive(id);
+    bool temp_input_is_active = TempInputIsActive(id);
     bool temp_input_start = false;
     if (!temp_input_is_active)
     {
@@ -2130,7 +2130,7 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* p_data,
         }
     }
     if (temp_input_is_active || temp_input_start)
-        return TempInputTextScalar(frame_bb, id, label, data_type, p_data, format);
+        return TempInputScalar(frame_bb, id, label, data_type, p_data, format);
 
     // Draw frame
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
@@ -2561,7 +2561,7 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
 
     // Tabbing or CTRL-clicking on Slider turns it into an input box
     const bool hovered = ItemHoverable(frame_bb, id);
-    bool temp_input_is_active = TempInputTextIsActive(id);
+    bool temp_input_is_active = TempInputIsActive(id);
     bool temp_input_start = false;
     if (!temp_input_is_active)
     {
@@ -2581,7 +2581,7 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
         }
     }
     if (temp_input_is_active || temp_input_start)
-        return TempInputTextScalar(frame_bb, id, label, data_type, p_data, format);
+        return TempInputScalar(frame_bb, id, label, data_type, p_data, format);
 
     // Draw frame
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
@@ -2860,15 +2860,29 @@ int ImParseFormatPrecision(const char* fmt, int default_precision)
 
 // Create text input in place of another active widget (e.g. used when doing a CTRL+Click on drag/slider widgets)
 // FIXME: Facilitate using this in variety of other situations.
-bool ImGui::TempInputTextScalar(const ImRect& bb, ImGuiID id, const char* label, ImGuiDataType data_type, void* p_data, const char* format)
+bool ImGui::TempInputText(const ImRect& bb, ImGuiID id, const char* label, char* buf, int buf_size, ImGuiInputTextFlags flags)
 {
-    ImGuiContext& g = *GImGui;
-
     // On the first frame, g.TempInputTextId == 0, then on subsequent frames it becomes == id.
     // We clear ActiveID on the first frame to allow the InputText() taking it back.
-    const bool init = (g.TempInputTextId != id);
+    ImGuiContext& g = *GImGui;
+    const bool init = (g.TempInputId != id);
     if (init)
         ClearActiveID();
+
+    g.CurrentWindow->DC.CursorPos = bb.Min;
+    bool value_changed = InputTextEx(label, NULL, buf, buf_size, bb.GetSize(), flags);
+    if (init)
+    {
+        // First frame we started displaying the InputText widget, we expect it to take the active id.
+        IM_ASSERT(g.ActiveId == id);
+        g.TempInputId = g.ActiveId;
+    }
+    return value_changed;
+}
+
+bool ImGui::TempInputScalar(const ImRect& bb, ImGuiID id, const char* label, ImGuiDataType data_type, void* p_data, const char* format)
+{
+    ImGuiContext& g = *GImGui;
 
     char fmt_buf[32];
     char data_buf[32];
@@ -2876,16 +2890,9 @@ bool ImGui::TempInputTextScalar(const ImRect& bb, ImGuiID id, const char* label,
     DataTypeFormatString(data_buf, IM_ARRAYSIZE(data_buf), data_type, p_data, format);
     ImStrTrimBlanks(data_buf);
 
-    g.CurrentWindow->DC.CursorPos = bb.Min;
     ImGuiInputTextFlags flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_NoMarkEdited;
     flags |= ((data_type == ImGuiDataType_Float || data_type == ImGuiDataType_Double) ? ImGuiInputTextFlags_CharsScientific : ImGuiInputTextFlags_CharsDecimal);
-    bool value_changed = InputTextEx(label, NULL, data_buf, IM_ARRAYSIZE(data_buf), bb.GetSize(), flags);
-    if (init)
-    {
-        // First frame we started displaying the InputText widget, we expect it to take the active id.
-        IM_ASSERT(g.ActiveId == id);
-        g.TempInputTextId = g.ActiveId;
-    }
+    bool value_changed = TempInputText(bb, id, label, data_buf, IM_ARRAYSIZE(data_buf), flags);
     if (value_changed)
     {
         value_changed = DataTypeApplyOpFromText(data_buf, g.InputTextState.InitialTextA.Data, data_type, p_data, NULL);
@@ -3273,8 +3280,8 @@ static bool STB_TEXTEDIT_INSERTCHARS(STB_TEXTEDIT_STRING* obj, int pos, const Im
 #define STB_TEXTEDIT_IMPLEMENTATION
 #include "imstb_textedit.h"
 
-// stb_textedit internally allows for a single undo record to do addition and deletion, but somehow, calling 
-// the stb_textedit_paste() function creates two separate records, so we perform it manually. (FIXME: Report to nothings/stb?) 
+// stb_textedit internally allows for a single undo record to do addition and deletion, but somehow, calling
+// the stb_textedit_paste() function creates two separate records, so we perform it manually. (FIXME: Report to nothings/stb?)
 static void stb_textedit_replace(STB_TEXTEDIT_STRING* str, STB_TexteditState* state, const STB_TEXTEDIT_CHARTYPE* text, int text_len)
 {
     stb_text_makeundo_replace(str, state, 0, str->CurLenW, text_len);
@@ -3859,7 +3866,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         }
 
         // When using 'ImGuiInputTextFlags_EnterReturnsTrue' as a special case we reapply the live buffer back to the input buffer before clearing ActiveId, even though strictly speaking it wasn't modified on this frame.
-        // If we didn't do that, code like InputInt() with ImGuiInputTextFlags_EnterReturnsTrue would fail. 
+        // If we didn't do that, code like InputInt() with ImGuiInputTextFlags_EnterReturnsTrue would fail.
         // This also allows the user to use InputText() with ImGuiInputTextFlags_EnterReturnsTrue without maintaining any user-side storage (please note that if you use this property along ImGuiInputTextFlags_CallbackResize you can end up with your temporary string object unnecessarily allocating once a frame, either store your string data, either if you don't then don't use ImGuiInputTextFlags_CallbackResize).
         bool apply_edit_back_to_user_buffer = !cancel_edit || (enter_pressed && (flags & ImGuiInputTextFlags_EnterReturnsTrue) != 0);
         if (apply_edit_back_to_user_buffer)
@@ -4956,8 +4963,12 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
     float grid_step = ImMin(size.x, size.y) / 2.99f;
     float rounding = ImMin(g.Style.FrameRounding, grid_step * 0.5f);
     ImRect bb_inner = bb;
-    float off = -0.75f; // The border (using Col_FrameBg) tends to look off when color is near-opaque and rounding is enabled. This offset seemed like a good middle ground to reduce those artifacts.
-    bb_inner.Expand(off);
+    float off = 0.0f;
+    if ((flags & ImGuiColorEditFlags_NoBorder) == 0)
+    {
+        off = -0.75f; // The border (using Col_FrameBg) tends to look off when color is near-opaque and rounding is enabled. This offset seemed like a good middle ground to reduce those artifacts.
+        bb_inner.Expand(off);
+    }
     if ((flags & ImGuiColorEditFlags_AlphaPreviewHalf) && col_rgb.w < 1.0f)
     {
         float mid_x = IM_ROUND((bb_inner.Min.x + bb_inner.Max.x) * 0.5f);
@@ -4974,10 +4985,13 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
             window->DrawList->AddRectFilled(bb_inner.Min, bb_inner.Max, GetColorU32(col_source), rounding, ImDrawCornerFlags_All);
     }
     RenderNavHighlight(bb, id);
-    if (g.Style.FrameBorderSize > 0.0f)
-        RenderFrameBorder(bb.Min, bb.Max, rounding);
-    else
-        window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg), rounding); // Color button are often in need of some sort of border
+    if ((flags & ImGuiColorEditFlags_NoBorder) == 0)
+    {
+        if (g.Style.FrameBorderSize > 0.0f)
+            RenderFrameBorder(bb.Min, bb.Max, rounding);
+        else
+            window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(ImGuiCol_FrameBg), rounding); // Color button are often in need of some sort of border
+    }
 
     // Drag and Drop Source
     // NB: The ActiveId test is merely an optional micro-optimization, BeginDragDropSource() does the same test.
@@ -6208,11 +6222,30 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
+    bool menu_is_open = IsPopupOpen(id);
+
+    // Sub-menus are ChildWindow so that mouse can be hovering across them (otherwise top-most popup menu would steal focus and not allow hovering on parent menu)
+    ImGuiWindowFlags flags = ImGuiWindowFlags_ChildMenu | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNavFocus;
+    if (window->Flags & (ImGuiWindowFlags_Popup | ImGuiWindowFlags_ChildMenu))
+        flags |= ImGuiWindowFlags_ChildWindow;
+
+    // If a menu with same the ID was already submitted, we will append to it, matching the behavior of Begin().
+    // We are relying on a O(N) search - so O(N log N) over the frame - which seems like the most efficient for the expected small amount of BeginMenu() calls per frame.
+    // If somehow this is ever becoming a problem we can switch to use e.g. a ImGuiStorager mapping key to last frame used.
+    if (g.MenusIdSubmittedThisFrame.contains(id))
+    {
+        if (menu_is_open)
+            menu_is_open = BeginPopupEx(id, flags); // menu_is_open can be 'false' when the popup is completely clipped (e.g. zero size display)
+        else
+            g.NextWindowData.ClearFlags();          // we behave like Begin() and need to consume those values
+        return menu_is_open;
+    }
+
+    // Tag menu as used. Next time BeginMenu() with same ID is called it will append to existing menu
+    g.MenusIdSubmittedThisFrame.push_back(id);
 
     ImVec2 label_size = CalcTextSize(label, NULL, true);
-
     bool pressed;
-    bool menu_is_open = IsPopupOpen(id);
     bool menuset_is_open = !(window->Flags & ImGuiWindowFlags_Popup) && (g.OpenPopupStack.Size > g.BeginPopupStack.Size && g.OpenPopupStack[g.BeginPopupStack.Size].OpenParentId == window->IDStack.back());
     ImGuiWindow* backed_nav_window = g.NavWindow;
     if (menuset_is_open)
@@ -6331,12 +6364,12 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
 
     if (menu_is_open)
     {
-        // Sub-menus are ChildWindow so that mouse can be hovering across them (otherwise top-most popup menu would steal focus and not allow hovering on parent menu)
         SetNextWindowPos(popup_pos, ImGuiCond_Always);
-        ImGuiWindowFlags flags = ImGuiWindowFlags_ChildMenu | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoNavFocus;
-        if (window->Flags & (ImGuiWindowFlags_Popup|ImGuiWindowFlags_ChildMenu))
-            flags |= ImGuiWindowFlags_ChildWindow;
         menu_is_open = BeginPopupEx(id, flags); // menu_is_open can be 'false' when the popup is completely clipped (e.g. zero size display)
+    }
+    else
+    {
+        g.NextWindowData.ClearFlags(); // We behave like Begin() and need to consume those values
     }
 
     return menu_is_open;

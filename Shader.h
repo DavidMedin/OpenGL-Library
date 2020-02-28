@@ -6,14 +6,11 @@
 //#include "Maths.h"
 #include <glm.hpp>
 #include <ext.hpp>
-#ifdef GRAPHICSLIBRARY_EXPORTS
-#define GRAPHICSLIBRARY_API __declspec(dllexport)
+ 
 #include <glew.h>
 #include <glfw3.h>
 #include "GLCall.h"
-#else
-#define GRAPHICSLIBRARY_API __declspec(dllimport)
-#endif
+ 
 using namespace std;
 using namespace glm;
 
@@ -25,7 +22,7 @@ using namespace glm;
 #define TYPE_VIEW 3
 
 
-class GRAPHICSLIBRARY_API Shader {
+class Shader {
 private:
 	unsigned int shader_Program;
 	//list<string> inputTypes;

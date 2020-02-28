@@ -6,16 +6,11 @@
 #include <gtx/quaternion.hpp>
 #include <matrix.hpp>
 #include <ext.hpp>
-#ifdef GRAPHICSLIBRARY_EXPORTS
-#define GRAPHICSLIBRARY_API __declspec(dllexport)
 #include <glew.h>
 using namespace glm;
 
-#else
-#define GRAPHICSLIBRARY_API __declspec(dllimport)
-#endif
 
-class GRAPHICSLIBRARY_API Camera {
+class  Camera {
 private:
 	double fov;
 	double nearRange, farRange;
@@ -55,4 +50,4 @@ public:
 
 //GRAPHICSLIBRARY_API mat4* GetCurrentProjection();
 //GRAPHICSLIBRARY_API void SetCurrentProjection(mat4* proj);
-GRAPHICSLIBRARY_API list<Camera*>* GetCameraList();
+ list<Camera*>* GetCameraList();

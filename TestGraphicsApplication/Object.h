@@ -1,7 +1,7 @@
 #pragma once
 #include <glm.hpp>
 #include <stdlib.h>
-#include <GraphicsLibrary.h>
+#include "../GraphicsLibrary.h"
 
 class Object {
 private:

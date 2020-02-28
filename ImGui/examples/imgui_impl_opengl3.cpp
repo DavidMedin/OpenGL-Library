@@ -2,7 +2,7 @@
 // - Desktop GL: 2.x 3.x 4.x
 // - Embedded GL: ES 2.0 (WebGL 1.0), ES 3.0 (WebGL 2.0)
 // This needs to be used along with a Platform Binding (e.g. GLFW, SDL, Win32, custom..)
-#include "pch.h"
+
 // Implemented features:
 //  [X] Renderer: User texture binding. Use 'GLuint' OpenGL texture identifier as void*/ImTextureID. Read the FAQ about ImTextureID!
 //  [x] Renderer: Desktop GL only: Support for large meshes (64k+ vertices) with 16-bit indices.
@@ -177,8 +177,8 @@ bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
         glsl_version = "#version 130";
 #endif
     IM_ASSERT((int)strlen(glsl_version) + 2 < IM_ARRAYSIZE(g_GlslVersionString));
-    strcpy_s(g_GlslVersionString, glsl_version);
-    strcat_s(g_GlslVersionString, "\n");
+    strcpy(g_GlslVersionString, glsl_version);
+    strcat(g_GlslVersionString, "\n");
 
     // Dummy construct to make it easily visible in the IDE and debugger which GL loader has been selected.
     // The code actually never uses the 'gl_loader' variable! It is only here so you can read it!
@@ -496,7 +496,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
 
     // Parse GLSL version string
     int glsl_version = 130;
-    sscanf_s(g_GlslVersionString, "#version %d", &glsl_version);
+    sscanf(g_GlslVersionString, "#version %d", &glsl_version);
 
     const GLchar* vertex_shader_glsl_120 =
         "uniform mat4 ProjMtx;\n"
