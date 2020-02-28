@@ -7,7 +7,6 @@
 #include <assimp/postprocess.h>
 
 
-
 //glm
 #include <glm.hpp>
 #include <ext.hpp>
@@ -101,3 +100,14 @@ public:
 	void Bind();
 };
 
+class GRAPHICSLIBRARY_API Light {
+private:
+
+public:
+	vec3 translate;
+	vec3 color;
+	float intensity;
+
+	Light(vec3 color, float intensity);
+
+};

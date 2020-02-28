@@ -414,3 +414,9 @@ GRAPHICSLIBRARY_API bool GetDrawFlags(int flag)
 {
 	return drawFlags&flag;
 }
+
+
+Light::Light(vec3 color, float intensity) {
+	this->color = color;
+	this->intensity = intensity;
+}

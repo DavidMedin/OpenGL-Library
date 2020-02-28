@@ -15,6 +15,11 @@ GRAPHICSLIBRARY_API void Translate(mat4* matrix, vec3* offset)
 	matrix[3][2] += offset->z;
 }
 
+GRAPHICSLIBRARY_API vec3 TranslateVec(vec3* input, vec3 offset)
+{
+	return *input + offset;
+}
+
 GRAPHICSLIBRARY_API mat4* NewProjection(double fov, double nearRange, double farRange) {
 	int height, width;
 	glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);

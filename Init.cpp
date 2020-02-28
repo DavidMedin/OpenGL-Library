@@ -6,9 +6,19 @@ Threads */
 #include "pch.h"
 #include "Init.h"
 //using namespace std;
-std::list<GLFWwindow*>* windowList;
-
+;
 int graphicsFlag = 1;
+
+
+void (*ImGuiFuncVar)(void);
+
+
+static void glfw_error_callback(int error, const char* description)
+{
+	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
+
 
 void WindowSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -34,15 +44,17 @@ bool GRAPHICSLIBRARY_API GetGraphicsFlag(int flag)
 	return graphicsFlag&flag;
 }
 int init(int width, int height, string name) {
+	glfwSetErrorCallback(glfw_error_callback);
+
 	if (!glfwInit()) {
 		NewError("glfwInit didn't start correctly\n");
 		return 0;
 	}
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 	if (!window) {
@@ -51,7 +63,9 @@ int init(int width, int height, string name) {
 		return 0;
 	}
 	glfwMakeContextCurrent(window);
-	//glfwSwapInterval(1);
+	glfwSwapInterval(1);
+
+
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
@@ -60,6 +74,22 @@ int init(int width, int height, string name) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
+
+
+	//Imgui stuff
+	int width_w, height_w;
+	glfwGetFramebufferSize(window, &width_w, &height_w);
+	glViewport(0, 0, width_w, height_w);
+	
+	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(NULL);
+
 
 
 	//-------Input------------//
@@ -90,4 +120,31 @@ float GetDeltaTime() {
 	float dt = (float)((float)glfwGetTime() - prev_dt);
 	prev_dt = (float)glfwGetTime();
 	return dt;
+}
+
+
+void ImGuiNewFrame() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+void ImGuiRender() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGuiFuncVar();
+	//ImGui::Begin("Hello, World!");
+	//ImGui::Text("Text!");
+	//ImGui::End();
+
+	ImGui::Render();
+	//int display_w, display_h;
+	//glfwGetFramebufferSize(glfwGetCurrentContext(), &display_w, &display_h);
+	//glViewport(0, 0, display_w, display_h);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiDefineFunc(void (*func)(void)) {
+	ImGuiFuncVar = func;
 }

@@ -87,13 +87,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\david\Documents\Github\GraphicsLibrary;C:\Users\david\Documents\Dependancies\glMath\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Github\GraphicsLibrary;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\david\Documents\Github\GraphicsLibrary\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GraphicsLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\david\Documents\Github\GraphicsLibrary\Debug;C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\lib\Release\Win32;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GraphicsLibrary.lib;glew32.lib;glfw3.lib;Opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,10 +141,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Dependancies\imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\..\Dependancies\imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\..\Dependancies\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\..\Dependancies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\..\Dependancies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\..\Dependancies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Dependancies\imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imconfig.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imgui.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\..\Dependancies\imgui\imstb_truetype.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Source.h" />
   </ItemGroup>

@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;GRAPHICSLIBRARY_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include;C:\Users\david\Documents\Dependancies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\david\Documents\Dependancies\glew-2.1.0-win32\glew-2.1.0\include\GL;C:\Users\david\Documents\Dependancies\glfw-3.3.bin.WIN32\include\GLFW;C:\Users\david\Documents\Dependancies\glMath\glm;C:\Users\david\Documents\Dependancies\assimp-5.0.0-build\include;C:\Users\david\Documents\Github\GraphicsLibrary\Imgui;C:\Users\david\Documents\Dependancies\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,6 +168,14 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GlCall.h" />
+    <ClInclude Include="Imgui\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="Imgui\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="Imgui\imconfig.h" />
+    <ClInclude Include="Imgui\imgui.h" />
+    <ClInclude Include="Imgui\imgui_internal.h" />
+    <ClInclude Include="Imgui\imstb_rectpack.h" />
+    <ClInclude Include="Imgui\imstb_textedit.h" />
+    <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Init.h" />
     <ClInclude Include="Input.h" />
@@ -184,6 +192,12 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="GlCall.cpp" />
+    <ClCompile Include="Imgui\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Imgui\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Imgui\imgui.cpp" />
+    <ClCompile Include="Imgui\imgui_demo.cpp" />
+    <ClCompile Include="Imgui\imgui_draw.cpp" />
+    <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Maths.cpp" />

@@ -16,5 +16,7 @@ using namespace glm;
 
 GRAPHICSLIBRARY_API void Translate(mat4* matrix, std::initializer_list<float> offset);
 GRAPHICSLIBRARY_API void Translate(mat4* matrix, vec3* offset);
+//might not work
+GRAPHICSLIBRARY_API vec3 TranslateVec(vec3* input, vec3 offset);
 GRAPHICSLIBRARY_API mat4* NewProjection(double fov, double nearRange, double farRange);
 GRAPHICSLIBRARY_API vec3 GetRightAxis(quat* quater);
