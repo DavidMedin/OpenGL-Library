@@ -26,7 +26,7 @@ int main(int argv, char* argc[]) {
 
 	Object* isosphere = new Object("../Models/Icosphere.dae");
 
-	Shader* meshShad = new Shader("../Shaders/Mesh.shader", true);
+	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
 
 	vec3* ambientResult = new vec3(mainLight->color * mainLight->intensity);
 	meshShad->UniformVector("ambientColor", ambientResult);
@@ -36,25 +36,23 @@ int main(int argv, char* argc[]) {
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 
+	float point = 2.0;
+
+
 	while (!ShouldCloseWindow()) {
 
 		float dt = GetDeltaTime();
 		ClearWindow();
-
-		//
-		//glViewport(0, 0, WIDTH, HEIGHT);
-		//glClear(GL_COLOR_BUFFER_BIT);
-
-
-		//ImGui_ImplOpenGL3_NewFrame();
-		//ImGui_ImplGlfw_NewFrame();
-		//ImGui::NewFrame();
 		ImGuiNewFrame();
+
 
 		ImGui::Begin("Hello, World!");
 		ImGui::Text("Text!");
+		ImGui::SliderFloat("float", &point, 0.0f, 10.0f);
 		ImGui::End();
-	
+
+
+
 		if (GetKey(keys::A_KEY)) {
 			cam->Translate(vec3(cos(-radians(cam->GetY()) + radians(90.0f)) * dt, 0.0f, -sin(-radians(cam->GetY()) + radians(90.0f)) * dt));
 		}

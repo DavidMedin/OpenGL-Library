@@ -3,16 +3,9 @@ uniform vec3 ambientColor;
 uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
 uniform vec3 lightColor;
 
-//uniform vec2 LightRamp1;
-//uniform vec2 LightRamp2;
-//vec2 LightRamp0 = vec2(0,0);
-//vec2 LightRamp3 = vec2(1,1);
-//vec2 LightRampArray[4];
+uniform vec2 LightRamp1;
+uniform vec2 LightRamp2;
 
-LightRampArray[0] = LightRamp0;
-LightRampArray[1] = LightRamp1;
-LightRampArray[2] = LightRamp2;
-LightRampArray[3] = LightRamp3;
 
 in vData{
 	vec3 normals;
@@ -30,7 +23,10 @@ void main() {
 	
 	vec2 LeftTarget = vec2(0,0);
 	vec2 RightTarget = vec2(0,0);
-	
+	vec2 LightRamp0 = vec2(0,0);
+	vec2 LightRamp3 = vec2(1,1);
+	vec2 LightRampArray[] = {LightRamp0,LightRamp1,LightRamp2,LightRamp3};
+
 	for(int i = 4;i > 0;i++){
 		if(LightRampArray[i].y < diff){
 			LeftTarget = LightRampArray[i];	
