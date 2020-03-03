@@ -181,6 +181,10 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name);
+	if (uni_Pos == -1) {
+		printf("%s is not a variable in your shader!", uniform_Name);
+		return;
+	}
 	UseShader();
 	
 	switch (type) {
@@ -192,6 +196,12 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		break;
 	case GL_FLOAT_VEC2:
 		GLCall(glUniform2f(uni_Pos, (*(vec2*)value)[0], (*(vec2*)value)[1]));
+		break;
+	case GL_INT:
+		GLCall(glUniform1i(uni_Pos, *((int*)value)));
+		break;
+	case GL_FLOAT:
+		GLCall(glUniform1f(uni_Pos, *((float*)value)));
 		break;
 	default:
 		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like

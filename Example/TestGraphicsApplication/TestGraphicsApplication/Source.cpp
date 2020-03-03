@@ -26,6 +26,7 @@ int main(int argv, char* argc[]) {
 	vec2* lightRamp1 = new vec2(.5f,0.f);
 	vec2* lightRamp2 = new vec2(.7f,1.f);
 
+	int renderSwitch = 0;
 
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
 
@@ -61,6 +62,7 @@ int main(int argv, char* argc[]) {
 				ImGui::SliderFloat2("LightRamp2", (float*)lightRamp2,0,1);
 				ImGui::TreePop();
 			}
+			ImGui::InputInt("RenderSwitch", &renderSwitch);
 			ImGui::TreePop();
 		}
 		
@@ -72,7 +74,7 @@ int main(int argv, char* argc[]) {
 		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color);
 		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1);
 		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2);
-
+		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch);
 		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
