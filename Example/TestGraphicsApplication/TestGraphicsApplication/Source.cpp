@@ -19,25 +19,19 @@ int main(int argv, char* argc[]) {
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
 	Object* plane = new Object("../Models/Plane/plane.dae");
 	plane->Translate(vec3(0, -.1f, 0));
-	plane->Rotate(vec3(1, 0, 0), 180);
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
+	vec3* ambientResult = new vec3(mainLight->color * mainLight->intensity);
+	vec2* lightRamp1 = new vec2(.5f,0.f);
+	vec2* lightRamp2 = new vec2(.7f,1.f);
 
-	Object* isosphere = new Object("../Models/Icosphere.dae");
 
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
 
-	vec3* ambientResult = new vec3(mainLight->color * mainLight->intensity);
-	meshShad->UniformVector("ambientColor", ambientResult);
-	meshShad->UniformVector("lightPos", &mainLight->translate);
-	meshShad->UniformVector("lightColor", &mainLight->color);
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
-
-	float point = 2.0;
-
 
 	while (!ShouldCloseWindow()) {
 
@@ -46,12 +40,40 @@ int main(int argv, char* argc[]) {
 		ImGuiNewFrame();
 
 
-		ImGui::Begin("Hello, World!");
-		ImGui::Text("Text!");
-		ImGui::SliderFloat("float", &point, 0.0f, 10.0f);
+		ImGui::Begin("Shader Variables");
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+		if (ImGui::TreeNode("Light")) {
+			if (ImGui::TreeNode("Position (vec3)")) {
+				ImGui::SliderFloat("float.x", &mainLight->translate.x, -1.0f, 1.0f);
+				ImGui::SliderFloat("float.y", &mainLight->translate.y, -1.0f, 1.0f);
+				ImGui::SliderFloat("float.z", &mainLight->translate.z, -1.0f, 1.0f);
+			
+				ImGui::TreePop();
+			}
+			float color[3] = {mainLight->color.x,mainLight->color.y,mainLight->color.z};
+			if (ImGui::ColorEdit3("Color", color)) {
+				mainLight->color.x = color[0];
+				mainLight->color.y = color[1];
+				mainLight->color.z = color[2];
+			}
+			if (ImGui::TreeNode("LightRamp")) {
+				ImGui::SliderFloat2("LightRamp1", (float*)lightRamp1,0,1);
+				ImGui::SliderFloat2("LightRamp2", (float*)lightRamp2,0,1);
+				ImGui::TreePop();
+			}
+			ImGui::TreePop();
+		}
+		
+		
 		ImGui::End();
 
+		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult);
+		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate);
+		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color);
+		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1);
+		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2);
 
+		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
 			cam->Translate(vec3(cos(-radians(cam->GetY()) + radians(90.0f)) * dt, 0.0f, -sin(-radians(cam->GetY()) + radians(90.0f)) * dt));

@@ -418,4 +418,5 @@ Transform::Transform(mat4* transform)
 Light::Light(vec3 color, float intensity) {
 	this->color = color;
 	this->intensity = intensity;
+	translate = vec3();
 }

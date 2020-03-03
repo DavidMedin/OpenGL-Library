@@ -177,29 +177,27 @@ void Shader::UseShader()
 	GLCall(glUseProgram(shader_Program));
 }
 
-//void Shader::UniformEquals(const char* uniform_Name,unsigned int type,float* value)
-//{
-//	//Types are:
-//		//vertex points,uv data: Library Lvl Access
-//		//projection,transform,view: Client Access, data is Library Access
-//		//custom data: client Access (arrays)
-//		//custom float: Client Access (1 float)
-		//Client acessable vertex data???
-
-//	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name);
-//	UseShader();
-//	switch (type) {
-//	case 1: 
-//		GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, value));
-//		break;
-//	case 2:
-//		GLCall(glUniform3f(uni_Pos, value[0], value[1], value[2]));
-//		break;
-//	default:
-//		printf("not a valid type\n");
-//		break;
-//	}
-//}
+void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value)
+//Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
+{
+	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name);
+	UseShader();
+	
+	switch (type) {
+	case GL_FLOAT_MAT4: 
+		GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*(mat4*)value)));
+		break;
+	case GL_FLOAT_VEC3:
+		GLCall(glUniform3f(uni_Pos, (*(vec3*)value)[0], (*(vec3*)value)[1], (*(vec3*)value)[2]));
+		break;
+	case GL_FLOAT_VEC2:
+		GLCall(glUniform2f(uni_Pos, (*(vec2*)value)[0], (*(vec2*)value)[1]));
+		break;
+	default:
+		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
+		break;
+	}
+}
 
 void Shader::UniformMatrix(string uniform_Name, mat4* matrix, unsigned int type) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());

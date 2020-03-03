@@ -19,6 +19,9 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{1d5b96c2-af90-42b4-a6f6-ace1a7b67551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{d542ea8a-4adc-4bf4-bfd5-ff1ae6c22926}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -140,5 +143,13 @@
     <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\MeshFs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\MeshVs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

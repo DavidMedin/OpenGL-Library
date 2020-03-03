@@ -19,7 +19,7 @@ void Object::UpdateModelMatrix() {
 }
 void Object::Draw(Shader* shad,Camera* cam) {
 	shad->UseShader();
-	shad->UniformMatrix("model", modelMatrix,TYPE_MODEL);
+	shad->UniformEquals("model",GL_FLOAT_MAT4, modelMatrix);
 	
 	for (Mesh* tmpMesh : meshList) {
 		if (GetDrawFlags(DRAWFLAG_TRIANGLE)) {

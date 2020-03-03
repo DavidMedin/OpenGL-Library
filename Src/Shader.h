@@ -14,8 +14,6 @@
 using namespace std;
 using namespace glm;
 
-#define MATRIX4 1
-#define VEC3F 2
 #define TYPE_NULL 0
 #define TYPE_PROJECTION 1
 #define TYPE_MODEL 2
@@ -34,10 +32,12 @@ public:
 	Shader(const char* shaderPath, bool makeDefault);
 	~Shader();
 	void UseShader();
-	//void UniformEquals(const char* uniform_Name, unsigned int type, float* value);
-	/*void UniformMatrix(string uniform_Name,Matrix4* matrix);
-	void UniformVector(string uniform_Name, Vector3* vec);*/
+	//Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
+	void UniformEquals(const char* uniform_Name, unsigned int type, void* value);
+	
+	//Don't use!
 	void UniformMatrix(string uniform_Name,mat4* matrix,unsigned int type);
+	//Don't use!
 	void UniformVector(string uniform_Name, vec3* vec);
 };
 extern Shader* defaultShader;
