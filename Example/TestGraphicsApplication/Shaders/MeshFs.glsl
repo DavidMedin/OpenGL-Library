@@ -59,6 +59,7 @@ float ColorRamp(vec2 _LightRamp1,vec2 _LightRamp2,float diff){
 	} 
 	float slope = (RightTarget.y-LeftTarget.y)/(RightTarget.x-LeftTarget.x);
 	float newDiff = slope * diff + LeftTarget.y;
+	if(newDiff > 1) newDiff = 1;
 	return newDiff;
 }
 
@@ -73,8 +74,7 @@ void main() {
 	float pureDitherDiff = Dither(oldDiff);
 
 
-	vec3 toonDiffuse = diff * lightColor;
-	vec4 toonResult = vec4(ambientColor + toonDiffuse,1);
+	vec4 toonResult = vec4(ambientColor + (diff * lightColor),1);
 	
 	vec3 ditherDiffuse = ditherDiff * lightColor;
 	vec4 ditherResult = vec4(ambientColor + ditherDiffuse, 1);
@@ -84,9 +84,12 @@ void main() {
 
 	if(renderSwitch == 0){
 		frag_colour = ditherResult * texture(diffuse, v_frag.texCoords);
-	}else if(renderSwitch == 1){
+		}
+	else if(renderSwitch == 1){
 		frag_colour = toonResult * texture(diffuse,v_frag.texCoords);
 	}else if(renderSwitch == 2){
+		frag_colour = vec4(ambientColor,1) * texture(diffuse,v_frag.texCoords);
+	}else if(renderSwitch == 3){
 		frag_colour = pureDitherResult * texture(diffuse,v_frag.texCoords);
 	}
 }

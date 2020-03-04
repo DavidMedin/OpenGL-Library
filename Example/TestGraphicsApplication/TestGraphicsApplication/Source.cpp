@@ -23,8 +23,8 @@ int main(int argv, char* argc[]) {
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
 	vec3* ambientResult = new vec3(mainLight->color * mainLight->intensity);
-	vec2* lightRamp1 = new vec2(.5f,0.f);
-	vec2* lightRamp2 = new vec2(.7f,1.f);
+	vec2* lightRamp1 = new vec2(.33f,0.f);
+	vec2* lightRamp2 = new vec2(0.878f,.586f);
 
 	int renderSwitch = 0;
 
