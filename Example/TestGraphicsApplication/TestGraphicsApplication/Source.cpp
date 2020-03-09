@@ -10,9 +10,9 @@ int main(int argv, char* argc[]) {
 
 	
 	//todo
-	//1.) create imgui rendering, while giving control to the application
-	//2.) bind uniforms to appropriate shader (maybe track the MatrixUniform function to go through and bind them)
-
+	//1. add variable resolution dithering
+	//seperate shade color (ambient) from "ambientResult" in source.cpp
+	//3. armatures - animation
 
 
 
@@ -63,6 +63,9 @@ int main(int argv, char* argc[]) {
 				ImGui::TreePop();
 			}
 			ImGui::InputInt("RenderSwitch", &renderSwitch);
+			if (ImGui::Button("Reload Shader")) {
+				meshShad->Reload();
+			}
 			ImGui::TreePop();
 		}
 		

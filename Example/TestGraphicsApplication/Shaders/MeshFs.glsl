@@ -17,23 +17,32 @@ layout(binding = 0) uniform sampler2D diffuse;
 
 out vec4 frag_colour;
 
-float Dither(float diff){
+float Dither(float diff,int rez){
 	float dithX = sin(gl_FragCoord.x);
 	float dithY = sin(gl_FragCoord.y);
-	float ditherDiff;
+	float ditherDiff=0;
 	if(dithX >= 0){
-		if(dithY>=0 && diff==1){
+		if(dithY>=0 && diff>=1){
 			ditherDiff = 1;
-		}else if(dithY<0 && diff>.25){
+		}else if(dithY<0 && diff>=.25){
 			ditherDiff = 1;
 		}else ditherDiff = 0;}
 	else{
-		if(dithY>0 && diff >.5){
+		if(dithY>=0 && diff >=.5){
 			ditherDiff = 1;
-		}else if(dithY<=0 && diff >.75){
+		}else if(dithY<=0 && diff >=.75){
 			ditherDiff = 1;
 		}else ditherDiff = 0;
 	}
+//	for(int i=0; i < rez;i++){
+//		if(dithX>=-1+(i*(2/rez))){
+//			for(int u = 0;u < rez;u++){
+//				if(dithY>=-1+(u*(2/rez)) && diff >= ){
+//					
+//				}
+//			}
+//		}
+//	}
 	return ditherDiff;
 }
 
@@ -70,8 +79,8 @@ void main() {
 	
 	
 	float diff = ColorRamp(LightRamp1,LightRamp2,oldDiff);
-	float ditherDiff = Dither(diff);
-	float pureDitherDiff = Dither(oldDiff);
+	float ditherDiff = Dither(diff,2);
+	float pureDitherDiff = Dither(oldDiff,2);
 
 
 	vec4 toonResult = vec4(ambientColor + (diff * lightColor),1);

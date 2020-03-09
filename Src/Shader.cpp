@@ -31,7 +31,6 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source) {
 	const char* src = source;
 	GLCall(glShaderSource(id, 1, &src, nullptr));
 	GLCall(glCompileShader(id));
-
 	int result;
 	GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 	if (!result) {
@@ -92,13 +91,19 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath, bool makeDefault) {
-	if (geomPath != nullptr) { shader_Program = CreateShaderProgram(ReadShader(vertexPath).c_str(), ReadShader(fragmentPath).c_str(), ReadShader(geomPath).c_str()); }
+	vertexContent = ReadShader(vertexPath);
+	fragmentContent = ReadShader(fragmentPath);
+	if (geomPath != nullptr) { 
+		vertexContent = ReadShader(geomPath);
+		shader_Program = CreateShaderProgram(vertexContent.c_str(), fragmentContent.c_str(), geometryContent.c_str()); 
+	}
 	else
 	{
-		shader_Program = CreateShaderProgram(ReadShader(vertexPath).c_str(), ReadShader(fragmentPath).c_str(),NULL);
+		shader_Program = CreateShaderProgram(vertexContent.c_str(),fragmentContent.c_str(),NULL);
 	}
 	if (makeDefault) defaultShader = this;
 	GLCall(glUseProgram(shader_Program));
+	
 }
 
 Shader::Shader(const char* shaderPath, bool makeDefault) {
@@ -218,4 +223,8 @@ void Shader::UniformVector(string uniform_Name, vec3* vec) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
 	UseShader();
 	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));
+}
+void Shader::Reload() {
+	unsigned int tmpShader = CreateShaderProgram(vertexContent.c_str(), fragmentContent.c_str(), NULL);
+	shader_Program = tmpShader;
 }
