@@ -15,9 +15,9 @@ int main(int argv, char* argc[]) {
 	//3. armatures - animation
 
 
-
-	Object* skull = new Object("../Models/Skull/skullLow.dae");
-	Object* plane = new Object("../Models/Plane/plane.dae");
+	Node* rootNode = new Node();
+	Object* skull = new Object("../Models/Skull/skullLow.dae",rootNode);
+	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
@@ -40,14 +40,15 @@ int main(int argv, char* argc[]) {
 		ClearWindow();
 		ImGuiNewFrame();
 
+		float imGuiDragSpeed = 0.25f;
 
-		ImGui::Begin("Shader Variables");
+		ImGui::Begin("Variables");
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::TreeNode("Light")) {
 			if (ImGui::TreeNode("Position (vec3)")) {
-				ImGui::SliderFloat("float.x", &mainLight->translate.x, -1.0f, 1.0f);
-				ImGui::SliderFloat("float.y", &mainLight->translate.y, -1.0f, 1.0f);
-				ImGui::SliderFloat("float.z", &mainLight->translate.z, -1.0f, 1.0f);
+				ImGui::DragFloat("float.x", &mainLight->translate.x, imGuiDragSpeed);
+				ImGui::DragFloat("float.y", &mainLight->translate.y, imGuiDragSpeed);
+				ImGui::DragFloat("float.z", &mainLight->translate.z, imGuiDragSpeed);
 			
 				ImGui::TreePop();
 			}
@@ -68,8 +69,37 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Scene")) {
+			std::list<Node*>::iterator current = rootNode->children.begin();
+			std::list<std::list<Node*>::iterator> stack;
+			stack.push_back(current);
+			while (1) { //find condition later
+				if (!(*stack.back())->children.empty()) {
+					current = (*stack.back())->children.begin();
+					stack.push_back(current);
+					//Imgui code here
+
+				}
+				else { //current's children list is empty
+					stack.pop_back();
+					if ((*stack.back())->children.end() == current) {
+						std::list<Node*>::iterator tmp = stack.back();
+						stack.pop_back();
+						stack.push_back(tmp++);
+					}
+					else {
+						//if iterator isn't last
+						//stack.pop_back();
+						current++;
+						stack.push_back(current);
+					}
+				}
+				
+			}
+			ImGui::TreePop();
+		}
 		
-		
+
 		ImGui::End();
 
 		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult);

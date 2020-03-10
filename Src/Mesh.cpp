@@ -362,6 +362,7 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UseShader();
 	shad->UniformMatrix("proj", cam->projectionMatrix, TYPE_PROJECTION);
 	shad->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
+	//shad->UniformEquals("model", GL_FLOAT_MAT4, this->transform);
 	VA->Bind();
 	index->Bind();
 	if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
