@@ -73,28 +73,8 @@ int main(int argv, char* argc[]) {
 			std::list<Node*>::iterator current = rootNode->children.begin();
 			std::list<std::list<Node*>::iterator> stack;
 			stack.push_back(current);
-			while (1) { //find condition later
-				if (!(*stack.back())->children.empty()) {
-					current = (*stack.back())->children.begin();
-					stack.push_back(current);
-					//Imgui code here
+			for (list<Node*>::iterator rootList = rootNode->children.begin(); rootList != rootNode->children.end(); rootList++) {
 
-				}
-				else { //current's children list is empty
-					stack.pop_back();
-					if ((*stack.back())->children.end() == current) {
-						std::list<Node*>::iterator tmp = stack.back();
-						stack.pop_back();
-						stack.push_back(tmp++);
-					}
-					else {
-						//if iterator isn't last
-						//stack.pop_back();
-						current++;
-						stack.push_back(current);
-					}
-				}
-				
 			}
 			ImGui::TreePop();
 		}
