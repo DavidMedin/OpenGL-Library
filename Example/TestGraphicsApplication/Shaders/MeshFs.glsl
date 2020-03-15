@@ -93,12 +93,15 @@ void main() {
 
 	if(renderSwitch == 0){
 		frag_colour = ditherResult * texture(diffuse, v_frag.texCoords);
-		}
+	}
 	else if(renderSwitch == 1){
 		frag_colour = toonResult * texture(diffuse,v_frag.texCoords);
 	}else if(renderSwitch == 2){
 		frag_colour = vec4(ambientColor,1) * texture(diffuse,v_frag.texCoords);
 	}else if(renderSwitch == 3){
-		frag_colour = pureDitherResult * texture(diffuse,v_frag.texCoords);
+		frag_colour = texture(diffuse,v_frag.texCoords);
+	}
+	if(texture(diffuse,v_frag.texCoords).a == 0){
+		discard;
 	}
 }

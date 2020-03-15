@@ -69,7 +69,7 @@ int init(int width, int height, string name) {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-
+	//glEnable(GL_BLEND);
 
 	//Imgui stuff
 	int width_w, height_w;

@@ -360,8 +360,8 @@ void Mesh::Draw(Camera* cam)
 void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
-	shad->UniformMatrix("proj", cam->projectionMatrix, TYPE_PROJECTION);
-	shad->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
+	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix);
+	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
 	//shad->UniformEquals("model", GL_FLOAT_MAT4, this->transform);
 	VA->Bind();
 	index->Bind();
@@ -415,9 +415,3 @@ Transform::Transform(mat4* transform)
 	return drawFlags&flag;
 }
 
-
-Light::Light(vec3 color, float intensity) {
-	this->color = color;
-	this->intensity = intensity;
-	translate = vec3();
-}

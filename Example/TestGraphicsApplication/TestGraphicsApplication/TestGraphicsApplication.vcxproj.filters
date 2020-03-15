@@ -151,5 +151,11 @@
     <None Include="..\Shaders\MeshVs.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ParticleFs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ParticleVs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

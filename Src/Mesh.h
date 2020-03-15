@@ -97,14 +97,3 @@ public:
 	void Bind();
 };
 
-class Light {
-private:
-
-public:
-	vec3 translate;
-	vec3 color;
-	float intensity;
-
-	Light(vec3 color, float intensity);
-
-};

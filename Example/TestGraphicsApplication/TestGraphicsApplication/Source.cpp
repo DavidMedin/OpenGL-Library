@@ -8,17 +8,15 @@
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
 
-	
-	//todo
-	//1. add variable resolution dithering
-	//seperate shade color (ambient) from "ambientResult" in source.cpp
-	//3. armatures - animation
 
-
-	Node* rootNode = new Node();
-	Object* skull = new Object("../Models/Skull/skullLow.dae",rootNode);
+	Object* skull = new Object("../Models/Skull/skullLow.dae");
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
+
+	Particle* bone = new Particle("../Models/Particle_Base/Dot.png");
+	delete bone->scale;
+	bone->scale = new vec3(0.05f);
+	bone->UpdateModelMatrix();
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -29,6 +27,8 @@ int main(int argv, char* argc[]) {
 	int renderSwitch = 0;
 
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
+	Shader* partShad = new Shader("../Shaders/ParticleVs.glsl", "../Shaders/ParticleFs.glsl", NULL, false);
+
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
@@ -40,24 +40,11 @@ int main(int argv, char* argc[]) {
 		ClearWindow();
 		ImGuiNewFrame();
 
-		float imGuiDragSpeed = 0.25f;
+		float imGuiDragSpeed = 0.0025f;
 
 		ImGui::Begin("Variables");
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-		if (ImGui::TreeNode("Light")) {
-			if (ImGui::TreeNode("Position (vec3)")) {
-				ImGui::DragFloat("float.x", &mainLight->translate.x, imGuiDragSpeed);
-				ImGui::DragFloat("float.y", &mainLight->translate.y, imGuiDragSpeed);
-				ImGui::DragFloat("float.z", &mainLight->translate.z, imGuiDragSpeed);
-			
-				ImGui::TreePop();
-			}
-			float color[3] = {mainLight->color.x,mainLight->color.y,mainLight->color.z};
-			if (ImGui::ColorEdit3("Color", color)) {
-				mainLight->color.x = color[0];
-				mainLight->color.y = color[1];
-				mainLight->color.z = color[2];
-			}
+		if (ImGui::TreeNode("shader")) {
 			if (ImGui::TreeNode("LightRamp")) {
 				ImGui::SliderFloat2("LightRamp1", (float*)lightRamp1,0,1);
 				ImGui::SliderFloat2("LightRamp2", (float*)lightRamp2,0,1);
@@ -69,16 +56,7 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Scene")) {
-			std::list<Node*>::iterator current = rootNode->children.begin();
-			std::list<std::list<Node*>::iterator> stack;
-			stack.push_back(current);
-			for (list<Node*>::iterator rootList = rootNode->children.begin(); rootList != rootNode->children.end(); rootList++) {
-
-			}
-			ImGui::TreePop();
-		}
-		
+		UpdateNodes();
 
 		ImGui::End();
 
@@ -122,6 +100,8 @@ int main(int argv, char* argc[]) {
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
+		bone->Draw(meshShad, cam);
+
 
 		cam->UpdateViewMatrix();
 		
@@ -133,7 +113,6 @@ int main(int argv, char* argc[]) {
 			error = PollError();
 		}
 	
-		//ImGuiNewFrame();
 
 
 		ImGuiRender();

@@ -1,30 +1,29 @@
 #pragma once
 #include <glm.hpp>
 #include <stdlib.h>
+#include "Maths.h"
 #include "../../../Src/GraphicsLibrary.h"
-#define OBJECT_TYPE 1
-#define NULL_TYPE 0
 
 class Node {
 private:
 
 public:
 	Node();
-	Node(unsigned int type);
 	void AddChild(Node* child);
-	unsigned int type;
 	std::list<Node*> children;
 	Node* parent;
 	string name;
+	virtual void Update() = 0;
 };
 
 
 
-class Object : Node {
+class Object : public Node {
 private:
 
 public:
-	glm::mat4* translate;
+	glm::vec3* translate;
+	glm::vec3* scale;
 	glm::mat4* modelMatrix;
 	glm::quat* orien;
 	Mesh* mesh;
@@ -36,5 +35,31 @@ public:
 	void Draw(Camera* cam);
 	void Translate(vec3 vector);
 	void Rotate(vec3 axis, float angle);
+	void Update();
+	void ImGuiUpdate();
 	void UpdateModelMatrix();
 };
+
+class Light : Node {
+private:
+
+public:
+	vec3 translate;
+	vec3 color;
+	float intensity;
+
+	Light(vec3 color, float intensity);
+	void Update();
+	void ImGuiUpdate();
+};
+
+class Particle : public Object {
+private:
+public:
+	string imagePath;
+	Particle();
+	Particle(string path);
+};
+
+void UpdateNodes();
+
