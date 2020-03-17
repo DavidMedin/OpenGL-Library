@@ -1,11 +1,8 @@
-
- 
 #include "Init.h"
-//using namespace std;
-;
+
 int graphicsFlag = 1;
 
-
+Shader shaderList[1];
 
 
 static void glfw_error_callback(int error, const char* description)
@@ -38,6 +35,36 @@ bool  GetGraphicsFlag(int flag)
 {
 	return graphicsFlag&flag;
 }
+
+void GraphicsEnable(unsigned int what) {
+	switch (what) {
+		//z_test
+		case 1: {
+			glEnable(GL_DEPTH_TEST);
+			break;
+		}
+		default:{
+			cout << what << "is not a valid enable\n";
+		}
+	}
+}
+
+void GraphicsDisable(unsigned int what)
+{
+	switch (what) {
+		//z_test
+	case 1: {
+		glDisable(GL_DEPTH_TEST);
+		break;
+	}
+	default: {
+		cout << what << "is not a valid enable\n";
+	}
+	}
+}
+
+
+//------------------------------
 int init(int width, int height, string name) {
 	glfwSetErrorCallback(glfw_error_callback);
 
@@ -87,6 +114,7 @@ int init(int width, int height, string name) {
 
 
 
+
 	//-------Input------------//
 	
 	glfwSetKeyCallback(glfwGetCurrentContext(), Key);
@@ -94,6 +122,8 @@ int init(int width, int height, string name) {
 	glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
 	glfwSetWindowSizeCallback(glfwGetCurrentContext(), WindowSizeCallback);
 	glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), framebuffer_size_callback);
+	
+	//shaderList[0] = Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", nullptr, false);
 	return 1;
 }
 
@@ -138,4 +168,9 @@ void ImGuiRender() {
 	//glViewport(0, 0, display_w, display_h);
 	//glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+Shader* GetShaders()
+{
+	return shaderList;
 }

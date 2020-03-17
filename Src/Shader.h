@@ -34,6 +34,7 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath,bool makeDefault);
 	//Should not use!
 	Shader(const char* shaderPath, bool makeDefault);
+	Shader();
 	~Shader();
 	void UseShader();
 	//Mem leak?

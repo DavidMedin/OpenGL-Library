@@ -97,3 +97,23 @@ public:
 	void Bind();
 };
 
+class Line {
+private:
+	VertexBuffer* VB;
+	VertexArray* VA;
+	//xyz,xyz - ONLY TWO VERTECIES (6 floats)
+	float* points;
+public:
+	float* mappedPoints;
+	vec3 color;
+	float size;
+	Line();
+	Line(vec3 point1, vec3 point2);
+	Line(vec3 point1, vec3 point2,vec3 color);
+	void SetPoint1(vec3 point);
+	void SetPoint2(vec3 point);
+	vec3 GetPoint1();
+	vec3 GetPoint2();
+	void Draw(Camera* cam);
+	void Draw(Shader* shad,Camera* cam);
+};

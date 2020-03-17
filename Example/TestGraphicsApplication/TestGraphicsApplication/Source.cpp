@@ -13,10 +13,9 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	Particle* bone = new Particle("../Models/Particle_Base/Dot.png");
-	delete bone->scale;
-	bone->scale = new vec3(0.05f);
-	bone->UpdateModelMatrix();
+	MetaLine* bone = new MetaLine(vec3(0,0,0),vec3(.25f,.25f,0));
+	bone->color = vec3(.2f, 1, .7f);
+	bone->size = 10.0f;
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -27,8 +26,7 @@ int main(int argv, char* argc[]) {
 	int renderSwitch = 0;
 
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
-	Shader* partShad = new Shader("../Shaders/ParticleVs.glsl", "../Shaders/ParticleFs.glsl", NULL, false);
-
+	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL, false);
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
@@ -100,7 +98,7 @@ int main(int argv, char* argc[]) {
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
-		bone->Draw(meshShad, cam);
+		bone->Draw(lineShad,cam);
 
 
 		cam->UpdateViewMatrix();

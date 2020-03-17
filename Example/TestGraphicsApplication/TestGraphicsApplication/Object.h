@@ -53,13 +53,21 @@ public:
 	void ImGuiUpdate();
 };
 
-class Particle : public Object {
+class MetaLine :public Line,public Node {
 private:
 public:
-	string imagePath;
-	Particle();
-	Particle(string path);
+	vec3 translate;
+	vec3 scale;
+	mat4 modelMatrix;
+	MetaLine();
+	MetaLine(vec3 point1, vec3 point2);
+	void Draw(Camera* cam);
+	void Draw(Shader* shad, Camera* cam);
+	void Update();
+	void ImGuiUpdate();
+	void UpdateModelMatrix();
 };
+
 
 void UpdateNodes();
 

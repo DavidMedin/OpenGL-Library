@@ -9,6 +9,7 @@
 class VertexBuffer {
 private:
 	unsigned int m_RendererID;
+	void* mappedData;
 public:
 	VertexBuffer(void* data, unsigned int size);
 	VertexBuffer();
@@ -16,6 +17,7 @@ public:
 	void Modify(const void* data, unsigned int size);
 	void Bind();
 	void Unbind();
+	void* MapData();
 };
 
 class VertexArray {

@@ -5,12 +5,12 @@
 VertexBuffer::VertexBuffer(void* data, unsigned int size) {
 	GLCall(glGenBuffers(1, &m_RendererID));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
 }
 VertexBuffer::VertexBuffer() {
 	GLCall(glGenBuffers(1, &m_RendererID));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW));
 }
 VertexBuffer::~VertexBuffer() {
 	GLCall(glDeleteBuffers(1, &m_RendererID));
@@ -18,7 +18,7 @@ VertexBuffer::~VertexBuffer() {
 
 void VertexBuffer::Modify(const void* data, unsigned int size) {
 	Bind();
-	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
 }
 
 void VertexBuffer::Bind() {
@@ -26,6 +26,13 @@ void VertexBuffer::Bind() {
 }
 void VertexBuffer::Unbind() {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+
+void* VertexBuffer::MapData()
+{
+	Bind();
+	mappedData = glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
+	return mappedData;
 }
 
 

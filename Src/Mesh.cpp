@@ -415,3 +415,115 @@ Transform::Transform(mat4* transform)
 	return drawFlags&flag;
 }
 
+ Line::Line()
+ {
+	points = (float*)malloc(sizeof(float) * 6);
+	if (points != NULL) {
+		points[0] = 0.0f;
+		points[1] = 0.0f;
+		points[2] = 0.0f;
+		points[3] = 1.0f;
+		points[4] = 1.0f;
+		points[5] = 1.0f;
+		VB = new VertexBuffer(points,sizeof(float)*6);
+		VA = new VertexArray();
+		mappedPoints = (float*)VB->MapData();
+		VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
+		color = vec3(1, 1, 1);
+		size = 5;
+	}
+	else {
+		printf("Could not allocate mem\n");
+		return;
+	}
+ }
+ Line::Line(vec3 point1, vec3 point2)
+ {
+	 points = (float*)malloc(sizeof(float) * 6);
+	 if (points != NULL) {
+		 points[0] = point1.x;
+		 points[1] = point1.y;
+		 points[2] = point1.z;
+		 points[3] = point2.x;
+		 points[4] = point2.y;
+		 points[5] = point2.z;
+		 VB = new VertexBuffer(points, sizeof(float) * 6);
+		 VA = new VertexArray();
+		 mappedPoints = (float*)VB->MapData();
+		 VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
+		 color = vec3(1, 1, 1);
+		 size = 5;
+	 }
+	 else {
+		 printf("Could not allocate mem\n");
+		 return;
+	 }
+ }
+ Line::Line(vec3 point1, vec3 point2,vec3 color)
+ {
+	points = (float*)malloc(sizeof(float) * 6);
+	if (points != NULL) {
+		points[0] = point1.x;
+		points[1] = point1.y;
+		points[2] = point1.z;
+		points[3] = point2.x;
+		points[4] = point2.y;
+		points[5] = point2.z;
+		VB = new VertexBuffer(points, sizeof(float) * 6);
+		VA = new VertexArray();
+		mappedPoints = (float*)VB->MapData();
+		VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
+		this->color = color;
+		size = 5;
+	}
+	else {
+		printf("Could not allocate mem\n");
+		return;
+	}
+ }
+
+ void Line::SetPoint1(vec3 point)
+ {
+	 points[0] = point.x;
+	 points[1] = point.y;
+	 points[2] = point.z;
+ }
+
+ void Line::SetPoint2(vec3 point)
+ {
+	 points[3] = point.x;
+	 points[4] = point.y;
+	 points[5] = point.z;
+ }
+
+ vec3 Line::GetPoint1()
+ {
+	 return vec3(points[0],points[1],points[2]);
+ }
+
+ vec3 Line::GetPoint2()
+ {
+	 return vec3(points[3],points[4],points[5]);
+ }
+
+ void Line::Draw(Camera* cam)
+ {
+	 glLineWidth(size);
+	 Shader* shads = GetShaders();
+	 shads[0].UseShader();
+	 shads[0].UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
+	 shads[0].UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
+	 VA->Bind();
+	 GLCall(glDrawArrays(GL_LINES, 0, 1));
+ }
+
+ void Line::Draw(Shader* shad, Camera* cam)
+ {
+	 glLineWidth(size);
+	 VA->Bind();
+	 shad->UseShader();
+	 shad->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
+	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
+	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0]);
+	 GLCall(glDrawArrays(GL_LINES, 0, 2));
+ }

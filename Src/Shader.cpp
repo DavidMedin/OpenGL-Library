@@ -5,6 +5,10 @@ using namespace std;
 Shader* defaultShader = nullptr;
 
 
+Shader::Shader() {
+	shader_Program = 0;
+}
+
 string Shader::ReadShader(const char* path) {
 	string tmp;
 	ifstream shaderFile;

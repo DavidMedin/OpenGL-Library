@@ -3,6 +3,8 @@
 #include <string>
 #include "Error.h"
 #include "Input.h"
+#include "Shader.h"
+
 #include <GLFW/glfw3.h>
  
 #include <glm.hpp>
@@ -20,8 +22,13 @@ using namespace std;
  
 
 #define GRAPHICS_FLAG_CULL 1
+
+#define Z_TEST 1
+
 void  SetGraphicsFlag(int flag);
 bool  GetGraphicsFlag(int flag);
+void GraphicsEnable(unsigned int what);
+void GraphicsDisable(unsigned int what);
 
 int init(int width, int height, string name);
 void PollEvents();
@@ -32,3 +39,6 @@ float GetDeltaTime();
 
 void ImGuiNewFrame();
 void ImGuiRender();
+
+//[0] = LineShader
+Shader* GetShaders();

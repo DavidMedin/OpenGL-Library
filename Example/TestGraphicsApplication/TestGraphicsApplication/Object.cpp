@@ -153,16 +153,87 @@ void Light::ImGuiUpdate() {
 		ImGui::TreePop();
 	}
 }
-int particleCount = 0;
-Particle::Particle() {
-	mesh = new Mesh("../Models/Particle_Base/Particle.dae");
+unsigned int metaLineCount = 0;
+MetaLine::MetaLine()
+{
+	translate = vec3(0);
+	scale = vec3(1);
 	nodeList.push_back(this);
-	name = "Particle_" + to_string(particleCount);
+	name = "MetaLine_" + to_string(metaLineCount);
+	metaLineCount++;
+	UpdateModelMatrix();
 }
-Particle::Particle(string path) {
-	mesh = new Mesh("../Models/Particle_Base/Particle.dae");
+
+MetaLine::MetaLine(vec3 point1, vec3 point2)
+{
+	translate = vec3(0);
+	scale = vec3(1);
+	SetPoint1(point1);
+	SetPoint2(point2);
 	nodeList.push_back(this);
-	name = path;
-	delete mesh->texList[0];
-	mesh->texList[0] = new Texture(DIFFUSE_SLOT,path);
+	name = "MetaLine_" + to_string(metaLineCount);
+	metaLineCount++;
+	UpdateModelMatrix();
+}
+
+void MetaLine::Draw(Camera* cam)
+{
+	Shader* shaders = GetShaders();
+	shaders[0].UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	GraphicsDisable(Z_TEST);
+	Line::Draw(cam);
+	GraphicsEnable(Z_TEST);
+}
+
+void MetaLine::Draw(Shader* shad, Camera* cam)
+{
+	shad->UseShader();
+	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	GraphicsDisable(Z_TEST);
+	Line::Draw(shad,cam);
+	GraphicsEnable(Z_TEST);
+}
+
+void MetaLine::Update()
+{
+	ImGuiUpdate();
+}
+
+void MetaLine::ImGuiUpdate()
+{
+	if (ImGui::TreeNode(name.c_str())) {
+		ImGui::Text("Point 1 Pos");
+		ImGui::DragFloat("x##Point1", &mappedPoints[0], imGuiDragSpeed);
+		ImGui::DragFloat("y##Point1", &mappedPoints[1], imGuiDragSpeed);
+		ImGui::DragFloat("z##Point1", &mappedPoints[2], imGuiDragSpeed);
+
+		ImGui::Text("Point 2 Pos");
+		ImGui::DragFloat("x##Point2", &mappedPoints[3], imGuiDragSpeed);
+		ImGui::DragFloat("y##Point2", &mappedPoints[4], imGuiDragSpeed);
+		ImGui::DragFloat("z##Point2", &mappedPoints[5], imGuiDragSpeed);
+		
+		ImGui::Text("Translate");
+		ImGui::DragFloat("x##Trans", &translate.x, imGuiDragSpeed);
+		ImGui::DragFloat("y##Trans", &translate.y, imGuiDragSpeed);
+		ImGui::DragFloat("z##Trans", &translate.z, imGuiDragSpeed);
+		ImGui::Text("Scale");
+		ImGui::DragFloat("x##Scale", &scale.x, imGuiDragSpeed);
+		ImGui::DragFloat("y##Scale", &scale.y, imGuiDragSpeed);
+		ImGui::DragFloat("z##Scale", &scale.z, imGuiDragSpeed);
+
+		ImGui::ColorEdit3("Color", &color[0]);
+		ImGui::SliderFloat("Line Width", &size,1,10);
+		UpdateModelMatrix();
+		for (Node* i : children) {
+			i->Update();
+		}
+		ImGui::TreePop();
+	}
+}
+
+void MetaLine::UpdateModelMatrix()
+{
+	mat4* tmpMat = new mat4(glm::scale(identity<mat4>(),scale));
+	modelMatrix = glm::translate(*tmpMat, translate);
+	delete tmpMat;
 }

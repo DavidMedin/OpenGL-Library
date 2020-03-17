@@ -151,10 +151,10 @@
     <None Include="..\Shaders\MeshVs.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ParticleFs.glsl">
+    <None Include="..\..\..\DefaultShaders\LineFs.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ParticleVs.glsl">
+    <None Include="..\..\..\DefaultShaders\LineVs.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
