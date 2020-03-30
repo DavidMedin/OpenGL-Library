@@ -162,6 +162,12 @@ MetaLine::MetaLine()
 	name = "MetaLine_" + to_string(metaLineCount);
 	metaLineCount++;
 	UpdateModelMatrix();
+
+	//private members
+	float* mappedData = OpenWriting();
+	lastEdit = (float*)malloc(sizeof(float) * 6);
+	memcpy(lastEdit, mappedData, sizeof(float) * 6);
+	GLCall(ClosedWriting());
 }
 
 MetaLine::MetaLine(vec3 point1, vec3 point2)
@@ -174,6 +180,12 @@ MetaLine::MetaLine(vec3 point1, vec3 point2)
 	name = "MetaLine_" + to_string(metaLineCount);
 	metaLineCount++;
 	UpdateModelMatrix();
+
+	//private members
+	float* mappedData = OpenWriting();
+	lastEdit = (float*)malloc(sizeof(float) * 6);
+	memcpy(lastEdit, mappedData, sizeof(float) * 6);
+	GLCall(ClosedWriting());
 }
 
 void MetaLine::Draw(Camera* cam)
@@ -201,17 +213,24 @@ void MetaLine::Update()
 
 void MetaLine::ImGuiUpdate()
 {
+	float store = 1;
 	if (ImGui::TreeNode(name.c_str())) {
-		ImGui::Text("Point 1 Pos");
-		ImGui::DragFloat("x##Point1", &mappedPoints[0], imGuiDragSpeed);
-		ImGui::DragFloat("y##Point1", &mappedPoints[1], imGuiDragSpeed);
-		ImGui::DragFloat("z##Point1", &mappedPoints[2], imGuiDragSpeed);
+		ImGui::Text("Point Pos'");
 
-		ImGui::Text("Point 2 Pos");
-		ImGui::DragFloat("x##Point2", &mappedPoints[3], imGuiDragSpeed);
-		ImGui::DragFloat("y##Point2", &mappedPoints[4], imGuiDragSpeed);
-		ImGui::DragFloat("z##Point2", &mappedPoints[5], imGuiDragSpeed);
-		
+		const char* strings[6] = {"x##Point1", "y##Point1","z##Point1","x##Point2","y##Point2","z##Point2"};
+		for (int i = 0; i < 6; i++) {
+			if (ImGui::DragFloat(strings[i], &lastEdit[i], imGuiDragSpeed)) { //something was edited
+				float* mappedData = OpenWriting();
+				if (mappedData != nullptr) {
+					memcpy(mappedData, lastEdit, sizeof(float) * 6);
+				}
+				else {
+					printf("OpenWriting returned nullptr\n");
+					__debugbreak();
+				}
+				GLCall(ClosedWriting());
+			}
+		}
 		ImGui::Text("Translate");
 		ImGui::DragFloat("x##Trans", &translate.x, imGuiDragSpeed);
 		ImGui::DragFloat("y##Trans", &translate.y, imGuiDragSpeed);

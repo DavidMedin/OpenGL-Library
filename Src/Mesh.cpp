@@ -427,7 +427,7 @@ Transform::Transform(mat4* transform)
 		points[5] = 1.0f;
 		VB = new VertexBuffer(points,sizeof(float)*6);
 		VA = new VertexArray();
-		mappedPoints = (float*)VB->MapData();
+		//mappedPoints = (float*)VB->MapData();
 		VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
 		color = vec3(1, 1, 1);
 		size = 5;
@@ -449,7 +449,7 @@ Transform::Transform(mat4* transform)
 		 points[5] = point2.z;
 		 VB = new VertexBuffer(points, sizeof(float) * 6);
 		 VA = new VertexArray();
-		 mappedPoints = (float*)VB->MapData();
+		 //mappedPoints = (float*)VB->MapData();
 		 VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
 		 color = vec3(1, 1, 1);
 		 size = 5;
@@ -471,7 +471,7 @@ Transform::Transform(mat4* transform)
 		points[5] = point2.z;
 		VB = new VertexBuffer(points, sizeof(float) * 6);
 		VA = new VertexArray();
-		mappedPoints = (float*)VB->MapData();
+		//mappedPoints = (float*)VB->MapData();
 		VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
 		this->color = color;
 		size = 5;
@@ -526,4 +526,15 @@ Transform::Transform(mat4* transform)
 	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
 	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0]);
 	 GLCall(glDrawArrays(GL_LINES, 0, 2));
+ }
+
+ float* Line::OpenWriting()
+ {
+	mappedPoints = (float*)VB->MapData();
+	return mappedPoints;
+ }
+
+ unsigned int Line::ClosedWriting()
+ {
+	 return VB->UnmapData();
  }

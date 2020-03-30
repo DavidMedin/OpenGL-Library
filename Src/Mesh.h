@@ -103,8 +103,8 @@ private:
 	VertexArray* VA;
 	//xyz,xyz - ONLY TWO VERTECIES (6 floats)
 	float* points;
-public:
 	float* mappedPoints;
+public:
 	vec3 color;
 	float size;
 	Line();
@@ -116,4 +116,6 @@ public:
 	vec3 GetPoint2();
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
+	float* OpenWriting();
+	unsigned int ClosedWriting();
 };

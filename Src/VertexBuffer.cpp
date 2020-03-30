@@ -35,6 +35,13 @@ void* VertexBuffer::MapData()
 	return mappedData;
 }
 
+unsigned int VertexBuffer::UnmapData()
+{
+	Bind();
+	unsigned int ret = glUnmapBuffer(GL_ARRAY_BUFFER);
+	return ret;
+}
+
 
 VertexArray::VertexArray(){
 	GLCall(glGenVertexArrays(1, &m_RendererID));

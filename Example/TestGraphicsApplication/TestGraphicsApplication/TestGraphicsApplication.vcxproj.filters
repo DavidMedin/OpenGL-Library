@@ -157,5 +157,7 @@
     <None Include="..\..\..\DefaultShaders\LineVs.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

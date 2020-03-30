@@ -18,6 +18,7 @@ public:
 	void Bind();
 	void Unbind();
 	void* MapData();
+	unsigned int UnmapData();
 };
 
 class VertexArray {

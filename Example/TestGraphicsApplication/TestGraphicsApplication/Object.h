@@ -55,6 +55,7 @@ public:
 
 class MetaLine :public Line,public Node {
 private:
+	float* lastEdit;
 public:
 	vec3 translate;
 	vec3 scale;
