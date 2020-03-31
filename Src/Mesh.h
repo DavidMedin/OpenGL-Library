@@ -76,13 +76,13 @@ private:
 	float* textureUVs;
 	unsigned int* indices;
 
-
+	mat4* boneOffsets[40]; //guess at max bone count
 
 public:
 	//A reference to the textures, should also be in attributes
 	Texture* texList[32];
 
-
+	unsigned int boneCount;
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
 	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);

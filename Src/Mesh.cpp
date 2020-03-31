@@ -288,6 +288,11 @@ Mesh::Mesh(string path)
 	this->textureUVs = UVs;
 
 
+	if (mesh->HasBones()) {
+		boneCount = mesh->mNumBones;
+
+	}
+
 	//texture loading
 	unsigned int num_textures = scene->mNumTextures;
 	unsigned int num_material = scene->mNumMaterials;
