@@ -83,6 +83,7 @@ mat4* ConvertAssimpMatrix(aiMatrix4x4 m) {
 
 
 Mesh::Mesh(void* mesh) {
+	drawMode = GL_TRIANGLES;
 	for (int i = 0; i < 32; i++) {
 		texList[i] = nullptr;
 	}
@@ -185,8 +186,33 @@ Mesh::Mesh(void* mesh) {
 
 
 
-Mesh::Mesh(string path)
+Mesh::Mesh(float* data, unsigned int size)
 {
+	drawMode = GL_TRIANGLES;
+	vertices = data;
+	pointCount = size/sizeof(float)*3;
+	vertexBuffer = new VertexBuffer(data, size);
+	VA = new VertexArray();
+	VA->BindVertexBuffer(vertexBuffer, 3, GL_FLOAT, false);
+	
+	indices = (unsigned int*)malloc(sizeof(unsigned int));
+	*indices = 1;
+	index = new IndexBuffer(indices, 1);
+	indexCount = 1;
+
+	//unused
+	//will want to check if these buffers are defined if you want to use them in your shader
+	textureUVBuffer = nullptr;
+	normalBuffer = nullptr;
+	transform = nullptr;
+	boneCount = NULL;
+	normals = nullptr;
+	textureUVs = nullptr;
+}
+
+Mesh::Mesh(string path)
+{	
+	drawMode = GL_TRIANGLES;
 	Assimp::Importer importer;
 	//aiProcess_JoinIdenticalVertices
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
@@ -366,34 +392,28 @@ void Mesh::Draw(Camera* cam)
 			break;
 		}
 	}
-	GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT,nullptr));
+	GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT,nullptr));
 }
 void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
-	//shad->UniformEquals("model", GL_FLOAT_MAT4, this->transform);
 	VA->Bind();
 	index->Bind();
-	if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
-		glEnable(GL_CULL_FACE);
+	////if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
+	////	glEnable(GL_CULL_FACE);
+	////}
+	//else glDisable(GL_CULL_FACE);
+	for (int i = 0; i < 32; i++) { //was commented?
+		if (texList[i] != nullptr) {
+			texList[i]->Bind(i);
+		}
+		else {
+			break;
+		}
 	}
-	else glDisable(GL_CULL_FACE);
-	//for (int i = 0; i < 32; i++) {
-	//	if (texList[i] != nullptr) {
-	//		texList[i]->Bind(i);
-	//	}
-	//	else {
-	//		break;
-	//	}
-	//}
-	if (drawFlags & DRAWFLAG_TRIANGLE) {
-		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
-	}
-	else {
-		GLCall(glDrawElements(GL_POINTS, indexCount, GL_UNSIGNED_INT, nullptr));
-	}
+		GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, nullptr));
 }
 void Mesh::BindCustomData(VertexBuffer* data, unsigned int type,unsigned int vecX) {
 	VA->BindCustomBuffer(data, vecX, type, false);

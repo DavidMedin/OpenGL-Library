@@ -8,12 +8,15 @@
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
 
+	glPointSize(10);
+	Dot* test = new Dot(vec3(1, 0, 1));
+	test->color = vec3(1, 1, 0);
 
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3((*skull->mesh->boneOffsets[0])[3][0]+0.00001f, (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]));
+	MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3(1,1,1));
 	bone->color = vec3(.2f, 1, .7f);
 	bone->size = 10.0f;
 
@@ -100,6 +103,7 @@ int main(int argv, char* argc[]) {
 		plane->Draw(meshShad, cam);
 		bone->Draw(lineShad,cam);
 
+		test->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		

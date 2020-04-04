@@ -184,6 +184,8 @@
     <ClInclude Include="Source.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\DefaultShaders\DotFs.glsl" />
+    <None Include="..\..\..\DefaultShaders\DotVs.glsl" />
     <None Include="..\..\..\DefaultShaders\LineFs.glsl" />
     <None Include="..\..\..\DefaultShaders\LineVs.glsl" />
     <None Include="..\Shaders\MeshFs.glsl" />

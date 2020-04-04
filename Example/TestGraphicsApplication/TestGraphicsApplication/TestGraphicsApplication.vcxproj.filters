@@ -159,5 +159,11 @@
     </None>
     <None Include="ClassDiagram.cd" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="..\..\..\DefaultShaders\DotFs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\DefaultShaders\DotVs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -256,3 +256,81 @@ void MetaLine::UpdateModelMatrix()
 	modelMatrix = glm::translate(*tmpMat, translate);
 	delete tmpMat;
 }
+
+unsigned int dotCount = 0;
+Dot::Dot()
+{
+	depthTest = false;
+	translate = vec3(0);
+	color = vec3(1);
+	UpdateModelMatrix();
+	dotCount++;
+	float* point = (float*)malloc(sizeof(float) * 3);
+	point[0] = 0;
+	point[1] = 0;
+	point[2] = 0;
+	mesh = new Mesh(point, sizeof(float) * 3);
+	mesh->drawMode = GL_POINTS;
+	nodeList.push_back(this);
+}
+
+Dot::Dot(vec3 pos)
+{
+	depthTest = false;
+	translate = pos;
+	color = vec3(1);
+	UpdateModelMatrix();
+	name = "Dot_" + to_string(dotCount);
+	dotCount++;
+	float* point = (float*)malloc(sizeof(float) * 3);
+	point[0] = 0;
+	point[1] = 0;
+	point[2] = 0;
+	mesh = new Mesh(point, sizeof(float) * 3);
+	mesh->drawMode = GL_POINTS;
+	nodeList.push_back(this);
+
+}
+
+void Dot::Update()
+{
+	ImGuiUpdate();
+}
+
+void Dot::ImGuiUpdate()
+{
+	if (ImGui::TreeNode(name.c_str())) {
+		const char* names[] = { "x##DotPos","y##DotPos","z##DotPos" };
+		for (int i = 0; i < 3; i++) {
+			if (ImGui::DragFloat(names[i], &translate[i], imGuiDragSpeed)) {
+				UpdateModelMatrix();
+			}
+		}
+		ImGui::ColorEdit3("Color##DotColor", &color[0]);
+		ImGui::DragFloat("Size##DotSize", &pointSize, 1);
+		if (ImGui::Button("Cull##DotCull")) {
+			depthTest = !depthTest;
+		}
+		for (Node* i : children) {
+			i->Update();
+		}
+		ImGui::TreePop();
+	}
+}
+
+void Dot::UpdateModelMatrix()
+{
+	modelMatrix = glm::translate(identity<mat4>(), translate);
+}
+
+void Dot::Draw(Camera* cam)
+{
+	glPushAttrib(GL_ENABLE_BIT);
+	depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+	glPointSize(pointSize);
+	Shader* shads = GetShaders();
+	shads[1].UniformEquals("color", GL_FLOAT_VEC3, &color);
+	shads[1].UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	mesh->Draw(&shads[1], cam);
+	glPopAttrib();
+}

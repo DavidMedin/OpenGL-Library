@@ -69,6 +69,24 @@ public:
 	void UpdateModelMatrix();
 };
 
+class Dot :public Node {
+private:
+	float pointSize = 30;
+public:
+	bool depthTest;
+
+	vec3 translate;
+	vec3 color;
+	mat4 modelMatrix;
+	string name;
+	Mesh* mesh;
+	Dot();
+	Dot(vec3 pos);
+	void Update();
+	void ImGuiUpdate();
+	void UpdateModelMatrix();
+	void Draw(Camera* cam);
+};
 
 void UpdateNodes();
 

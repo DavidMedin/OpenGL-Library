@@ -69,7 +69,7 @@ private:
 	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
 	VertexArray* VA;
 	IndexBuffer* index;
-	mat4* transform;
+	mat4* transform;// not used in drawing
 
 	float* vertices;
 	float* normals;
@@ -78,18 +78,25 @@ private:
 
 
 public:
-	mat4* boneOffsets[256]; //guess at max bone count
-	//A reference to the textures, should also be in attributes
+	mat4* boneOffsets[256];
+	//A reference to the textures
 	Texture* texList[32];
 
 	unsigned int boneCount;
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
-	//Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount);
+
+	//use this for primitives, index buffer will be generated
+	Mesh(float* data, unsigned int size);
+
+	//main mesh constructor
 	Mesh(string path);
+
 	//must be a pointer to a aiMesh!!
 	//not recommended for the user of the Library unless you include AssiImp
 	Mesh(void* mesh);
+
+	unsigned int drawMode; //must be GL_TRIANGLES,GL_POINTS, or the like
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
 	//untested!!!

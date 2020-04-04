@@ -2,7 +2,7 @@
 
 int graphicsFlag = 1;
 
-Shader shaderList[1];
+Shader shaderList[2];
 
 
 static void glfw_error_callback(int error, const char* description)
@@ -123,7 +123,8 @@ int init(int width, int height, string name) {
 	glfwSetWindowSizeCallback(glfwGetCurrentContext(), WindowSizeCallback);
 	glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), framebuffer_size_callback);
 	
-	//shaderList[0] = Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", nullptr, false);
+	shaderList[0] = Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", nullptr, false);
+	shaderList[1] = Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", nullptr, false);
 	return 1;
 }
 
