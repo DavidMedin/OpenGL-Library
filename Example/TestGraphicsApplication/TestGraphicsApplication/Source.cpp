@@ -13,7 +13,7 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	MetaLine* bone = new MetaLine(vec3(0,0,0),vec3(.25f,.25f,0));
+	MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3((*skull->mesh->boneOffsets[0])[3][0]+0.00001f, (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]));
 	bone->color = vec3(.2f, 1, .7f);
 	bone->size = 10.0f;
 

@@ -72,16 +72,15 @@ Texture::~Texture() {
 }
 
 
-//Mesh::Mesh(float* data, unsigned int size, const unsigned int* indexData, unsigned int indexCount) {
-//	/*transform = new DataTransform();
-//	((DataTransform*)transform)->matrix = new mat4(1.0);*/
-//	transform = new mat4(1.0f);
-//	vertexBuffer = new VertexBuffer(data, size);
-//	VA = new VertexArray();
-//	VA->BindVertexBuffer(vertexBuffer, 3, GL_FLOAT, false);
-//	index = new IndexBuffer(indexData, indexCount);
-//	this->indexCount = indexCount;
-//}
+mat4* ConvertAssimpMatrix(aiMatrix4x4 m) {
+	return new mat4(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		m.a4, m.b4, m.c4, m.d4
+		);
+}
+
 
 Mesh::Mesh(void* mesh) {
 	for (int i = 0; i < 32; i++) {
@@ -290,7 +289,14 @@ Mesh::Mesh(string path)
 
 	if (mesh->HasBones()) {
 		boneCount = mesh->mNumBones;
-
+		char names[256][64];
+		for (int i = 0; i < boneCount; i++) {
+			const aiBone* bone = mesh->mBones[i];
+			strcpy_s(names[i], bone->mName.data);
+			printf("bone %d : %s\n", i, names[i]);
+			boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
+			cout << to_string<mat4>(*boneOffsets[i]) << "\n";
+		}
 	}
 
 	//texture loading
@@ -492,6 +498,9 @@ Transform::Transform(mat4* transform)
 	 points[0] = point.x;
 	 points[1] = point.y;
 	 points[2] = point.z;
+	 float* mem = (float*)VB->MapData();
+	 memcpy(mem, points, sizeof(float) * 3);
+	 VB->UnmapData();
  }
 
  void Line::SetPoint2(vec3 point)
@@ -499,6 +508,9 @@ Transform::Transform(mat4* transform)
 	 points[3] = point.x;
 	 points[4] = point.y;
 	 points[5] = point.z;
+	 float* mem = (float*)VB->MapData();
+	 memcpy(&mem[3], &points[3], sizeof(float) * 3);
+	 VB->UnmapData();
  }
 
  vec3 Line::GetPoint1()

@@ -76,9 +76,9 @@ private:
 	float* textureUVs;
 	unsigned int* indices;
 
-	mat4* boneOffsets[40]; //guess at max bone count
 
 public:
+	mat4* boneOffsets[256]; //guess at max bone count
 	//A reference to the textures, should also be in attributes
 	Texture* texList[32];
 
