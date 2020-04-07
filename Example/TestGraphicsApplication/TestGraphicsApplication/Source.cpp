@@ -31,6 +31,7 @@ int main(int argv, char* argc[]) {
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
 	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL, false);
 
+
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();

@@ -84,22 +84,34 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLCall(glAttachShader(shader_program, geometry_shader));
 	}
 	GLCall(glLinkProgram(shader_program));
-	GLCall(glValidateProgram(shader_program));
-	GLCall(glDeleteShader(vertex_shader));
-	GLCall(glDeleteShader(fragment_shader));
-	if (geometryShader != nullptr) {
-		GLCall(glDeleteShader(geometry_shader));
+	GLint rez = NULL;
+	GLCall(glGetProgramiv(shader_program, GL_LINK_STATUS, &rez));
+	if (rez == NULL || rez != GL_TRUE) {
+		GLsizei logSize = 255;
+		GLchar* log = (GLchar*)malloc(sizeof(GLchar) * logSize);
+		GLsizei actualSize = 0;
+		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
+		cout << actualSize << "\n";
+		cout << log << "\n";
+		delete log;
 	}
-	GLint rez=NULL;
+
+	GLCall(glValidateProgram(shader_program));
+	rez=NULL;
 	GLCall(glGetProgramiv(shader_program, GL_VALIDATE_STATUS, &rez));
 	if (rez == NULL || rez != GL_TRUE) {
 		GLsizei logSize = 255;
 		GLchar* log = (GLchar*)malloc(sizeof(GLchar)*logSize);
 		GLsizei actualSize=0;
-		GLCall(glGetProgramInfoLog(shader_program, logSize, &actualSize, log));
+		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
 		cout << actualSize << "\n";
 		cout << log << "\n";
 		delete log;
+	}
+	GLCall(glDeleteShader(vertex_shader));
+	GLCall(glDeleteShader(fragment_shader));
+	if (geometryShader != nullptr) {
+		GLCall(glDeleteShader(geometry_shader));
 	}
 	return shader_program;
 }

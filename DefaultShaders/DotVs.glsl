@@ -1,4 +1,4 @@
-#version 420
+#version 130
 in vec3 pos;
 uniform vec3 color;
 uniform mat4 proj,view,model;
