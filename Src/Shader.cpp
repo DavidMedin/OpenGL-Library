@@ -90,6 +90,17 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	if (geometryShader != nullptr) {
 		GLCall(glDeleteShader(geometry_shader));
 	}
+	GLint rez=NULL;
+	GLCall(glGetProgramiv(shader_program, GL_VALIDATE_STATUS, &rez));
+	if (rez == NULL || rez != GL_TRUE) {
+		GLsizei logSize = 255;
+		GLchar* log = (GLchar*)malloc(sizeof(GLchar)*logSize);
+		GLsizei actualSize=0;
+		GLCall(glGetProgramInfoLog(shader_program, logSize, &actualSize, log));
+		cout << actualSize << "\n";
+		cout << log << "\n";
+		delete log;
+	}
 	return shader_program;
 }
 
