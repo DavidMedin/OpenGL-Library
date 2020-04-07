@@ -546,10 +546,10 @@ Transform::Transform(mat4* transform)
  void Line::Draw(Camera* cam)
  {
 	 glLineWidth(size);
-	 Shader* shads = GetShaders();
-	 shads[0].UseShader();
-	 shads[0].UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
-	 shads[0].UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
+	 Shader** shads = GetShaders();
+	 shads[0]->UseShader();
+	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
+	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
 	 VA->Bind();
 	 GLCall(glDrawArrays(GL_LINES, 0, 1));
  }

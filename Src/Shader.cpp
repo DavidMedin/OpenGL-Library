@@ -83,6 +83,8 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	if (geometryShader != nullptr) {
 		GLCall(glAttachShader(shader_program, geometry_shader));
 	}
+
+
 	GLCall(glLinkProgram(shader_program));
 	GLint rez = NULL;
 	GLCall(glGetProgramiv(shader_program, GL_LINK_STATUS, &rez));
@@ -214,7 +216,10 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name);
 	if (uni_Pos == -1) {
-		printf("%s is not a variable in your shader!", uniform_Name);
+		printf("%s is not a variable in your shader!\n", uniform_Name);
+		int rez = NULL;
+		glGetProgramiv(shader_Program, GL_ACTIVE_UNIFORMS, &rez);
+		printf("There are %d active uniforms in shader!\n", rez);
 		return;
 	}
 	UseShader();

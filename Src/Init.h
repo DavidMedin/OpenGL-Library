@@ -42,4 +42,4 @@ void ImGuiRender();
 
 //[0] = LineShader
 //[1] = DotShader
-Shader* GetShaders();
+Shader** GetShaders();

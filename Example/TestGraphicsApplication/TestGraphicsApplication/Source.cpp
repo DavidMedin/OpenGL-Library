@@ -9,16 +9,15 @@ int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
 
 	glPointSize(10);
-	Dot* test = new Dot(vec3(1, 0, 1));
-	test->color = vec3(1, 1, 0);
 
 	Object* skull = new Object("../Models/Skull/skullLow.dae");
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3(1,1,1));
-	bone->color = vec3(.2f, 1, .7f);
-	bone->size = 10.0f;
+	//MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3(1,1,1));
+	//bone->color = vec3(.2f, 1, .7f);
+	//bone->size = 10.0f;
+	Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -29,7 +28,6 @@ int main(int argv, char* argc[]) {
 	int renderSwitch = 0;
 
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
-	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL, false);
 
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
@@ -102,9 +100,7 @@ int main(int argv, char* argc[]) {
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
-		bone->Draw(lineShad,cam);
-
-		test->Draw(cam);
+		bone->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		

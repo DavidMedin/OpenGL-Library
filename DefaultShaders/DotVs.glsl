@@ -1,10 +1,8 @@
-#version 130
-in vec3 pos;
-uniform vec3 color;
-uniform mat4 proj,view,model;
+#version 420
+layout(location=0) in vec3 vp;
+uniform mat4 model;
+uniform mat4 proj,view;
 
-out vec3 colorOut;
 void main(){
-	gl_Position = proj * view * model * vec4(pos,1.0);
-	colorOut = color;
+	gl_Position = proj * view * model * vec4(vp,1.0);
 }

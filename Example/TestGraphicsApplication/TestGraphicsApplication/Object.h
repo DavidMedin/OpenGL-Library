@@ -86,6 +86,7 @@ public:
 	void ImGuiUpdate();
 	void UpdateModelMatrix();
 	void Draw(Camera* cam);
+	void Draw(Shader* shad, Camera* cam);
 };
 
 void UpdateNodes();
