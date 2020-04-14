@@ -321,8 +321,11 @@ Mesh::Mesh(string path)
 			strcpy_s(names[i], bone->mName.data);
 			printf("bone %d : %s\n", i, names[i]);
 			boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
-			cout << to_string<mat4>(*boneOffsets[i]) << "\n";
+		//	cout << to_string<mat4>(*boneOffsets[i]) << "\n";
 		}
+	}
+	else {
+		printf("No bones!\n");
 	}
 
 	//texture loading

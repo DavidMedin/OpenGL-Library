@@ -10,14 +10,11 @@ int main(int argv, char* argc[]) {
 
 	glPointSize(10);
 
-	Object* skull = new Object("../Models/Skull/skullLow.dae");
+	Object* skull = new Object("../Models/Skull/ArmSkull.fbx");
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	//MetaLine* bone = new MetaLine(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]), vec3(1,1,1));
-	//bone->color = vec3(.2f, 1, .7f);
-	//bone->size = 10.0f;
-	Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[3][0], (*skull->mesh->boneOffsets[0])[3][1], (*skull->mesh->boneOffsets[0])[3][2]));
+	Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[0][3], (*skull->mesh->boneOffsets[0])[1][3], (*skull->mesh->boneOffsets[0])[2][3]));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -35,7 +32,6 @@ int main(int argv, char* argc[]) {
 	cam->UpdateViewMatrix();
 
 	while (!ShouldCloseWindow()) {
-
 		float dt = GetDeltaTime();
 		ClearWindow();
 		ImGuiNewFrame();

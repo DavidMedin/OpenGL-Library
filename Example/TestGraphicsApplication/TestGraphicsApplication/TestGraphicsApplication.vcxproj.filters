@@ -157,8 +157,6 @@
     <None Include="..\..\..\DefaultShaders\LineVs.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="..\..\..\DefaultShaders\DotFs.glsl">
       <Filter>Shaders</Filter>
     </None>

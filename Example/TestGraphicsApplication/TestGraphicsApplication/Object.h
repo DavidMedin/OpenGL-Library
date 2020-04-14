@@ -71,7 +71,7 @@ public:
 
 class Dot :public Node {
 private:
-	float pointSize = 30;
+	float pointSize = 10;
 public:
 	bool depthTest;
 
