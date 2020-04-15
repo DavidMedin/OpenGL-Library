@@ -1,4 +1,4 @@
-#version 420
+#version 460
 uniform vec3 ambientColor;
 uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
 uniform vec3 lightColor;
@@ -11,6 +11,8 @@ in vData{
 	vec3 normals;
 	vec2 texCoords;
 	vec4 fragLoc;
+
+	vec3 idColor;
 }v_frag;
 uniform vec3 camLoc;
 layout(binding = 0) uniform sampler2D diffuse;
@@ -100,6 +102,8 @@ void main() {
 		frag_colour = vec4(ambientColor,1) * texture(diffuse,v_frag.texCoords);
 	}else if(renderSwitch == 3){
 		frag_colour = texture(diffuse,v_frag.texCoords);
+	}else if(renderSwitch == 4){
+		frag_colour = vec4(v_frag.idColor,1);
 	}
 	if(texture(diffuse,v_frag.texCoords).a == 0){
 		discard;

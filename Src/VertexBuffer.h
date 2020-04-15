@@ -5,7 +5,7 @@
 #include "Error.h"
 #include <string>
 
-#define MANDNUM 3
+#define MANDNUM 4
 class VertexBuffer {
 private:
 	unsigned int m_RendererID;
@@ -30,6 +30,7 @@ public:
 	void Bind();
 	VertexArray();
 	void BindVertexBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
+	void BindIntVertexBuffer(VertexBuffer* buffer);
 	void BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
 };
 

@@ -312,21 +312,36 @@ Mesh::Mesh(string path)
 	VA->BindVertexBuffer(textureUVBuffer, 2, GL_FLOAT, false);
 	this->textureUVs = UVs;
 
-
+	boneIds = (int*)malloc(pointCount * sizeof(int));
+	for (int i = 0; i < pointCount; i++) {
+		boneIds[i] = -1;
+	}
 	if (mesh->HasBones()) {
 		boneCount = mesh->mNumBones;
 		char names[256][64];
 		for (int i = 0; i < boneCount; i++) {
 			const aiBone* bone = mesh->mBones[i];
+			unsigned int weightNum = bone->mNumWeights;
+			for (int u = 0; u < weightNum; u++) {
+				aiVertexWeight weight = bone->mWeights[u];
+				unsigned int vertexId = weight.mVertexId;
+				if (weight.mWeight >= 0.3) {
+					boneIds[vertexId] = i; // index through points to get the only bone it is affected by.
+					//because of this boneIds will be spotty
+				}
+
+			}
 			strcpy_s(names[i], bone->mName.data);
 			printf("bone %d : %s\n", i, names[i]);
 			boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
-		//	cout << to_string<mat4>(*boneOffsets[i]) << "\n";
+			cout << to_string<mat4>(*boneOffsets[i]) << "\n";
 		}
 	}
 	else {
 		printf("No bones!\n");
 	}
+	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int));
+	VA->BindIntVertexBuffer(boneIdBuffer);
 
 	//texture loading
 	unsigned int num_textures = scene->mNumTextures;
@@ -402,6 +417,7 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UseShader();
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
+	shad->ArrayUniformEquals("bones", GL_FLOAT_MAT4, boneOffsets, 32);
 	VA->Bind();
 	index->Bind();
 	////if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {

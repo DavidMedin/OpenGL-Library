@@ -30,6 +30,7 @@ private:
 	string ReadShader(const char* path);
 	unsigned int CompileShader(unsigned int type, const char* source);
 	unsigned int CreateShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
+	void _UniformEquals(int location, void* value, unsigned int type);
 public:
 	Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath,bool makeDefault);
 	//Should not use!
@@ -41,6 +42,7 @@ public:
 	void Reload();
 	//Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 	void UniformEquals(const char* uniform_Name, unsigned int type, void* value);
+	void ArrayUniformEquals(const char* uniformName, unsigned int type, void* value,unsigned int count);
 	//Don't use!
 	void UniformMatrix(string uniform_Name,mat4* matrix,unsigned int type);
 	//Don't use!

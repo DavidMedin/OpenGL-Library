@@ -118,6 +118,32 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	return shader_program;
 }
 
+void Shader::_UniformEquals(int location, void* value, unsigned int type)
+{
+	UseShader();
+
+	switch (type) {
+	case GL_FLOAT_MAT4:
+		GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(*(mat4*)value)));
+		break;
+	case GL_FLOAT_VEC3:
+		GLCall(glUniform3f(location, (*(vec3*)value)[0], (*(vec3*)value)[1], (*(vec3*)value)[2]));
+		break;
+	case GL_FLOAT_VEC2:
+		GLCall(glUniform2f(location, (*(vec2*)value)[0], (*(vec2*)value)[1]));
+		break;
+	case GL_INT:
+		GLCall(glUniform1i(location, *((int*)value)));
+		break;
+	case GL_FLOAT:
+		GLCall(glUniform1f(location, *((float*)value)));
+		break;
+	default:
+		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
+		break;
+	}
+}
+
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath, bool makeDefault) {
 	vertexContent = ReadShader(vertexPath);
@@ -222,29 +248,28 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		printf("There are %d active uniforms in shader!\n", rez);
 		return;
 	}
+	_UniformEquals(uni_Pos, value, type);
+}
+
+void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count)
+{
 	UseShader();
-	
-	switch (type) {
-	case GL_FLOAT_MAT4: 
-		GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*(mat4*)value)));
-		break;
-	case GL_FLOAT_VEC3:
-		GLCall(glUniform3f(uni_Pos, (*(vec3*)value)[0], (*(vec3*)value)[1], (*(vec3*)value)[2]));
-		break;
-	case GL_FLOAT_VEC2:
-		GLCall(glUniform2f(uni_Pos, (*(vec2*)value)[0], (*(vec2*)value)[1]));
-		break;
-	case GL_INT:
-		GLCall(glUniform1i(uni_Pos, *((int*)value)));
-		break;
-	case GL_FLOAT:
-		GLCall(glUniform1f(uni_Pos, *((float*)value)));
-		break;
-	default:
-		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
-		break;
+	//int* locs = (int*)malloc(sizeof(int) * count);
+	char name[64];
+	for (unsigned int i = 0; i < count; i++) {
+		sprintf_s(name, "%s[%i]", uniformName, i);
+		int loc = glGetUniformLocation(shader_Program, name);
+		if (loc == -1) {
+			cout << name << " is not a variable in your shader!\n";
+		}
+		else {
+			_UniformEquals(loc, value, type);
+		}
 	}
 }
+
+// make uniform equals for arrays
+
 
 void Shader::UniformMatrix(string uniform_Name, mat4* matrix, unsigned int type) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());

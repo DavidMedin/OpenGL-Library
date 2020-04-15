@@ -66,6 +66,7 @@ private:
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
+	VertexBuffer* boneIdBuffer; //contains a bone index for each vertex
 	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
 	VertexArray* VA;
 	IndexBuffer* index;
@@ -75,7 +76,7 @@ private:
 	float* normals;
 	float* textureUVs;
 	unsigned int* indices;
-
+	int* boneIds;
 
 public:
 	mat4* boneOffsets[256];

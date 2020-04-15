@@ -10,7 +10,7 @@ int main(int argv, char* argc[]) {
 
 	glPointSize(10);
 
-	Object* skull = new Object("../Models/Skull/ArmSkull.fbx");
+	Object* skull = new Object("../Models/Skull/Skull.fbx");
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
