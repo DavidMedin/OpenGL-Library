@@ -72,13 +72,19 @@ Texture::~Texture() {
 }
 
 
-mat4* ConvertAssimpMatrix(aiMatrix4x4 m) {
-	return new mat4(
+void ConvertAssimpMatrix(mat4* dest,aiMatrix4x4* m) {
+	*dest = mat4(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		m.a4, m.b4, m.c4, m.d4
+		m->a4, m->b4, m->c4, m->d4
 		);
+	//return new mat4(
+	//	1.0f, 0.0f, 0.0f, 0.0f,
+	//	0.0f, 1.0f, 0.0f, 0.0f,
+	//	0.0f, 0.0f, 1.0f, 0.0f,
+	//	m.a4, m.b4, m.c4, m.d4
+	//);
 }
 
 
@@ -333,8 +339,9 @@ Mesh::Mesh(string path)
 			}
 			strcpy_s(names[i], bone->mName.data);
 			printf("bone %d : %s\n", i, names[i]);
-			boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
-			cout << to_string<mat4>(*boneOffsets[i]) << "\n";
+			//boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
+			ConvertAssimpMatrix(&boneOffsets[i], (aiMatrix4x4*)&bone->mOffsetMatrix);
+			cout << to_string<mat4>(boneOffsets[i]) << "\n";
 		}
 	}
 	else {
@@ -415,9 +422,11 @@ void Mesh::Draw(Camera* cam)
 void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
-	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix);
-	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
-	shad->ArrayUniformEquals("bones", GL_FLOAT_MAT4, boneOffsets, 32);
+	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
+	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
+	if (boneCount > 0) {
+		shad->UniformEquals("bones", GL_FLOAT_MAT4, boneOffsets,32);
+	}
 	VA->Bind();
 	index->Bind();
 	////if (GetGraphicsFlag(GRAPHICS_FLAG_CULL)) {
@@ -567,8 +576,8 @@ Transform::Transform(mat4* transform)
 	 glLineWidth(size);
 	 Shader** shads = GetShaders();
 	 shads[0]->UseShader();
-	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
-	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
+	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1);
+	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1);
 	 VA->Bind();
 	 GLCall(glDrawArrays(GL_LINES, 0, 1));
  }
@@ -578,9 +587,9 @@ Transform::Transform(mat4* transform)
 	 glLineWidth(size);
 	 VA->Bind();
 	 shad->UseShader();
-	 shad->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix);
-	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat);
-	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0]);
+	 shad->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1);
+	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1);
+	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0],1);
 	 GLCall(glDrawArrays(GL_LINES, 0, 2));
  }
 

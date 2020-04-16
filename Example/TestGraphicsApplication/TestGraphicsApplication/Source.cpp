@@ -14,7 +14,12 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[0][3], (*skull->mesh->boneOffsets[0])[1][3], (*skull->mesh->boneOffsets[0])[2][3]));
+
+	glm::mat4 test = identity<mat4>();
+
+
+
+	//Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[0][3], (*skull->mesh->boneOffsets[0])[1][3], (*skull->mesh->boneOffsets[0])[2][3]));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -52,16 +57,19 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
+		if (ImGui::Button("Rotate")) {
+			skull->mesh->boneOffsets[0]= glm::rotate(skull->mesh->boneOffsets[0], radians(5.0f), vec3(1, 0, 0));
+		}
 		UpdateNodes();
 
 		ImGui::End();
 
-		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult);
-		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate);
-		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color);
-		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1);
-		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2);
-		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch);
+		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1);
+		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1);
+		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1);
+		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
+		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
+		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1);
 		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
@@ -96,7 +104,7 @@ int main(int argv, char* argc[]) {
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
-		bone->Draw(cam);
+		//bone->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		

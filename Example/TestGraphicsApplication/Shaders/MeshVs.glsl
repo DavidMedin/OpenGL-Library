@@ -17,11 +17,11 @@ out vData{
 }v_frag;
 
 void main() {
-//	if(boneId != -1){
-		gl_Position = proj * view * model * bones[0] * vec4(vp,1.0);
-//	}else{
-//		gl_Position = proj * view * model * vec4(vp, 1.0);
-//	}
+	if(boneId != -1){
+		gl_Position = proj * view * model * bones[boneId] * vec4(vp,1.0);
+	}else{
+		gl_Position = proj * view * model * vec4(vp, 1.0);
+	}
 	v_frag.normals = normals;
 	v_frag.texCoords = texCoords;
 	v_frag.fragLoc = model * vec4(vp,1);

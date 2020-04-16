@@ -79,7 +79,7 @@ private:
 	int* boneIds;
 
 public:
-	mat4* boneOffsets[256];
+	mat4 boneOffsets[256];
 	//A reference to the textures
 	Texture* texList[32];
 

@@ -118,25 +118,25 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	return shader_program;
 }
 
-void Shader::_UniformEquals(int location, void* value, unsigned int type)
+void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count)
 {
 	UseShader();
 
 	switch (type) {
 	case GL_FLOAT_MAT4:
-		GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(*(mat4*)value)));
+		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(*(mat4*)value)));
 		break;
 	case GL_FLOAT_VEC3:
-		GLCall(glUniform3f(location, (*(vec3*)value)[0], (*(vec3*)value)[1], (*(vec3*)value)[2]));
+		GLCall(glUniform3fv(location,count, &(*(vec3*)value)[0]));
 		break;
 	case GL_FLOAT_VEC2:
-		GLCall(glUniform2f(location, (*(vec2*)value)[0], (*(vec2*)value)[1]));
+		GLCall(glUniform2fv(location,count, &(*(vec3*)value)[0]));
 		break;
 	case GL_INT:
-		GLCall(glUniform1i(location, *((int*)value)));
+		GLCall(glUniform1iv(location,count, ((int*)value)));
 		break;
 	case GL_FLOAT:
-		GLCall(glUniform1f(location, *((float*)value)));
+		GLCall(glUniform1fv(location,count, ((float*)value)));
 		break;
 	default:
 		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
@@ -237,20 +237,30 @@ void Shader::UseShader()
 	GLCall(glUseProgram(shader_Program));
 }
 
-void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value)
+void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count)
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
+	UseShader(); 
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name);
 	if (uni_Pos == -1) {
 		printf("%s is not a variable in your shader!\n", uniform_Name);
 		int rez = NULL;
-		glGetProgramiv(shader_Program, GL_ACTIVE_UNIFORMS, &rez);
-		printf("There are %d active uniforms in shader!\n", rez);
+		GLCall(glGetProgramiv(shader_Program, GL_ACTIVE_UNIFORMS, &rez));
+		printf("	There are %d active uniforms in shader!\n", rez);
+		GLsizei length;// use size of the buffer
+		GLint size; //sizeof the variable
+		GLenum type;
+		GLchar buffer[64]; //= (char*)malloc(sizeof(char)*64)
+		for (GLuint i = 0; i < rez; i++) {
+			GLCall(glGetActiveUniform(shader_Program, i, sizeof(buffer), &length, &size, &type, buffer));
+			printf("	Uniform: #%d | Type: %u | Name : %s\n", i, type, buffer);
+		}
 		return;
 	}
-	_UniformEquals(uni_Pos, value, type);
+	//basicly the same function but whatever
+	_UniformEquals(uni_Pos, value, type,count);
 }
-
+// value must be an array of values, not an array of pointers
 void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count)
 {
 	UseShader();
@@ -263,7 +273,7 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 			cout << name << " is not a variable in your shader!\n";
 		}
 		else {
-			_UniformEquals(loc, value, type);
+			_UniformEquals(loc, value, type,1);
 		}
 	}
 }

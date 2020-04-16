@@ -57,7 +57,7 @@ void Object::UpdateModelMatrix() {
 }
 void Object::Draw(Shader* shad,Camera* cam) {
 	shad->UseShader();
-	shad->UniformEquals("model",GL_FLOAT_MAT4, modelMatrix);
+	shad->UniformEquals("model",GL_FLOAT_MAT4, modelMatrix,1);
 	
 	
 	if (GetDrawFlags(DRAWFLAG_TRIANGLE)) {
@@ -191,7 +191,7 @@ MetaLine::MetaLine(vec3 point1, vec3 point2)
 void MetaLine::Draw(Camera* cam)
 {
 	Shader** shaders = GetShaders();
-	shaders[0]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	shaders[0]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	GraphicsDisable(Z_TEST);
 	Line::Draw(cam);
 	GraphicsEnable(Z_TEST);
@@ -200,7 +200,7 @@ void MetaLine::Draw(Camera* cam)
 void MetaLine::Draw(Shader* shad, Camera* cam)
 {
 	shad->UseShader();
-	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	GraphicsDisable(Z_TEST);
 	Line::Draw(shad,cam);
 	GraphicsEnable(Z_TEST);
@@ -329,8 +329,8 @@ void Dot::Draw(Camera* cam)
 	depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glPointSize(pointSize);
 	Shader** shads = GetShaders();
-	shads[1]->UniformEquals("color", GL_FLOAT_VEC3, &color);
-	shads[1]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	shads[1]->UniformEquals("color", GL_FLOAT_VEC3, &color,1);
+	shads[1]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	mesh->Draw(shads[1], cam);
 	glPopAttrib();
 }
@@ -340,8 +340,8 @@ void Dot::Draw(Shader* shad, Camera* cam)
 	glPushAttrib(GL_ENABLE_BIT);
 	depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glPointSize(pointSize);
-	shad->UniformEquals("color", GL_FLOAT_VEC3, &color);
-	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix);
+	shad->UniformEquals("color", GL_FLOAT_VEC3, &color,1);
+	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	mesh->Draw(shad, cam);
 	glPopAttrib();
 }
