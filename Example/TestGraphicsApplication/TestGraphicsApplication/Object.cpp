@@ -70,10 +70,6 @@ void Object::Draw(Shader* shad,Camera* cam) {
 	mesh->Draw(shad,cam);
 	
 }
-void Object::Draw(Camera* cam) {
-	//defaultShader->UniformMatrix("model", modelMatrix);
-	mesh->Draw(cam);
-}
 void Object::Translate(vec3 vector) {
 	//mat4* tmpMat = this->translate;
 	//translate = new mat4(glm::translate(*translate, vector));

@@ -32,7 +32,6 @@ public:
 	Object(string path, Node* parent);
 	//will want to add a variadic function to take in as many shaders as mesh objects
 	void Draw(Shader* shad,Camera* cam);
-	void Draw(Camera* cam);
 	void Translate(vec3 vector);
 	void Rotate(vec3 axis, float angle);
 	void Update();

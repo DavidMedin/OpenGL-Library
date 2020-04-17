@@ -32,9 +32,9 @@ private:
 	unsigned int CreateShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
 	void _UniformEquals(int location, void* value, unsigned int type,unsigned int count);
 public:
-	Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath,bool makeDefault);
+	Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath);
 	//Should not use!
-	Shader(const char* shaderPath, bool makeDefault);
+	Shader(const char* shaderPath);
 	Shader();
 	~Shader();
 	void UseShader();

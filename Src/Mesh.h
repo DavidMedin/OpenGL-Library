@@ -79,7 +79,8 @@ private:
 	int* boneIds;
 
 public:
-	mat4 boneOffsets[256];
+	vec3* boneOffsets;
+	mat4* boneMatrices;
 	//A reference to the textures
 	Texture* texList[32];
 
@@ -98,7 +99,6 @@ public:
 	Mesh(void* mesh);
 
 	unsigned int drawMode; //must be GL_TRIANGLES,GL_POINTS, or the like
-	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
 	//untested!!!
 	void BindCustomData(VertexBuffer* data, unsigned int type, unsigned int vecX); //untested

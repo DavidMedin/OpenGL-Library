@@ -72,13 +72,8 @@ Texture::~Texture() {
 }
 
 
-void ConvertAssimpMatrix(mat4* dest,aiMatrix4x4* m) {
-	*dest = mat4(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		m->a4, m->b4, m->c4, m->d4
-		);
+void ConvertAssimpMatrix(vec3* dest,aiMatrix4x4* m) {
+	*dest = vec3(m->a4, m->b4, m->c4);
 	//return new mat4(
 	//	1.0f, 0.0f, 0.0f, 0.0f,
 	//	0.0f, 1.0f, 0.0f, 0.0f,
@@ -324,7 +319,12 @@ Mesh::Mesh(string path)
 	}
 	if (mesh->HasBones()) {
 		boneCount = mesh->mNumBones;
-		char names[256][64];
+		if (boneCount > 32) {
+			printf("WARNING - too many bones, things will be broken! (32 max, you have %d\n", boneCount);
+		}
+		boneMatrices = (mat4*)malloc(sizeof(mat4)*boneCount);
+		boneOffsets = (vec3*)malloc(sizeof(mat4)*boneCount);
+		char names[32][64];
 		for (int i = 0; i < boneCount; i++) {
 			const aiBone* bone = mesh->mBones[i];
 			unsigned int weightNum = bone->mNumWeights;
@@ -341,11 +341,12 @@ Mesh::Mesh(string path)
 			printf("bone %d : %s\n", i, names[i]);
 			//boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
 			ConvertAssimpMatrix(&boneOffsets[i], (aiMatrix4x4*)&bone->mOffsetMatrix);
-			cout << to_string<mat4>(boneOffsets[i]) << "\n";
+			boneMatrices[i] = identity<mat4>();
+			cout << to_string<vec3>(boneOffsets[i]) << "\n";
 		}
 	}
 	else {
-		printf("No bones!\n");
+		printf("	No bones!\n");
 	}
 	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int));
 	VA->BindIntVertexBuffer(boneIdBuffer);
@@ -397,35 +398,14 @@ Mesh::Mesh(string path)
 }
 
 
-void Mesh::Draw(Camera* cam)
-{
-	if (defaultShader != nullptr) defaultShader->UseShader();
-	else {
-		NewError("Default Shader is Null, create new shader with Shader(const char* vertexPath, const char* fragmentPath,true)");
-		return;
-	}
-	defaultShader->UniformMatrix("proj", cam->projectionMatrix, TYPE_PROJECTION);
-	defaultShader->UniformMatrix("view", cam->viewMat, TYPE_VIEW);
-	VA->Bind();
-	index->Bind();
-	for (int i = 0; i < 32; i++) {
-		if (texList[i] != nullptr) {
-			texList[i]->Bind(i);
 
-		}
-		else {
-			break;
-		}
-	}
-	GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT,nullptr));
-}
 void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
 	if (boneCount > 0) {
-		shad->UniformEquals("bones", GL_FLOAT_MAT4, boneOffsets,32);
+		shad->UniformEquals("bones", GL_FLOAT_MAT4, boneMatrices,32);
 	}
 	VA->Bind();
 	index->Bind();

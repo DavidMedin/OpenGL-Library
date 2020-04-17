@@ -29,7 +29,7 @@ int main(int argv, char* argc[]) {
 
 	int renderSwitch = 0;
 
-	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL, true);
+	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL);
 
 
 	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
@@ -57,8 +57,11 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
-		if (ImGui::Button("Rotate")) {
-			skull->mesh->boneOffsets[0]= glm::rotate(skull->mesh->boneOffsets[0], radians(5.0f), vec3(1, 0, 0));
+		if (ImGui::Button("Rotate First Bone")) {
+			skull->mesh->boneMatrices[0] = glm::rotate(skull->mesh->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
+		}
+		if (ImGui::Button("Rotate Second Bone")) {
+			skull->mesh->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->boneMatrices[1],skull->mesh->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->boneOffsets[1] * vec3(-1, -1, -1));
 		}
 		UpdateNodes();
 

@@ -2,7 +2,6 @@
 #include "Shader.h"
 #define GRAPHICSLIBRARY_EXPORTS 1
 using namespace std;
-Shader* defaultShader = nullptr;
 
 
 Shader::Shader() {
@@ -145,7 +144,7 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 }
 
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath, bool makeDefault) {
+Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geomPath) {
 	vertexContent = ReadShader(vertexPath);
 	fragmentContent = ReadShader(fragmentPath);
 	if (geomPath != nullptr) { 
@@ -156,12 +155,11 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath,const char* geom
 	{
 		shader_Program = CreateShaderProgram(vertexContent.c_str(),fragmentContent.c_str(),NULL);
 	}
-	if (makeDefault) defaultShader = this;
 	GLCall(glUseProgram(shader_Program));
 	
 }
 
-Shader::Shader(const char* shaderPath, bool makeDefault) {
+Shader::Shader(const char* shaderPath) {
 	//read and find identifiers
 	// -> @vertex,@fragment,@geometry
 	//add to flag var
@@ -223,7 +221,6 @@ Shader::Shader(const char* shaderPath, bool makeDefault) {
 	if (geometry_shader != NULL) {
 		GLCall(glDeleteShader(geometry_shader));
 	}
-	if (makeDefault) defaultShader = this;
 
 	GLCall(glUseProgram(shader_Program));
 }
