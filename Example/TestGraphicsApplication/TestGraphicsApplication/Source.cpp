@@ -10,15 +10,13 @@ int main(int argv, char* argc[]) {
 
 	glPointSize(10);
 
-	Object* skull = new Object("../Models/Skull/Skull.fbx");
+	Object* skull = new Object("../Models/Skull/BigJaw.fbx");
+	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
+
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-	glm::mat4 test = identity<mat4>();
 
-
-
-	//Dot* bone = new Dot(vec3((*skull->mesh->boneOffsets[0])[0][3], (*skull->mesh->boneOffsets[0])[1][3], (*skull->mesh->boneOffsets[0])[2][3]));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -57,11 +55,22 @@ int main(int argv, char* argc[]) {
 			ImGui::TreePop();
 		}
 		if (ImGui::Button("Rotate First Bone")) {
-			skull->mesh->skelly->boneMatrices[0] = glm::rotate(skull->mesh->skelly->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
+			//skull->mesh->skelly->boneMatrices[0] = glm::rotate(skull->mesh->skelly->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
+
+
+
+			glm::quat* tmp = firstRotate;
+			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1, 0, 0)) * *firstRotate);
+			delete tmp;
+			/*cout << glm::to_string(glm::mat4_cast(glm::normalize(*firstRotate))) << "\n";
+			glm::mat4* sacrifice = skull->modelMatrix;
+			skull->modelMatrix = new glm::mat4(*skull->modelMatrix*glm::mat4_cast(*firstRotate));
+			delete sacrifice;*/
+			skull->mesh->skelly->Rotate(0, firstRotate);
 		}
-		if (ImGui::Button("Rotate Second Bone")) {
-			skull->mesh->skelly->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->skelly->boneMatrices[1],skull->mesh->skelly->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->skelly->boneOffsets[1] * vec3(-1, -1, -1));
-		}
+		//if (ImGui::Button("Rotate Second Bone")) {
+			//skull->mesh->skelly->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->skelly->boneMatrices[1],skull->mesh->skelly->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->skelly->boneOffsets[1] * vec3(-1, -1, -1));
+		//}
 		UpdateNodes();
 
 		ImGui::End();

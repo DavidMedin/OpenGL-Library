@@ -14,19 +14,25 @@
 #include <string>
 #include <list>
 #include <iostream>
+
+extern class Skeleton;
 class BoneNode {
 private:
 public:
 	bool kill;
 
 	std::string name;
-	unsigned int index;
+
+	Skeleton* skelly;
+	int index;
+
 	std::list<BoneNode*> children;
 	BoneNode* parent;
 
 	BoneNode();
 	//recursivly goes through scene node
-	BoneNode(aiNode* node, aiMesh* mesh);
+	BoneNode(Skeleton* skelly, aiNode* node, aiMesh* mesh);
+	void Rotate(glm::quat* quat);
 };
 
 class Skeleton {
@@ -35,9 +41,12 @@ public:
 	//boneOffsets and boneMatrices are boneCount in size
 	glm::vec3* boneOffsets; //this might be a mat4
 	glm::mat4* boneMatrices;
+
 	BoneNode* rootBone;
 	unsigned int boneCount;
 
 	Skeleton();
 	Skeleton(aiNode* node, aiMesh* mesh);
+	void Rotate(unsigned int index, glm::quat* quat);
+	BoneNode* Search(BoneNode* node, unsigned int index);
 };

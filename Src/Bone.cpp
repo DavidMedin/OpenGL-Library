@@ -1,5 +1,8 @@
 #include "Bone.h"
 
+#define GETMATRIX(i) skelly->boneMatrices[i->index]
+#define GETOFFSET(i) skelly->boneOffsets[i->index]
+
 void ConvertAssimpMatrix(glm::vec3* dest, aiMatrix4x4* m) {
 	*dest = glm::vec3(m->a4, m->b4, m->c4);
 	//return new mat4(
@@ -21,13 +24,15 @@ BoneNode::BoneNode()
 	parent = nullptr;
 }
 
-BoneNode::BoneNode(aiNode* node,aiMesh* mesh)
+BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 {
 	//node should be the root scene node
 	//looks for a match for any of the given names
 	kill = false;
 	parent = nullptr;
-	index = NULL;
+	index = -1;
+
+	this->skelly = skelly;
 	bool hasBone=false;
 	for (int i = 0; i < mesh->mNumBones; i++) {
 		name = node->mName.C_Str();
@@ -39,7 +44,7 @@ BoneNode::BoneNode(aiNode* node,aiMesh* mesh)
 	}
 	bool hasGoodBone = false;
 	for (int i = 0; i < node->mNumChildren; i++) {
-		BoneNode* child = new BoneNode(node->mChildren[i], mesh);
+		BoneNode* child = new BoneNode(skelly,node->mChildren[i], mesh);
 		if (child->kill != true) {//won't be null if has bones and stuff
 			hasGoodBone = true;
 			children.push_back(child);
@@ -54,6 +59,21 @@ BoneNode::BoneNode(aiNode* node,aiMesh* mesh)
 	}
 	kill = true;
 }
+
+void BoneNode::Rotate(glm::quat* quat) {
+	if (index != -1) {
+		glm::mat4 tmpParent = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
+		GETMATRIX(this) = tmpParent * glm::translate(glm::identity<glm::mat4>(),GETOFFSET(this)*glm::vec3(-1,-1,-1)) * glm::mat4_cast(*quat) * glm::translate(glm::identity<glm::mat4>(),GETOFFSET(this));
+
+		for (BoneNode* child : children) {
+			glm::quat* tmp = new glm::quat(glm::identity<glm::quat>());
+			child->Rotate(tmp);
+			delete tmp;
+		}
+	}
+	else printf("This node isn't a bone! (index: %u)\n",index);
+}
+
 
 Skeleton::Skeleton()
 {
@@ -77,5 +97,28 @@ Skeleton::Skeleton(aiNode* node, aiMesh* mesh)
 		boneMatrices[i] = glm::identity<glm::mat4>();
 	}
 
-	rootBone = new BoneNode(node, mesh);
+	rootBone = new BoneNode(this,node, mesh);
+}
+
+void Skeleton::Rotate(unsigned int index, glm::quat* quat)
+{
+	BoneNode* child = Search(rootBone, index);
+	if (child != nullptr) {
+		child->Rotate(quat);
+	}
+	else printf("There is no bone of index %u in this skeleton!\n", index);
+}
+BoneNode* Skeleton::Search(BoneNode* node,unsigned int index) {
+	if (node->index == index) { //this is the correct node
+		return node;
+	}
+	else {
+		for (BoneNode* child : node->children) { // check children for correct node
+			BoneNode* rez = Search(child, index);//  check if this child is good
+			if (rez != nullptr) {
+				return rez;
+			}
+		}
+		return nullptr; // if fail return nullptr
+	}
 }
