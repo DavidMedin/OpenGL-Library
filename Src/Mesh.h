@@ -22,6 +22,7 @@ using namespace glm;
 #include <vector>
 #include "Camera.h"
 #include <Bone.h>
+
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
 
@@ -80,8 +81,8 @@ private:
 	int* boneIds;
 
 public:
-	vec3* boneOffsets;
-	mat4* boneMatrices;
+	Skeleton* skelly;
+
 	//A reference to the textures
 	Texture* texList[32];
 

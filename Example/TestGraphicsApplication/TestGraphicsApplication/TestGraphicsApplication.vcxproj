@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\..\Libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\..\Src\Bone.cpp" />
     <ClCompile Include="..\..\..\Src\Camera.cpp" />
     <ClCompile Include="..\..\..\Src\Error.cpp" />
     <ClCompile Include="..\..\..\Src\GlCall.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="..\..\..\Libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\..\Src\Bone.h" />
     <ClInclude Include="..\..\..\Src\Camera.h" />
     <ClInclude Include="..\..\..\Src\Error.h" />
     <ClInclude Include="..\..\..\Src\GlCall.h" />

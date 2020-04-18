@@ -317,14 +317,12 @@ Mesh::Mesh(string path)
 	for (int i = 0; i < pointCount; i++) {
 		boneIds[i] = -1;
 	}
+	skelly = nullptr;
 	if (mesh->HasBones()) {
 		boneCount = mesh->mNumBones;
 		if (boneCount > 32) {
 			printf("WARNING - too many bones, things will be broken! (32 max, you have %d\n", boneCount);
 		}
-		boneMatrices = (mat4*)malloc(sizeof(mat4)*boneCount);
-		boneOffsets = (vec3*)malloc(sizeof(mat4)*boneCount);
-		char names[32][64];
 		for (int i = 0; i < boneCount; i++) {
 			const aiBone* bone = mesh->mBones[i];
 			unsigned int weightNum = bone->mNumWeights;
@@ -335,15 +333,9 @@ Mesh::Mesh(string path)
 					boneIds[vertexId] = i; // index through points to get the only bone it is affected by.
 					//because of this boneIds will be spotty
 				}
-
 			}
-			strcpy_s(names[i], bone->mName.data);
-			printf("bone %d : %s\n", i, names[i]);
-			//boneOffsets[i] = ConvertAssimpMatrix(bone->mOffsetMatrix);
-			ConvertAssimpMatrix(&boneOffsets[i], (aiMatrix4x4*)&bone->mOffsetMatrix);
-			boneMatrices[i] = identity<mat4>();
-			cout << to_string<vec3>(boneOffsets[i]) << "\n";
 		}
+		skelly = new Skeleton((aiNode*)scene->mRootNode, (aiMesh*)mesh);
 	}
 	else {
 		printf("	No bones!\n");
@@ -405,7 +397,7 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
 	if (boneCount > 0) {
-		shad->UniformEquals("bones", GL_FLOAT_MAT4, boneMatrices,32);
+		shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,32);
 	}
 	VA->Bind();
 	index->Bind();

@@ -14,7 +14,6 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-
 	glm::mat4 test = identity<mat4>();
 
 
@@ -58,10 +57,10 @@ int main(int argv, char* argc[]) {
 			ImGui::TreePop();
 		}
 		if (ImGui::Button("Rotate First Bone")) {
-			skull->mesh->boneMatrices[0] = glm::rotate(skull->mesh->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
+			skull->mesh->skelly->boneMatrices[0] = glm::rotate(skull->mesh->skelly->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
 		}
 		if (ImGui::Button("Rotate Second Bone")) {
-			skull->mesh->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->boneMatrices[1],skull->mesh->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->boneOffsets[1] * vec3(-1, -1, -1));
+			skull->mesh->skelly->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->skelly->boneMatrices[1],skull->mesh->skelly->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->skelly->boneOffsets[1] * vec3(-1, -1, -1));
 		}
 		UpdateNodes();
 
