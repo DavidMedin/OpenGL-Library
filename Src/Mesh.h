@@ -21,6 +21,7 @@ using namespace glm;
 #include "Error.h"
 #include <vector>
 #include "Camera.h"
+#include <Bone.h>
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
 

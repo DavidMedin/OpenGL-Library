@@ -72,15 +72,15 @@ Texture::~Texture() {
 }
 
 
-void ConvertAssimpMatrix(vec3* dest,aiMatrix4x4* m) {
-	*dest = vec3(m->a4, m->b4, m->c4);
-	//return new mat4(
-	//	1.0f, 0.0f, 0.0f, 0.0f,
-	//	0.0f, 1.0f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 1.0f, 0.0f,
-	//	m.a4, m.b4, m.c4, m.d4
-	//);
-}
+//void ConvertAssimpMatrix(vec3* dest,aiMatrix4x4* m) {
+//	*dest = vec3(m->a4, m->b4, m->c4);
+//	//return new mat4(
+//	//	1.0f, 0.0f, 0.0f, 0.0f,
+//	//	0.0f, 1.0f, 0.0f, 0.0f,
+//	//	0.0f, 0.0f, 1.0f, 0.0f,
+//	//	m.a4, m.b4, m.c4, m.d4
+//	//);
+//}
 
 
 Mesh::Mesh(void* mesh) {
