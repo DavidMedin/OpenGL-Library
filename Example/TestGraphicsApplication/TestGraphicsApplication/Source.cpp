@@ -16,7 +16,8 @@ int main(int argv, char* argc[]) {
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
 	plane->Translate(vec3(0, -.1f, 0));
 
-
+	int index = 0;
+	Dot* dot = new Dot(vec3(skull->mesh->skelly->boneMatrices[index][0][3], skull->mesh->skelly->boneMatrices[index][1][3], skull->mesh->skelly->boneMatrices[index][2][3]));
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -33,6 +34,8 @@ int main(int argv, char* argc[]) {
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 
+
+	float tick = 0;
 	while (!ShouldCloseWindow()) {
 		float dt = GetDeltaTime();
 		ClearWindow();
@@ -55,22 +58,16 @@ int main(int argv, char* argc[]) {
 			ImGui::TreePop();
 		}
 		if (ImGui::Button("Rotate First Bone")) {
-			//skull->mesh->skelly->boneMatrices[0] = glm::rotate(skull->mesh->skelly->boneMatrices[0], radians(5.0f), vec3(1, 0, 0));
-
-
-
 			glm::quat* tmp = firstRotate;
 			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1, 0, 0)) * *firstRotate);
-			delete tmp;
-			/*cout << glm::to_string(glm::mat4_cast(glm::normalize(*firstRotate))) << "\n";
-			glm::mat4* sacrifice = skull->modelMatrix;
-			skull->modelMatrix = new glm::mat4(*skull->modelMatrix*glm::mat4_cast(*firstRotate));
-			delete sacrifice;*/
 			skull->mesh->skelly->Rotate(0, firstRotate);
+			dot->translate = vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
 		}
-		//if (ImGui::Button("Rotate Second Bone")) {
-			//skull->mesh->skelly->boneMatrices[1] = translate(glm::rotate(translate(skull->mesh->skelly->boneMatrices[1],skull->mesh->skelly->boneOffsets[1]), radians(10.0f), vec3(1, 0, 0)), skull->mesh->skelly->boneOffsets[1] * vec3(-1, -1, -1));
-		//}
+		if (ImGui::InputInt("DotIndex", &index)) {
+			dot->translate = vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
+			dot->UpdateModelMatrix();
+		}
+		ImGui::SliderFloat("frame",&tick, 0, 10);
 		UpdateNodes();
 
 		ImGui::End();
@@ -113,9 +110,11 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
+		skull->mesh->skelly->Animate(double(tick));
+
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
-		//bone->Draw(cam);
+		dot->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		

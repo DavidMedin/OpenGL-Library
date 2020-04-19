@@ -3,7 +3,6 @@
 #include <assImp/scene.h>
 #include <assimp/postprocess.h>
 
-
 //glm
 #include <glm.hpp>
 #include <ext.hpp>
@@ -15,7 +14,7 @@
 #include <list>
 #include <iostream>
 
-extern class Skeleton;
+class Skeleton;
 class BoneNode {
 private:
 public:
@@ -29,10 +28,24 @@ public:
 	std::list<BoneNode*> children;
 	BoneNode* parent;
 
+	//will need a new set of these for each animation
+	glm::vec3* posKeys;
+	double* posKeyTimes;
+	unsigned int posKeyNum;
+
+	glm::quat* rotKeys;
+	double* rotKeyTimes;
+	unsigned int rotKeyNum;
+
+	glm::vec3* scaKeys;
+	double* scaKeyTimes;
+	unsigned int scaKeyNum;
+
 	BoneNode();
 	//recursivly goes through scene node
 	BoneNode(Skeleton* skelly, aiNode* node, aiMesh* mesh);
 	void Rotate(glm::quat* quat);
+	void Animate(double tick,glm::mat4* parMat);
 };
 
 class Skeleton {
@@ -45,8 +58,16 @@ public:
 	BoneNode* rootBone;
 	unsigned int boneCount;
 
+	
+
 	Skeleton();
-	Skeleton(aiNode* node, aiMesh* mesh);
+	Skeleton(aiNode* node, aiMesh* mesh, aiScene* scene);
+	
 	void Rotate(unsigned int index, glm::quat* quat);
-	BoneNode* Search(BoneNode* node, unsigned int index);
+
+	void Animate(double tick);
+
+	//searches
+	BoneNode* IndexSearch(BoneNode* node, int index);
+	BoneNode* NameSearch(BoneNode* node, std::string name);
 };

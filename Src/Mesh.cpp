@@ -314,7 +314,7 @@ Mesh::Mesh(string path)
 	this->textureUVs = UVs;
 
 	boneIds = (int*)malloc(pointCount * sizeof(int));
-	for (int i = 0; i < pointCount; i++) {
+	for (unsigned int i = 0; i < pointCount; i++) {
 		boneIds[i] = -1;
 	}
 	skelly = nullptr;
@@ -323,10 +323,10 @@ Mesh::Mesh(string path)
 		if (boneCount > 32) {
 			printf("WARNING - too many bones, things will be broken! (32 max, you have %d\n", boneCount);
 		}
-		for (int i = 0; i < boneCount; i++) {
+		for (unsigned int i = 0; i < boneCount; i++) {
 			const aiBone* bone = mesh->mBones[i];
 			unsigned int weightNum = bone->mNumWeights;
-			for (int u = 0; u < weightNum; u++) {
+			for (unsigned int u = 0; u < weightNum; u++) {
 				aiVertexWeight weight = bone->mWeights[u];
 				unsigned int vertexId = weight.mVertexId;
 				if (weight.mWeight >= 0.3) {
@@ -335,7 +335,7 @@ Mesh::Mesh(string path)
 				}
 			}
 		}
-		skelly = new Skeleton((aiNode*)scene->mRootNode, (aiMesh*)mesh);
+		skelly = new Skeleton((aiNode*)scene->mRootNode, (aiMesh*)mesh,(aiScene*)scene);
 	}
 	else {
 		printf("	No bones!\n");
