@@ -52,7 +52,7 @@ class Skeleton {
 private:
 public:
 	//boneOffsets and boneMatrices are boneCount in size
-	glm::vec3* boneOffsets; //this might be a mat4
+	glm::mat4* boneOffsets; //this might be a mat4
 	glm::mat4* boneMatrices;
 
 	BoneNode* rootBone;

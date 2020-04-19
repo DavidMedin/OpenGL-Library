@@ -3,14 +3,15 @@
 #define GETMATRIX(i) skelly->boneMatrices[i->index]
 #define GETOFFSET(i) skelly->boneOffsets[i->index]
 
-void ConvertAssimpMatrix(glm::vec3* dest, aiMatrix4x4* m) {
-	*dest = glm::vec3(m->a4, m->b4, m->c4);
-	//return new mat4(
-	//	1.0f, 0.0f, 0.0f, 0.0f,
-	//	0.0f, 1.0f, 0.0f, 0.0f,
-	//	0.0f, 0.0f, 1.0f, 0.0f,
-	//	m.a4, m.b4, m.c4, m.d4
-	//);
+void ConvertAssimpMatrix(glm::mat4* dest, aiMatrix4x4* m) {
+	//*dest = glm::vec3(m->a4, m->b4, m->c4);
+	aiMatrix4x4 t = *m;// might need to be equal to m
+	*dest = glm::mat4(
+		t.a1, t.b1, t.c1, t.d1,
+		t.a2, t.b2, t.c2, t.d2,
+		t.a3, t.b3, t.c3, t.d3,
+		t.a4, t.b4, t.c4, t.d4
+	);
 }
 
 unsigned int boneInstances = 0;
@@ -39,6 +40,13 @@ BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 		if (strcmp(mesh->mBones[i]->mName.C_Str(), node->mName.C_Str())==0) {//this node is one of our bones!
 			hasBone = true;
 			index = i;
+			if (index != -1) {
+				glm::mat4 parentOff = parent != nullptr && parent->index != -1 ? GETOFFSET(parent) : glm::identity<glm::mat4>();
+				glm::mat4 off;
+				ConvertAssimpMatrix(&off,&mesh->mBones[index]->mOffsetMatrix);
+				GETOFFSET(this) = parentOff * off;
+				GETMATRIX(this) = glm::identity<glm::mat4>();
+			}
 			break;
 		}
 	}
@@ -53,8 +61,6 @@ BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 		else delete child;
 	}
 	if (hasBone || hasGoodBone) {// this is a good node, populate it
-		//ConvertAssimpMatrix(offset,&mesh->mBones[boneIndex]->mOffsetMatrix);
-		//matrix = new glm::mat4(glm::identity<glm::mat4>());
 		return;
 	}
 	kill = true;
@@ -63,10 +69,11 @@ BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 void BoneNode::Rotate(glm::quat* quat) {
 	if (index != -1) {
 		//if there is no parent, assume indentity matrix
-		glm::mat4 tmpParent = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
+		glm::mat4 tmpParentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
 		//apply the rotations
-		//GETMATRIX(this) = tmpParent * glm::translate(glm::identity<glm::mat4>(),GETOFFSET(this)*glm::vec3(-1,-1,-1)) * glm::mat4_cast(*quat) * glm::translate(glm::identity<glm::mat4>(),GETOFFSET(this));
-		GETMATRIX(this) = tmpParent*glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this));
+		//GETMATRIX(this) = (GETOFFSET(this)*tmpParentOff) * glm::inverse(GETOFFSET(this)*tmpParentOff) * tmpParentMat;
+		GETMATRIX(this) = tmpParentMat * glm::inverse(GETOFFSET(this)) * glm::mat4_cast(*quat) * (GETOFFSET(this));
+		//GETMATRIX(this) = glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this));
 
 		for (BoneNode* child : children) {
 			glm::quat* tmp = new glm::quat(glm::identity<glm::quat>());
@@ -96,8 +103,8 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		double m = -1 / (posKeyTimes[beforeKey] - posKeyTimes[afterKey]);
 		double weight = m * tick-posKeyTimes[beforeKey];
 		delete translate;
-		//translate = new glm::vec3(glm::mix(posKeys[beforeKey], posKeys[afterKey],weight));
-		translate = new glm::vec3(posKeys[beforeKey]);
+		translate = new glm::vec3(glm::mix(posKeys[beforeKey], posKeys[afterKey],weight));
+		//translate = new glm::vec3(posKeys[beforeKey]);
 	}
 
 	glm::vec3* scale = new glm::vec3(0);
@@ -140,12 +147,13 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		glm::mat4 trans = glm::translate(glm::identity<glm::mat4>(), *translate);
 		glm::mat4 sca = glm::scale(glm::identity<glm::mat4>(), *scale);
 		glm::mat4 rot = glm::mat4_cast(*rotation);
-		glm::mat4* transform = new glm::mat4(trans*rot*sca);
+		glm::mat4* transform = new glm::mat4(sca*trans*rot);
+		
 		glm::mat4 parentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
 
 		delete childMat;
-		childMat = new glm::mat4(glm::translate(*transform, GETOFFSET(this)));
-		GETMATRIX(this) = parentMat */* glm::inverse(glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this))) **/ *transform * glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this));
+		childMat = new glm::mat4(*transform * *parMat);
+		GETMATRIX(this) = *parMat * *transform* (GETOFFSET(this));
 		delete transform;
 	}
 
@@ -178,13 +186,13 @@ Skeleton::Skeleton(aiNode* node, aiMesh* mesh, aiScene* scene)
 	}
 	//allocate memory
 	boneMatrices = (glm::mat4*)malloc(sizeof(glm::mat4) * boneCount);
-	boneOffsets = (glm::vec3*)malloc(sizeof(glm::vec3) * boneCount);
+	boneOffsets = (glm::mat4*)malloc(sizeof(glm::mat4) * boneCount);
 	//get where the bones are
-	for (unsigned int i = 0; i < boneCount; i++) {
-		const aiBone* bone = mesh->mBones[i];
-		ConvertAssimpMatrix(&boneOffsets[i], (aiMatrix4x4*)&bone->mOffsetMatrix);
-		boneMatrices[i] = glm::identity<glm::mat4>();
-	}
+	//for (unsigned int i = 0; i < boneCount; i++) {
+	//	const aiBone* bone = mesh->mBones[i];
+	//	ConvertAssimpMatrix(&boneOffsets[i], (aiMatrix4x4*)&bone->mOffsetMatrix);
+	//	boneMatrices[i] = glm::identity<glm::mat4>();
+	//}
 
 	// create out bones
 	rootBone = new BoneNode(this,node, mesh);

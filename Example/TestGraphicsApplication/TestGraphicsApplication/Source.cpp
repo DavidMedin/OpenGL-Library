@@ -17,7 +17,10 @@ int main(int argv, char* argc[]) {
 	plane->Translate(vec3(0, -.1f, 0));
 
 	int index = 0;
-	Dot* dot = new Dot(vec3(skull->mesh->skelly->boneMatrices[index][0][3], skull->mesh->skelly->boneMatrices[index][1][3], skull->mesh->skelly->boneMatrices[index][2][3]));
+	Dot* dot = new Dot(glm::vec3((skull->mesh->skelly->boneOffsets[index][0][3]), (skull->mesh->skelly->boneOffsets[index][1][3]), (skull->mesh->skelly->boneOffsets[index][2][3])));
+
+	Dot* zero = new Dot(vec3(0, 0, 0));
+	zero->color = vec3(1, 0, 0);
 
 	Light* mainLight = new Light(vec3(1,1,1),.25);
 	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
@@ -57,18 +60,18 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
-		vec3 boi = vec3(-1,-1,-1)*vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
+		vec3 boi = glm::vec3((-skull->mesh->skelly->boneOffsets[index][3][0]), (-skull->mesh->skelly->boneOffsets[index][3][1]), (-skull->mesh->skelly->boneOffsets[index][3][2]));
 		if (ImGui::Button("Rotate First Bone")) {
 			glm::quat* tmp = firstRotate;
-			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1, 0, 0)) * *firstRotate);
-			skull->mesh->skelly->Rotate(0, firstRotate);
+			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1,0,0)) * *firstRotate);
+			skull->mesh->skelly->Rotate(index, firstRotate);
 			dot->translate = boi;
 		}
 		if (ImGui::InputInt("DotIndex", &index)) {
 			dot->translate = boi;
 			dot->UpdateModelMatrix();
 		}
-		ImGui::SliderFloat("frame",&tick, 0, 10);
+		ImGui::SliderFloat("frame",&tick, 0, 5);
 		UpdateNodes();
 
 		ImGui::End();
@@ -116,6 +119,7 @@ int main(int argv, char* argc[]) {
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
 		dot->Draw(cam);
+		zero->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		
