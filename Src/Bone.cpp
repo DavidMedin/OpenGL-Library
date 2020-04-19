@@ -96,7 +96,8 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		double m = -1 / (posKeyTimes[beforeKey] - posKeyTimes[afterKey]);
 		double weight = m * tick-posKeyTimes[beforeKey];
 		delete translate;
-		translate = new glm::vec3(glm::mix(posKeys[beforeKey], posKeys[afterKey],weight));
+		//translate = new glm::vec3(glm::mix(posKeys[beforeKey], posKeys[afterKey],weight));
+		translate = new glm::vec3(posKeys[beforeKey]);
 	}
 
 	glm::vec3* scale = new glm::vec3(0);
@@ -136,15 +137,15 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 	}
 	glm::mat4* childMat = new glm::mat4(glm::identity<glm::mat4>());
 	if (index != -1) {
-		//glm::mat4* transform = new glm::mat4(glm::translate(glm::identity<glm::mat4>(),*translate));
-		glm::mat4* transform = new glm::mat4(glm::scale(glm::translate(glm::identity<glm::mat4>(), *translate), *scale) * glm::mat4_cast(*rotation));
+		glm::mat4 trans = glm::translate(glm::identity<glm::mat4>(), *translate);
+		glm::mat4 sca = glm::scale(glm::identity<glm::mat4>(), *scale);
+		glm::mat4 rot = glm::mat4_cast(*rotation);
+		glm::mat4* transform = new glm::mat4(trans*rot*sca);
 		glm::mat4 parentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
 
 		delete childMat;
 		childMat = new glm::mat4(glm::translate(*transform, GETOFFSET(this)));
-		//GETMATRIX(this) = glm::translate(*transform,GETOFFSET(this));
-		//GETMATRIX(this) = parentMat * glm::inverse(glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this)));
-		GETMATRIX(this) = parentMat * *transform* glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this));
+		GETMATRIX(this) = parentMat */* glm::inverse(glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this))) **/ *transform * glm::translate(glm::identity<glm::mat4>(), GETOFFSET(this));
 		delete transform;
 	}
 
@@ -216,26 +217,26 @@ Skeleton::Skeleton(aiNode* node, aiMesh* mesh, aiScene* scene)
 			for (unsigned int p = 0; p < node->posKeyNum; p++) {
 				aiVectorKey key = chan->mPositionKeys[p];
 				aiVector3D vec = key.mValue;
-				node->posKeys[p][0] = vec[0];
-				node->posKeys[p][1] = vec[1];
-				node->posKeys[p][2] = vec[2];
+				node->posKeys[p].x = vec.x;
+				node->posKeys[p].y = vec.y;
+				node->posKeys[p].z = vec.z;
 				node->posKeyTimes[p] = key.mTime;
 			}
 			for (unsigned int r = 0; r < node->rotKeyNum; r++) {
 				aiQuatKey key = chan->mRotationKeys[r];
 				aiQuaternion quat = key.mValue;
-				node->rotKeys[r][0] = quat.x;
-				node->rotKeys[r][1] = quat.y;
-				node->rotKeys[r][2] = quat.z;
-				node->rotKeys[r][3] = quat.w;
+				node->rotKeys[r].x = quat.x;
+				node->rotKeys[r].y = quat.y;
+				node->rotKeys[r].z = quat.z;
+				node->rotKeys[r].w = quat.w;
 				node->rotKeyTimes[r] = key.mTime;
 			}
 			for (unsigned int s = 0; s < node->scaKeyNum; s++) {
 				aiVectorKey key = chan->mScalingKeys[s];
 				aiVector3D vec = key.mValue;
-				node->scaKeys[s][0] = vec[0];
-				node->scaKeys[s][1] = vec[1];
-				node->scaKeys[s][2] = vec[2];
+				node->scaKeys[s].x = vec.x;
+				node->scaKeys[s].y = vec.y;
+				node->scaKeys[s].z = vec.z;
 				node->scaKeyTimes[s] = key.mTime;
 			}
 		}

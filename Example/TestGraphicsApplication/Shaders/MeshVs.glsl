@@ -26,7 +26,7 @@ void main() {
 	v_frag.texCoords = texCoords;
 	v_frag.fragLoc = model * vec4(vp,1);
 
-	if(boneId!=2){
+	if(boneId!=0){
 		v_frag.idColor = vec3(1,0,0);
 	}else{
 		v_frag.idColor = vec3(0,1,1);

@@ -57,14 +57,15 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
+		vec3 boi = vec3(-1,-1,-1)*vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
 		if (ImGui::Button("Rotate First Bone")) {
 			glm::quat* tmp = firstRotate;
 			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1, 0, 0)) * *firstRotate);
 			skull->mesh->skelly->Rotate(0, firstRotate);
-			dot->translate = vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
+			dot->translate = boi;
 		}
 		if (ImGui::InputInt("DotIndex", &index)) {
-			dot->translate = vec3(skull->mesh->skelly->boneOffsets[index][0], skull->mesh->skelly->boneOffsets[index][1], skull->mesh->skelly->boneOffsets[index][2]);
+			dot->translate = boi;
 			dot->UpdateModelMatrix();
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 10);
