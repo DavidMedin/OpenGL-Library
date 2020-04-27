@@ -12,7 +12,7 @@ public:
 	void AddChild(Node* child);
 	std::list<Node*> children;
 	Node* parent;
-	string name;
+	std::string name;
 	virtual void Update() = 0;
 };
 
@@ -28,12 +28,12 @@ public:
 	glm::quat* orien;
 	Mesh* mesh;
 	Object();
-	Object(string path);
-	Object(string path, Node* parent);
+	Object(std::string path);
+	Object(std::string path, Node* parent);
 	//will want to add a variadic function to take in as many shaders as mesh objects
 	void Draw(Shader* shad,Camera* cam);
-	void Translate(vec3 vector);
-	void Rotate(vec3 axis, float angle);
+	void Translate(glm::vec3 vector);
+	void Rotate(glm::vec3 axis, float angle);
 	void Update();
 	void ImGuiUpdate();
 	void UpdateModelMatrix();
@@ -43,11 +43,11 @@ class Light : Node {
 private:
 
 public:
-	vec3 translate;
-	vec3 color;
+	glm::vec3 translate;
+	glm::vec3 color;
 	float intensity;
 
-	Light(vec3 color, float intensity);
+	Light(glm::vec3 color, float intensity);
 	void Update();
 	void ImGuiUpdate();
 };
@@ -56,11 +56,11 @@ class MetaLine :public Line,public Node {
 private:
 	float* lastEdit;
 public:
-	vec3 translate;
-	vec3 scale;
-	mat4 modelMatrix;
+	glm::vec3 translate;
+	glm::vec3 scale;
+	glm::mat4 modelMatrix;
 	MetaLine();
-	MetaLine(vec3 point1, vec3 point2);
+	MetaLine(glm::vec3 point1, glm::vec3 point2);
 	void Draw(Camera* cam);
 	void Draw(Shader* shad, Camera* cam);
 	void Update();
@@ -74,13 +74,13 @@ private:
 public:
 	bool depthTest;
 
-	vec3 translate;
-	vec3 color;
-	mat4 modelMatrix;
-	string name;
+	glm::vec3 translate;
+	glm::vec3 color;
+	glm::mat4 modelMatrix;
+	std::string name;
 	Mesh* mesh;
 	Dot();
-	Dot(vec3 pos);
+	Dot(glm::vec3 pos);
 	void Update();
 	void ImGuiUpdate();
 	void UpdateModelMatrix();

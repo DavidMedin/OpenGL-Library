@@ -7,7 +7,6 @@
 #include <matrix.hpp>
 #include <ext.hpp>
 #include <GL/glew.h>
-using namespace glm;
 
 
 class  Camera {
@@ -16,38 +15,38 @@ private:
 	double nearRange, farRange;
 
 public:
-	mat4* transform;
-	quat* orien;
+	glm::mat4* transform;
+	glm::quat* orien;
 	
-	mat4* viewMat;
-	mat4* projectionMatrix;
+	glm::mat4* viewMat;
+	glm::mat4* projectionMatrix;
 
 
-	Camera(vec3* pos);
-	Camera(vec3 pos);
+	Camera(glm::vec3* pos);
+	Camera(glm::vec3 pos);
 	~Camera();
 
-	void Translate(const vec3& offset);
-	void Translate(vec3* offset);
-	void Rotate(float angle,const vec3& axis);
-	void Rotate(float angle,vec3* axis);
+	void Translate(const glm::vec3& offset);
+	void Translate(glm::vec3* offset);
+	void Rotate(float angle,const glm::vec3& axis);
+	void Rotate(float angle,glm::vec3* axis);
 	void UpdateViewMatrix();
-	void UpdateViewMatrix(mat4& rotation);
+	void UpdateViewMatrix(glm::mat4& rotation);
 	void PrintTransform();
-	vec3 GetRightAxis();
+	glm::vec3 GetRightAxis();
 	//might not work
-	vec3 GetForwardAxis();
+	glm::vec3 GetForwardAxis();
 	//might not work
-	vec3 GetUpAxis();
+	glm::vec3 GetUpAxis();
 	float GetX();
 	float GetY();
 	float GetZ();
 
 	void RecalculateProjection();
 	void NewProjection(double fov, double nearRange, double farRange);
-	vec3 GetTranslateVec();
+	glm::vec3 GetTranslateVec();
 };
 
 //GRAPHICSLIBRARY_API mat4* GetCurrentProjection();
 //GRAPHICSLIBRARY_API void SetCurrentProjection(mat4* proj);
- list<Camera*>* GetCameraList();
+ std::list<Camera*>* GetCameraList();

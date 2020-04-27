@@ -15,7 +15,7 @@ static void glfw_error_callback(int error, const char* description)
 void WindowSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glfwSetWindowSize(window, width, height);
-	list<Camera*>* camList = GetCameraList();
+	std::list<Camera*>* camList = GetCameraList();
 	/*for (list<Camera*>::iterator i = camList->begin(); i != camList->end(); i++) {
 		i._Ptr->_Myval->RecalculateProjection();
 	}*/
@@ -44,7 +44,7 @@ void GraphicsEnable(unsigned int what) {
 			break;
 		}
 		default:{
-			cout << what << "is not a valid enable\n";
+			std::cout << what << "is not a valid enable\n";
 		}
 	}
 }
@@ -58,14 +58,14 @@ void GraphicsDisable(unsigned int what)
 		break;
 	}
 	default: {
-		cout << what << "is not a valid enable\n";
+		std::cout << what << "is not a valid enable\n";
 	}
 	}
 }
 
 
 //------------------------------
-int init(int width, int height, string name) {
+int init(int width, int height, std::string name) {
 	glfwSetErrorCallback(glfw_error_callback);
 
 	if (!glfwInit()) {
@@ -74,8 +74,8 @@ int init(int width, int height, string name) {
 	}
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);

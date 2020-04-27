@@ -2,7 +2,6 @@
 #include <string>
 #include <list>
  
-using namespace std;
-extern list<string*> errorList;
-void NewError(string error);
-string PollError();
+extern std::list<std::string*> errorList;
+void NewError(std::string error);
+std::string PollError();

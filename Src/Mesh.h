@@ -11,12 +11,10 @@
 #include <ext.hpp>
 //glew
 #include <GL/glew.h>
-using namespace glm;
 
  
 #include "Maths.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
+#include "Buffer.h"
 #include "Shader.h"
 #include "Error.h"
 #include <vector>
@@ -38,10 +36,10 @@ class Transform /*: Attribute*/ {
 private:
 
 public:
-	mat4* data;
+	glm::mat4* data;
 
 	Transform();
-	Transform(mat4* transform);
+	Transform(glm::mat4* transform);
 
 };
 
@@ -72,7 +70,7 @@ private:
 	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
 	VertexArray* VA;
 	IndexBuffer* index;
-	mat4* transform;// not used in drawing
+	glm::mat4* transform;// not used in drawing
 
 	float* vertices;
 	float* normals;
@@ -94,7 +92,7 @@ public:
 	Mesh(float* data, unsigned int size);
 
 	//main mesh constructor
-	Mesh(string path);
+	Mesh(std::string path);
 
 	//must be a pointer to a aiMesh!!
 	//not recommended for the user of the Library unless you include AssiImp
@@ -115,15 +113,15 @@ private:
 	float* points;
 	float* mappedPoints;
 public:
-	vec3 color;
+	glm::vec3 color;
 	float size;
 	Line();
-	Line(vec3 point1, vec3 point2);
-	Line(vec3 point1, vec3 point2,vec3 color);
-	void SetPoint1(vec3 point);
-	void SetPoint2(vec3 point);
-	vec3 GetPoint1();
-	vec3 GetPoint2();
+	Line(glm::vec3 point1, glm::vec3 point2);
+	Line(glm::vec3 point1, glm::vec3 point2, glm::vec3 color);
+	void SetPoint1(glm::vec3 point);
+	void SetPoint2(glm::vec3 point);
+	glm::vec3 GetPoint1();
+	glm::vec3 GetPoint2();
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
 	float* OpenWriting();

@@ -148,16 +148,15 @@
     <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\..\Src\Bone.cpp" />
+    <ClCompile Include="..\..\..\Src\Buffer.cpp" />
     <ClCompile Include="..\..\..\Src\Camera.cpp" />
     <ClCompile Include="..\..\..\Src\Error.cpp" />
     <ClCompile Include="..\..\..\Src\GlCall.cpp" />
-    <ClCompile Include="..\..\..\Src\IndexBuffer.cpp" />
     <ClCompile Include="..\..\..\Src\Init.cpp" />
     <ClCompile Include="..\..\..\Src\Input.cpp" />
     <ClCompile Include="..\..\..\Src\Maths.cpp" />
     <ClCompile Include="..\..\..\Src\Mesh.cpp" />
     <ClCompile Include="..\..\..\Src\Shader.cpp" />
-    <ClCompile Include="..\..\..\Src\VertexBuffer.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
@@ -171,17 +170,16 @@
     <ClInclude Include="..\..\..\Libs\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\..\Src\Bone.h" />
+    <ClInclude Include="..\..\..\Src\Buffer.h" />
     <ClInclude Include="..\..\..\Src\Camera.h" />
     <ClInclude Include="..\..\..\Src\Error.h" />
     <ClInclude Include="..\..\..\Src\GlCall.h" />
     <ClInclude Include="..\..\..\Src\GraphicsLibrary.h" />
-    <ClInclude Include="..\..\..\Src\IndexBuffer.h" />
     <ClInclude Include="..\..\..\Src\Init.h" />
     <ClInclude Include="..\..\..\Src\Input.h" />
     <ClInclude Include="..\..\..\Src\Maths.h" />
     <ClInclude Include="..\..\..\Src\Mesh.h" />
     <ClInclude Include="..\..\..\Src\Shader.h" />
-    <ClInclude Include="..\..\..\Src\VertexBuffer.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Source.h" />
   </ItemGroup>

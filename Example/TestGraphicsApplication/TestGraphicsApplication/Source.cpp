@@ -14,29 +14,29 @@ int main(int argv, char* argc[]) {
 	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
 
 	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
-	plane->Translate(vec3(0, -.1f, 0));
+	plane->Translate(glm::vec3(0, -.1f, 0));
 
-	int index = 0;
-	Dot* dot = new Dot(glm::vec3((skull->mesh->skelly->boneOffsets[index][0][3]), (skull->mesh->skelly->boneOffsets[index][1][3]), (skull->mesh->skelly->boneOffsets[index][2][3])));
+	Dot* zero = new Dot(glm::vec3(0, 0, 0));
+	zero->color = glm::vec3(1, 0, 0);
 
-	Dot* zero = new Dot(vec3(0, 0, 0));
-	zero->color = vec3(1, 0, 0);
-
-	Light* mainLight = new Light(vec3(1,1,1),.25);
-	mainLight->translate = TranslateVec(&mainLight->translate, vec3(0, 1, .25));
-	vec3* ambientResult = new vec3(mainLight->color * mainLight->intensity);
-	vec2* lightRamp1 = new vec2(.33f,0.f);
-	vec2* lightRamp2 = new vec2(0.878f,.586f);
+	Light* mainLight = new Light(glm::vec3(1,1,1),.25);
+	mainLight->translate = TranslateVec(&mainLight->translate, glm::vec3(0, 1, .25));
+	glm::vec3* ambientResult = new glm::vec3(mainLight->color * mainLight->intensity);
+	glm::vec2* lightRamp1 = new glm::vec2(.33f,0.f);
+	glm::vec2* lightRamp2 = new glm::vec2(0.878f,.586f);
 
 	int renderSwitch = 0;
-
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL);
 
-
-	Camera* cam = new Camera(vec3(0.0f,0.0f,1.0));
+	Camera* cam = new Camera(glm::vec3(0.0f,0.0f,1.0));
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 
+	float* uniData = (float*)malloc(sizeof(float)*6 + sizeof(glm::mat4));
+	memcpy(uniData, &glm::vec3(0,1,0)[0], sizeof(float) * 3);
+	memcpy(&uniData[3], &glm::vec3(1,1,1)[0], sizeof(float) * 3);
+	memcpy(&uniData[7], &glm::identity<glm::mat4>()[0], sizeof(glm::mat4));
+	UniformBuffer* uni = new UniformBuffer({ {GL_FLOAT_VEC3,1},{GL_FLOAT_VEC3,1},{GL_FLOAT_MAT4,1} }, (void*)uniData, (unsigned int)0, true, &meshShad, 0, "Test");
 
 	float tick = 0;
 	while (!ShouldCloseWindow()) {
@@ -60,17 +60,6 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
-		vec3 boi = glm::vec3((-skull->mesh->skelly->boneOffsets[index][3][0]), (-skull->mesh->skelly->boneOffsets[index][3][1]), (-skull->mesh->skelly->boneOffsets[index][3][2]));
-		if (ImGui::Button("Rotate First Bone")) {
-			glm::quat* tmp = firstRotate;
-			firstRotate = new glm::quat(glm::angleAxis(radians(10.0f), glm::vec3(1,0,0)) * *firstRotate);
-			skull->mesh->skelly->Rotate(index, firstRotate);
-			dot->translate = boi;
-		}
-		if (ImGui::InputInt("DotIndex", &index)) {
-			dot->translate = boi;
-			dot->UpdateModelMatrix();
-		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
 		UpdateNodes();
 
@@ -85,29 +74,29 @@ int main(int argv, char* argc[]) {
 		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
-			cam->Translate(vec3(cos(-radians(cam->GetY()) + radians(90.0f)) * dt, 0.0f, -sin(-radians(cam->GetY()) + radians(90.0f)) * dt));
+			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt));
 		}
 		if (GetKey(keys::D_KEY)) {
-			cam->Translate(-vec3(cos(-radians(cam->GetY()) + radians(90.0f)) * dt, 0.0f, -sin(-radians(cam->GetY()) + radians(90.0f)) * dt));
+			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt));
 		}
 		if (GetKey(keys::W_KEY)) {
-			cam->Translate(vec3(cos(-radians(cam->GetY())) * dt, 0.0f, -sin(-radians(cam->GetY())) * dt));
+			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt));
 		}
 		if (GetKey(keys::S_KEY)) {
-			cam->Translate(-vec3(cos(-radians(cam->GetY())) * dt, 0.0f, -sin(-radians(cam->GetY())) * dt));
+			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt));
 		}
 		if (GetKey(keys::CTRL_KEY)) {
-			cam->Translate(vec3(0, -1, 0)*dt);
+			cam->Translate(glm::vec3(0, -1, 0)*dt);
 		}
 
 		if (GetKey(keys::SPACE_KEY)) {
-			cam->Translate(vec3(0, 1, 0) * dt);
+			cam->Translate(glm::vec3(0, 1, 0) * dt);
 		}
 		float x, y;
 		GetMousePos(&x, &y);
 		if (GetKey(keys::Q_KEY)) {
 			SetDisabledMouse(true);
-			cam->Rotate(10*-dt * x, vec3(0, 1, 0));
+			cam->Rotate(10*-dt * x, glm::vec3(0, 1, 0));
 			cam->Rotate(10*-dt * y, cam->GetRightAxis());
 		}
 		else {
@@ -118,16 +107,15 @@ int main(int argv, char* argc[]) {
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
-		dot->Draw(cam);
 		zero->Draw(cam);
 
 		cam->UpdateViewMatrix();
 		
 		
 		//Error Handleing
-		string error = PollError();
+		std::string error = PollError();
 		while (error != "Empty") {
-			cout << error << "\n";
+			std::cout << error << "\n";
 			error = PollError();
 		}
 	

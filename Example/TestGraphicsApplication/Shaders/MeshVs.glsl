@@ -7,6 +7,13 @@ layout(location = 3) in int boneId;
 //uniform vec3 camLoc;
 uniform mat4 proj, view, model, bones[32];
 
+layout(std140) uniform Test
+{
+	vec3 testColor;
+	vec3 testBoi;
+	mat4 testTranslate;
+};
+
 
 out vData{
 	vec3 normals;
@@ -18,7 +25,7 @@ out vData{
 
 void main() {
 	if(boneId != -1){
-		gl_Position = proj * view * model * bones[boneId] * vec4(vp,1.0);
+		gl_Position = proj * view * model * bones[boneId] * testTranslate * vec4(vp,1.0);
 	}else{
 		gl_Position = proj * view * model * vec4(vp, 1.0);
 	}
@@ -29,6 +36,6 @@ void main() {
 	if(boneId!=0){
 		v_frag.idColor = vec3(1,0,0);
 	}else{
-		v_frag.idColor = vec3(0,1,1);
+		v_frag.idColor = testColor;
 	}
 }

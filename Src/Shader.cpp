@@ -1,21 +1,20 @@
  
 #include "Shader.h"
 #define GRAPHICSLIBRARY_EXPORTS 1
-using namespace std;
 
 
 Shader::Shader() {
 	shader_Program = 0;
 }
 
-string Shader::ReadShader(const char* path) {
-	string tmp;
-	ifstream shaderFile;
-	shaderFile.open(path, ios::in);
-	string input;
+std::string Shader::ReadShader(const char* path) {
+	std::string tmp;
+	std::ifstream shaderFile;
+	shaderFile.open(path, std::ios::in);
+	std::string input;
 	while (!shaderFile.eof()) {
 		getline(shaderFile, input);
-		if (input.find("uniform") != string::npos) {
+		if (input.find("uniform") != std::string::npos) {
 
 		}
 		tmp.append(input);
@@ -60,7 +59,7 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source) {
 			}
 		}
 		printf("failed to compile %s shader: ", message);
-		cout << error << "\n";
+		std::cout << error << "\n";
 		
 		free(error);
 		GLCall(glDeleteShader(id));
@@ -92,8 +91,8 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLchar* log = (GLchar*)malloc(sizeof(GLchar) * logSize);
 		GLsizei actualSize = 0;
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
-		cout << actualSize << "\n";
-		cout << log << "\n";
+		std::cout << actualSize << "\n";
+		std::cout << log << "\n";
 		delete log;
 	}
 
@@ -105,8 +104,8 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLchar* log = (GLchar*)malloc(sizeof(GLchar)*logSize);
 		GLsizei actualSize=0;
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
-		cout << actualSize << "\n";
-		cout << log << "\n";
+		std::cout << actualSize << "\n";
+		std::cout << log << "\n";
 		delete log;
 	}
 	GLCall(glDeleteShader(vertex_shader));
@@ -123,13 +122,13 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 
 	switch (type) {
 	case GL_FLOAT_MAT4:
-		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(*(mat4*)value)));
+		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(*(glm::mat4*)value)));
 		break;
 	case GL_FLOAT_VEC3:
-		GLCall(glUniform3fv(location,count, &(*(vec3*)value)[0]));
+		GLCall(glUniform3fv(location,count, &(*(glm::vec3*)value)[0]));
 		break;
 	case GL_FLOAT_VEC2:
-		GLCall(glUniform2fv(location,count, &(*(vec3*)value)[0]));
+		GLCall(glUniform2fv(location,count, &(*(glm::vec3*)value)[0]));
 		break;
 	case GL_INT:
 		GLCall(glUniform1iv(location,count, ((int*)value)));
@@ -166,33 +165,33 @@ Shader::Shader(const char* shaderPath) {
 	char flags = 0;
 
 	//parse the file for identifiers
-	string tmp;
-	ifstream shaderFile;
-	shaderFile.open(shaderPath, ios::in);
-	string input;
+	std::string tmp;
+	std::ifstream shaderFile;
+	shaderFile.open(shaderPath, std::ios::in);
+	std::string input;
 
-	string vertexText;
-	string fragmentText;
-	string geometryText;
+	std::string vertexText;
+	std::string fragmentText;
+	std::string geometryText;
 
 	while (!shaderFile.eof()) {
 		getline(shaderFile, input);
-		if (input.find("uniform") != string::npos) {
+		if (input.find("uniform") != std::string::npos) {
 
 		}
 
-		if (input.find("@vertex") != string::npos) {//should be after the vertex shader
+		if (input.find("@vertex") != std::string::npos) {//should be after the vertex shader
 			vertexText = tmp;
 			tmp.clear();
 			//might clear VertexText
 			continue;
 		}
-		else if (input.find("@fragment") != string::npos) {
+		else if (input.find("@fragment") != std::string::npos) {
 			fragmentText = tmp;
 			tmp.clear();
 			continue;
 		}
-		else if (input.find("@geometry") != string::npos) {
+		else if (input.find("@geometry") != std::string::npos) {
 			geometryText = tmp;
 			tmp.clear();
 			continue;
@@ -234,6 +233,11 @@ void Shader::UseShader()
 	GLCall(glUseProgram(shader_Program));
 }
 
+unsigned int Shader::GetProgram()
+{
+	return shader_Program;
+}
+
 void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count)
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
@@ -267,7 +271,7 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 		sprintf_s(name, "%s[%i]", uniformName, i);
 		int loc = glGetUniformLocation(shader_Program, name);
 		if (loc == -1) {
-			cout << name << " is not a variable in your shader!\n";
+			std::cout << name << " is not a variable in your shader!\n";
 		}
 		else {
 			_UniformEquals(loc, value, type,1);
@@ -278,12 +282,12 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 // make uniform equals for arrays
 
 
-void Shader::UniformMatrix(string uniform_Name, mat4* matrix, unsigned int type) {
+void Shader::UniformMatrix(std::string uniform_Name, glm::mat4* matrix, unsigned int type) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
 	UseShader();
 	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));
 }
-void Shader::UniformVector(string uniform_Name, vec3* vec) {
+void Shader::UniformVector(std::string uniform_Name, glm::vec3* vec) {
 	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
 	UseShader();
 	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));

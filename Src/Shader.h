@@ -11,8 +11,7 @@
 #include <GLFW/glfw3.h>
 #include "GLCall.h"
  
-using namespace std;
-using namespace glm;
+
 
 #define TYPE_NULL 0
 #define TYPE_PROJECTION 1
@@ -22,12 +21,12 @@ using namespace glm;
 
 class Shader {
 private:
-	string vertexContent;
-	string fragmentContent;
-	string geometryContent; //might fail
-	unsigned int shader_Program;
+	std::string vertexContent;
+	std::string fragmentContent;
+	std::string geometryContent; //might fail
 	//list<string> inputTypes;
-	string ReadShader(const char* path);
+	unsigned int shader_Program;
+	std::string ReadShader(const char* path);
 	unsigned int CompileShader(unsigned int type, const char* source);
 	unsigned int CreateShaderProgram(const char* vertexShader, const char* fragmentShader, const char* geometryShader);
 	void _UniformEquals(int location, void* value, unsigned int type,unsigned int count);
@@ -38,14 +37,16 @@ public:
 	Shader();
 	~Shader();
 	void UseShader();
+
+	unsigned int GetProgram();
 	//Mem leak?
 	void Reload();
 	//Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 	void UniformEquals(const char* uniform_Name, unsigned int type, void* value,unsigned int count);
 	void ArrayUniformEquals(const char* uniformName, unsigned int type, void* value,unsigned int count);
 	//Don't use!
-	void UniformMatrix(string uniform_Name,mat4* matrix,unsigned int type);
+	void UniformMatrix(std::string uniform_Name,glm::mat4* matrix,unsigned int type);
 	//Don't use!
-	void UniformVector(string uniform_Name, vec3* vec);
+	void UniformVector(std::string uniform_Name, glm::vec3* vec);
 };
 extern Shader* defaultShader;

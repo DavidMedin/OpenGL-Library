@@ -109,7 +109,7 @@ Mesh::Mesh(void* mesh) {
 			return;
 		}
 	}
-	transform = new mat4(1.0f);
+	transform = new glm::mat4(1.0f);
 	vertexBuffer = new VertexBuffer(points, sizeof(float) * point_count * 3);
 	pointCount = point_count;
 	VA = new VertexArray();
@@ -211,7 +211,7 @@ Mesh::Mesh(float* data, unsigned int size)
 	textureUVs = nullptr;
 }
 
-Mesh::Mesh(string path)
+Mesh::Mesh(std::string path)
 {	
 	drawMode = GL_TRIANGLES;
 	Assimp::Importer importer;
@@ -242,7 +242,7 @@ Mesh::Mesh(string path)
 			return;
 		}
 	}
-	transform = new mat4(1.0f);
+	transform = new glm::mat4(1.0f);
 	vertexBuffer = new VertexBuffer(points,sizeof(float)*point_count*3);
 	pointCount = point_count;
 	VA = new VertexArray();
@@ -351,7 +351,7 @@ Mesh::Mesh(string path)
 	aiString textureName;
 
 	size_t lastChar = path.find_last_of("/\\")+1;
-	string pathTo = path.erase(lastChar);
+	std::string pathTo = path.erase(lastChar);
 
 	for (int i = 0; i < 32; i++) {
 		texList[i] = nullptr;
@@ -367,7 +367,7 @@ Mesh::Mesh(string path)
 			if (diffuseNum == 1) {
 			material->GetTexture(aiTextureType_DIFFUSE, i, &textureName);
 			//printf("	|-> %s\n", textureName.C_Str());
-			diffuseTexture = new Texture(DIFFUSE_SLOT,pathTo + string(textureName.C_Str()));
+			diffuseTexture = new Texture(DIFFUSE_SLOT,pathTo + std::string(textureName.C_Str()));
 			texList[DIFFUSE_SLOT] = diffuseTexture;
 			}
 			else {
@@ -427,10 +427,10 @@ void Mesh::Bind() {
 Transform::Transform()
 {
 	//type = ATTRIBUTE_TRANSFORM;
-	data = new mat4(identity<mat4>());
+	data = new glm::mat4(glm::identity<glm::mat4>());
 }
 
-Transform::Transform(mat4* transform)
+Transform::Transform(glm::mat4* transform)
 {
 	data = transform;
 	//type = ATTRIBUTE_TRANSFORM;
@@ -460,7 +460,7 @@ Transform::Transform(mat4* transform)
 		VA = new VertexArray();
 		//mappedPoints = (float*)VB->MapData();
 		VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
-		color = vec3(1, 1, 1);
+		color = glm::vec3(1, 1, 1);
 		size = 5;
 	}
 	else {
@@ -468,7 +468,7 @@ Transform::Transform(mat4* transform)
 		return;
 	}
  }
- Line::Line(vec3 point1, vec3 point2)
+ Line::Line(glm::vec3 point1, glm::vec3 point2)
  {
 	 points = (float*)malloc(sizeof(float) * 6);
 	 if (points != NULL) {
@@ -482,7 +482,7 @@ Transform::Transform(mat4* transform)
 		 VA = new VertexArray();
 		 //mappedPoints = (float*)VB->MapData();
 		 VA->BindVertexBuffer(VB, 3, GL_FLOAT, false);
-		 color = vec3(1, 1, 1);
+		 color = glm::vec3(1, 1, 1);
 		 size = 5;
 	 }
 	 else {
@@ -490,7 +490,7 @@ Transform::Transform(mat4* transform)
 		 return;
 	 }
  }
- Line::Line(vec3 point1, vec3 point2,vec3 color)
+ Line::Line(glm::vec3 point1, glm::vec3 point2,glm::vec3 color)
  {
 	points = (float*)malloc(sizeof(float) * 6);
 	if (points != NULL) {
@@ -513,7 +513,7 @@ Transform::Transform(mat4* transform)
 	}
  }
 
- void Line::SetPoint1(vec3 point)
+ void Line::SetPoint1(glm::vec3 point)
  {
 	 points[0] = point.x;
 	 points[1] = point.y;
@@ -523,7 +523,7 @@ Transform::Transform(mat4* transform)
 	 VB->UnmapData();
  }
 
- void Line::SetPoint2(vec3 point)
+ void Line::SetPoint2(glm::vec3 point)
  {
 	 points[3] = point.x;
 	 points[4] = point.y;
@@ -533,14 +533,14 @@ Transform::Transform(mat4* transform)
 	 VB->UnmapData();
  }
 
- vec3 Line::GetPoint1()
+ glm::vec3 Line::GetPoint1()
  {
-	 return vec3(points[0],points[1],points[2]);
+	 return glm::vec3(points[0],points[1],points[2]);
  }
 
- vec3 Line::GetPoint2()
+ glm::vec3 Line::GetPoint2()
  {
-	 return vec3(points[3],points[4],points[5]);
+	 return glm::vec3(points[3],points[4],points[5]);
  }
 
  void Line::Draw(Camera* cam)

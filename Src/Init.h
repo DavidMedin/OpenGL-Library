@@ -18,7 +18,6 @@
 #include "examples/imgui_impl_opengl3.h"
 void WindowSizeCallback(GLFWwindow* window, int width, int height);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-using namespace std;
  
 
 #define GRAPHICS_FLAG_CULL 1
@@ -30,7 +29,7 @@ bool  GetGraphicsFlag(int flag);
 void GraphicsEnable(unsigned int what);
 void GraphicsDisable(unsigned int what);
 
-int init(int width, int height, string name);
+int init(int width, int height, std::string name);
 void PollEvents();
 void ClearWindow();
 void DrawWindow();
