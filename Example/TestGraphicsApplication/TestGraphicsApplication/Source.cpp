@@ -32,13 +32,19 @@ int main(int argv, char* argc[]) {
 	cam->NewProjection(32, .1f, 100);
 	cam->UpdateViewMatrix();
 
-	float* uniData = (float*)malloc(sizeof(float)*6 + sizeof(glm::mat4));
-	memcpy(uniData, &glm::vec3(0,1,0)[0], sizeof(float) * 3);
-	memcpy(&uniData[3], &glm::vec3(1,1,1)[0], sizeof(float) * 3);
-	memcpy(&uniData[7], &glm::identity<glm::mat4>()[0], sizeof(glm::mat4));
-	UniformBuffer* uni = new UniformBuffer({ {GL_FLOAT_VEC3,1},{GL_FLOAT_VEC3,1},{GL_FLOAT_MAT4,1} }, (void*)uniData, (unsigned int)0, true, &meshShad, 0, "Test");
+	glm::vec3 testVec[2] = { glm::vec3(1,1,1),glm::vec3(1,0,1) };
+
+	float numberArray[2] = { -1,1 };
+	glm::vec3 notherVec = glm::vec3(1, 0, 0);
+	glm::mat4 matrix = glm::identity<glm::mat4>();
+	matrix = glm::translate(matrix, glm::vec3(0, 1, 0));
+	glm::vec4 vecs[3] = { glm::vec4(1,1,1,1),glm::vec4(1,0,0,1),glm::vec4(1,1,0,1) };
+
+	void* uniData[] = { &notherVec[0],numberArray, &matrix[0],vecs};
+	StorageBuffer* uni = new StorageBuffer({ {GL_FLOAT_VEC3,1},{GL_FLOAT,2} ,{GL_FLOAT_MAT4,1},{GL_FLOAT_VEC4,3} }, (void**)uniData, 0, &meshShad, 1, "Test");
 
 	float tick = 0;
+
 	while (!ShouldCloseWindow()) {
 		float dt = GetDeltaTime();
 		ClearWindow();

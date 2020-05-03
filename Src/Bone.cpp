@@ -92,7 +92,7 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 	if (posKeyNum != 0) {
 		int beforeKey=0;
 		int afterKey=0;
-		for (int k = 0; k < posKeyNum-1; k++) {
+		for (int k = 0; (unsigned int)k < posKeyNum-1; k++) {
 			beforeKey = k;
 			afterKey = k + 1;
 			if (posKeyTimes[afterKey] >= tick) {
@@ -111,7 +111,7 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 	if (scaKeyNum != 0) {
 		int beforeKey = 0;
 		int afterKey = 0;
-		for (int k = 0; k < scaKeyNum - 1; k++) {
+		for (int k = 0; (unsigned int)k < scaKeyNum - 1; k++) {
 			beforeKey = k;
 			afterKey = k + 1;
 			if (scaKeyTimes[afterKey] >= tick) {
@@ -129,7 +129,7 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 	if (rotKeyNum != 0) {
 		int beforeKey = 0;
 		int afterKey = 0;
-		for (int k = 0; k < rotKeyNum - 1; k++) {
+		for (int k = 0; (unsigned int)k < rotKeyNum - 1; k++) {
 			beforeKey = k;
 			afterKey = k + 1;
 			if (rotKeyTimes[afterKey] >= tick) {

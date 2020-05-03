@@ -93,7 +93,7 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
 		std::cout << actualSize << "\n";
 		std::cout << log << "\n";
-		delete log;
+		free(log);
 	}
 
 	GLCall(glValidateProgram(shader_program));
@@ -106,7 +106,7 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
 		std::cout << actualSize << "\n";
 		std::cout << log << "\n";
-		delete log;
+		free(log);
 	}
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
@@ -252,7 +252,7 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		GLint size; //sizeof the variable
 		GLenum type;
 		GLchar buffer[64]; //= (char*)malloc(sizeof(char)*64)
-		for (GLuint i = 0; i < rez; i++) {
+		for (GLuint i = 0; i < (unsigned int)rez; i++) {
 			GLCall(glGetActiveUniform(shader_Program, i, sizeof(buffer), &length, &size, &type, buffer));
 			printf("	Uniform: #%d | Type: %u | Name : %s\n", i, type, buffer);
 		}

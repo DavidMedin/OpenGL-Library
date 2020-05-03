@@ -75,7 +75,25 @@ public:
 	UniformBuffer();
 	//types = {{GL_FLOAT_MAT4,2},...}
 	//must be according to the layout specifier of the uniform buffer defined in your shader
-	UniformBuffer(std::initializer_list<unsigned int[2]> types, void* data, unsigned int bindingPoint,bool toStd140,Shader* shads[],unsigned int shadNum, std::string uniformName);
+	UniformBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint,Shader* shads[],unsigned int shadNum, std::string uniformName);
 	void Bind();
 	void UnBind();
 };
+
+class StorageBuffer {
+private:
+	unsigned int bufferId;
+	unsigned int bindingPoint;
+	char* data;
+public:
+	StorageBuffer();
+	StorageBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName);
+
+	void Bind();
+	void UnBind();
+
+	void ModifyData();
+	void RegenerateData();
+};
+
+void* ToStd140(std::initializer_list<unsigned int[2]> types, void** data,unsigned int* size);
