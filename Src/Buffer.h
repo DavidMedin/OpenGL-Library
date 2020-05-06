@@ -9,7 +9,6 @@
 #include "GlCall.h"
 #include "Shader.h"
 
-#define STD140 1
 
 class IndexBuffer {
 private:
@@ -75,7 +74,7 @@ public:
 	UniformBuffer();
 	//types = {{GL_FLOAT_MAT4,2},...}
 	//must be according to the layout specifier of the uniform buffer defined in your shader
-	UniformBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint,Shader* shads[],unsigned int shadNum, std::string uniformName);
+	UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint,Shader* shads[],unsigned int shadNum, std::string uniformName);
 	void Bind();
 	void UnBind();
 };
@@ -84,16 +83,29 @@ class StorageBuffer {
 private:
 	unsigned int bufferId;
 	unsigned int bindingPoint;
-	char* data;
+	void* data;
+	unsigned int size;
+
+	int arrayType;
 public:
 	StorageBuffer();
-	StorageBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName);
-
+	//last element type is assumed to be the variable length array type if it is an array (always include!)
+	StorageBuffer(unsigned int types[][2],unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName);
 	void Bind();
 	void UnBind();
 
-	void ModifyData();
-	void RegenerateData();
+	unsigned int GetSize();
+
+	//returns pointer to write/read from
+	void* MapData();
+	//call this to free mapped data and write data to opengl (apply it)
+	void UnMapData();
+	//call this to resize, will copy data from old data to new data (will truncate if needed) - new data is initialized to zero
+	//returns old size - use this to write to end of old data
+	//unsigned int ResizeData(unsigned int newSize);
+
+	//will rewrite the last element of the storage buffer IF IT IS AN ARRAY!!! (must be an unsized array in GLSL, check it)
+	void AdjustVarElement(unsigned int newElementNum,void* data);
 };
 
-void* ToStd140(std::initializer_list<unsigned int[2]> types, void** data,unsigned int* size);
+void* ToStd140(unsigned int types[][2],unsigned int typesNum, void** data,unsigned int* size);

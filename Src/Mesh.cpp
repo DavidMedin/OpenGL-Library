@@ -366,7 +366,7 @@ Mesh::Mesh(std::string path)
 		for (unsigned int i = 0; i < diffuseNum; i++) {
 			if (diffuseNum == 1) {
 			material->GetTexture(aiTextureType_DIFFUSE, i, &textureName);
-			//printf("	|-> %s\n", textureName.C_Str());
+			printf("	texture[%d]: %s\n",i, textureName.C_Str());
 			diffuseTexture = new Texture(DIFFUSE_SLOT,pathTo + std::string(textureName.C_Str()));
 			texList[DIFFUSE_SLOT] = diffuseTexture;
 			}

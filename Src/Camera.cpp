@@ -141,7 +141,7 @@ void Camera::NewProjection(double fov, double nearRange, double farRange) {
 	glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
 
 	double aspect = (double)width / (double)height;
-	double range = tan((double)fov) * 0.5 * nearRange;
+	double range = tan(glm::radians(fov)) * 0.5 * nearRange;
 	double Sx = (2 * nearRange) / (range * aspect + range * aspect);
 	double Sy = nearRange / range;
 	double Sz = -(farRange + nearRange) / (farRange - nearRange);

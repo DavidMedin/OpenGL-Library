@@ -13,7 +13,7 @@ int main(int argv, char* argc[]) {
 	Object* skull = new Object("../Models/Skull/BigJaw.fbx");
 	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
 
-	Object* plane = new Object("../Models/Plane/plane.dae",(Node*)skull);
+	Object* plane = new Object("../Models/Plane/plane.fbx",(Node*)skull);
 	plane->Translate(glm::vec3(0, -.1f, 0));
 
 	Dot* zero = new Dot(glm::vec3(0, 0, 0));
@@ -29,19 +29,20 @@ int main(int argv, char* argc[]) {
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL);
 
 	Camera* cam = new Camera(glm::vec3(0.0f,0.0f,1.0));
-	cam->NewProjection(32, .1f, 100);
+	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
 
-	glm::vec3 testVec[2] = { glm::vec3(1,1,1),glm::vec3(1,0,1) };
-
-	float numberArray[2] = { -1,1 };
-	glm::vec3 notherVec = glm::vec3(1, 0, 0);
+	float value = 1.0f;
+	glm::vec3 vector = glm::vec3(1, 0, 0);
 	glm::mat4 matrix = glm::identity<glm::mat4>();
-	matrix = glm::translate(matrix, glm::vec3(0, 1, 0));
-	glm::vec4 vecs[3] = { glm::vec4(1,1,1,1),glm::vec4(1,0,0,1),glm::vec4(1,1,0,1) };
+	matrix = glm::rotate(matrix, glm::radians(50.0f), glm::vec3(1, 0, 0));
+	float array[3] = { 1,2,3 };
+	bool boolie = false;
+	int integer = 69;
 
-	void* uniData[] = { &notherVec[0],numberArray, &matrix[0],vecs};
-	StorageBuffer* uni = new StorageBuffer({ {GL_FLOAT_VEC3,1},{GL_FLOAT,2} ,{GL_FLOAT_MAT4,1},{GL_FLOAT_VEC4,3} }, (void**)uniData, 0, &meshShad, 1, "Test");
+	void* uniData[] = { &vector[0],&value};
+	unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1} };
+	StorageBuffer* uni = new StorageBuffer(types,2, (void**)uniData, 0, &meshShad, 1, "Test");
 
 	float tick = 0;
 
@@ -109,7 +110,7 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		skull->mesh->skelly->Animate(double(tick));
+		//skull->mesh->skelly->Animate(double(tick));
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);

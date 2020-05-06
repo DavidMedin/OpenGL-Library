@@ -8,8 +8,8 @@ int SizeofGlEnum(int type)
 	case GL_FLOAT_VEC3: size = sizeof(glm::vec3); break;
 	case GL_FLOAT_VEC4: size = sizeof(glm::vec4); break;
 	case GL_FLOAT: size = sizeof(float); break;
-	case GL_INT: size = sizeof(int); break;
-	case GL_BOOL: size = sizeof(bool); break;
+	case GL_INT: size = sizeof(float); break;
+	case GL_BOOL: size = sizeof(float); break;
 	case GL_FLOAT_MAT4: size = sizeof(glm::vec4); break; 
 	default: printf("invalid input to 'SizeofGLEnum'!\n"); return NULL;//-----------------------------------
 	}
@@ -23,9 +23,9 @@ int GetAlignmentOf(int type) {
 	case GL_INT:
 	case GL_BOOL: return N;
 	case GL_FLOAT_VEC2: return 2 * N;
-	case GL_FLOAT_VEC3:
+	case GL_FLOAT_VEC3: /*return 3 * N*/; //-----------------------tmp
 	case GL_FLOAT_VEC4: return 4 * N;
-	case GL_FLOAT_MAT4: printf("handle matrices outside of this function!\n"); return 0;
+	case GL_FLOAT_MAT4: return sizeof(glm::mat4);
 	default: printf("type %d is not handled!", type); return 0;
 	}
 }
@@ -150,13 +150,13 @@ UniformBuffer::UniformBuffer()
 	bufferId = NULL;
 }
 
-UniformBuffer::UniformBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string uniformName)
+UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string uniformName)
 {
 	GLCall(glGenBuffers(1, &bufferId));
 	Bind();
 
 	unsigned int size;
-	void* newData = ToStd140(types, data,&size);
+	void* newData = ToStd140(types,typesNum, data,&size);
 	
 
 	GLCall(glBufferData(GL_UNIFORM_BUFFER, size, newData, GL_STATIC_DRAW));
@@ -187,15 +187,15 @@ void UniformBuffer::UnBind()
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER,0));
 }
 
-void* ToStd140(std::initializer_list<unsigned int[2]> types, void** data, unsigned int* size)
+void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int* size)
 {
 	//finds the number of total elements
 	unsigned int alignNum = 0;
-	for (auto i : types) {
-		if (i[0] == GL_FLOAT_MAT4) {
-			alignNum += 4; //adds num of elements
+	for (int i = 0; i < typesNum;i++) {
+		if (types[i][0] == GL_FLOAT_MAT4) {
+			alignNum += 4*types[i][1]; //adds num of elements
 		}
-		else alignNum += i[1];
+		else alignNum += types[i][1];
 	}
 
 	unsigned int _size = 0; //in bytes
@@ -209,103 +209,76 @@ void* ToStd140(std::initializer_list<unsigned int[2]> types, void** data, unsign
 
 	int offset = 0;
 	int inc = 0;
-	for (int i = 0; (unsigned int)i < types.size(); i++) {
-		const unsigned int* u = *(types.begin() + i);
+	for (int i = 0; (unsigned int)i < typesNum; i++) {
+		const unsigned int* u = types[i];
 
-			if (u[1] > 1) {
-				//----------------------- later - impl matrix array
-				//all elements are size of vec4
-				_size += sizeof(glm::vec4) * u[1];
-				//populate the alignments (per element)
-				for (int i = 0; (unsigned int)i < u[1]; i++) {
-					alignments[inc] = sizeof(glm::vec4);
+		if(u[0] == GL_FLOAT_MAT4) {
+			_size += sizeof(glm::mat4)*u[1];
+		}
+		else _size += SizeofGlEnum(u[0])*u[1]; // *u[1] because sometimes size of zero
 
-					//ajust offset
-					if (offset % alignments[inc] != 0) { //if the offset is incorrect
-					//inc -1 to compensate for adding one to inc after writing
-						unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
-						offset += alignments[inc] + fix;
-						_size += fix;
-						offsets[inc] = offset;
-					}
-					else {
-						offsets[inc] = offset;
-						offset += alignments[inc];
-					}
+		int elementNum = u[1];
+		if (u[0] == GL_FLOAT_MAT4) elementNum = 4*u[1];
+		int align=GetAlignmentOf(u[0]);
+		if (u[0] == GL_FLOAT_MAT4 || u[1]>1) align = sizeof(glm::vec4);
+		//write to alignments
+		for (int q = 0; q < elementNum; q++) {
+			alignments[inc] = align;
 
-					inc++;//next element of alignments
-				}
-
+			//ajust offset
+			if (offset % alignments[inc] != 0) { //if the offset is incorrect
+				unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
+				offset += SizeofGlEnum(u[0]) + fix;
+				_size += fix;
+				offsets[inc] = offset - SizeofGlEnum(u[0]);
 			}
-			else if (u[0] == GL_FLOAT_MAT4) {
-				_size += sizeof(glm::mat4);
-				printf("inc size %u -> %u\n", sizeof(glm::mat4), _size);
-
-				//write to alignments
-				for (int i = 0; i < 4; i++) {
-					alignments[inc] = sizeof(glm::vec4);
-
-					//ajust offset
-					if (offset % alignments[inc] != 0) { //if the offset is incorrect
-					//inc -1 to compensate for adding one to inc after writing
-						unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
-						offset += alignments[inc] + fix;
-						_size += fix;
-						offsets[inc] = offset - alignments[inc];
-					}
-					else {
-						offsets[inc] = offset;
-						offset += alignments[inc];
-					}
-
-					inc++;
-				}
+			else {
+				offsets[inc] = offset;
+				offset += SizeofGlEnum(u[0]);
 			}
-			else
-			{
-				_size += GetAlignmentOf(u[0]);
-				alignments[inc] = GetAlignmentOf(u[0]);
 
-				printf("inc size %u -> %u\n", GetAlignmentOf(u[0]), _size);
-
-				//ajust offset
-				if (offset % alignments[inc] != 0) { //if the offset is incorrect
-					//inc -1 to compensate for adding one to inc after writing
-					unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
-					offset += alignments[inc] + fix;
-					_size += fix;
-					offsets[inc] = offset - alignments[inc];
-				}
-				else {
-					offsets[inc] = offset;
-					offset += alignments[inc];
-				}
-
+			inc++;
+		}
+		//variable after array is fixed to start at base alignmnet multiple of array
+		if (u[1] > 1) {
+			//ajust offset
+			if (offset % alignments[inc] != 0) { //if the offset is incorrect
+				inc--;
+				unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
 				inc++;
-			}		
+				offset += fix;
+				_size += fix;
+			}
+
+		}
 	}
 
 	//allocate and write to newData
 	int lastTypeIndex = 0;
-	unsigned int lastElementNum = ((unsigned int*)(types.begin() + lastTypeIndex))[1];
+	unsigned int lastElementNum =types[lastTypeIndex][1];
 	int currentElement = 1;
 	//int lastIndex=0;
 	newData = (char*)malloc(_size);
 	for (int i = 0; (unsigned int)i < alignNum; i++) {
-		int typeSize = SizeofGlEnum(*(types.begin() + lastTypeIndex)[0]);
+		int typeSize = SizeofGlEnum(types[lastTypeIndex][0]);
 		int byteOffsetElement = (currentElement - 1) * typeSize;//array element * typeSize
 		if (offsets[i] + typeSize > _size) {
 			printf("Whaooo!");
 		}
+		
 		memcpy(&newData[offsets[i]], &(((char*)data[lastTypeIndex])[byteOffsetElement]), typeSize);
+		if (types[lastTypeIndex][0] == GL_BOOL) {
+			*(int*)&(newData[offsets[i]]) = *((char**)data)[lastTypeIndex] == true ? 1 : 0;
+		}
 
 		if (currentElement == lastElementNum) { //reached the end of the type
 			lastTypeIndex++; //inc type pointer
-			if (((unsigned int*)(types.begin() + lastTypeIndex))[0] == GL_FLOAT_MAT4) {
-				lastElementNum = 4;
+			unsigned int* u = types[lastTypeIndex];
+			if (u[0] == GL_FLOAT_MAT4) {
+				lastElementNum = 4*u[1];
 			}
 			else
-				lastElementNum = ((unsigned int*)(types.begin() + lastTypeIndex))[1];
+				lastElementNum = u[1];
 			currentElement = 0;
 		}
 		currentElement++;
@@ -321,11 +294,11 @@ StorageBuffer::StorageBuffer()
 {
 }
 
-StorageBuffer::StorageBuffer(std::initializer_list<unsigned int[2]> types, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName)
+StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName)
 {
 	//converts data to std140
 	unsigned int size;
-	void* newData = ToStd140(types, data, &size);
+	void* newData = ToStd140(types,typesNum, data, &size);
 
 	GLCall(glGenBuffers(1, &bufferId));
 	Bind();
@@ -334,6 +307,11 @@ StorageBuffer::StorageBuffer(std::initializer_list<unsigned int[2]> types, void*
 	bindingPoint = StorageBufferBind;
 	StorageBufferBind++;
 	
+	
+	//this *should* say "get the last types type"
+	//arrayType = *(types.begin() + (types.size() - 1))[0];
+	arrayType = types[typesNum - 1][0];
+
 	//bind the uniform blocks in shader code to a binding point
 	for (unsigned int i = 0; i < shadNum; i++) {
 		shads[i]->UseShader();
@@ -347,6 +325,7 @@ StorageBuffer::StorageBuffer(std::initializer_list<unsigned int[2]> types, void*
 	}
 	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingPoint, bufferId));
 	this->data = (char*)newData;
+	this->size = size;
 	UnBind();
 }
 
@@ -359,3 +338,38 @@ void StorageBuffer::UnBind()
 {
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
 }
+
+void* StorageBuffer::MapData()
+{
+	Bind();
+	void* newData = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+	return newData;
+}
+
+void StorageBuffer::UnMapData()
+{
+	Bind();
+	GLCall(glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
+}
+
+//unsigned int StorageBuffer::ResizeData(unsigned int newSize)
+//{
+//	Bind();
+//	void* newData = calloc(newSize,1);
+//	memcpy(newData, data, size<=newSize ? size : newSize);
+//	
+//	unsigned int oldSize = size;
+//	size = newSize;
+//	free(data);
+//	data = newData;
+//	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_DRAW));
+//	return oldSize;
+//}
+void StorageBuffer::AdjustVarElement(unsigned int newElementNum, void* data)
+{
+
+}
+unsigned int StorageBuffer::GetSize() {
+	return size;
+}
+
