@@ -11,6 +11,8 @@ layout(std140) buffer Test
 {
 	vec3 vector;
 	float value;
+	mat4 identity;
+	mat4 target[];
 };
 
 
@@ -23,12 +25,13 @@ out vData{
 }v_frag;
 
 void main() {
-//	float extra=0;
-//	for(int i = 0;i < target.length();i++){
-//		extra+=target[i];
-//	}
+	mat4 extra = identity;
+	for(int i = 0;i < target.length();i++){
+		extra*=target[i];
+	}
+
 	if(boneId != -1){
-		gl_Position = proj * view * model * bones[boneId] * vec4(vp,1.0);
+		gl_Position = proj * view * model * bones[boneId] *extra * vec4(vp,1.0);
 	}else{
 		gl_Position = proj * view * model * vec4(vp, 1.0);
 	}

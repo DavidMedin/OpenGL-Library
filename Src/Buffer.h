@@ -83,10 +83,18 @@ class StorageBuffer {
 private:
 	unsigned int bufferId;
 	unsigned int bindingPoint;
-	void* data;
+	void* _data;
 	unsigned int size;
 
-	int arrayType;
+	int arrayElementSize;
+	unsigned int arrayOffset;
+	unsigned int arrayType;
+
+	std::string name;
+	//returns pointer to write/read from
+	void* MapData();
+	//call this to free mapped data and write data to opengl (apply it)
+	void UnMapData();
 public:
 	StorageBuffer();
 	//last element type is assumed to be the variable length array type if it is an array (always include!)
@@ -96,16 +104,13 @@ public:
 
 	unsigned int GetSize();
 
-	//returns pointer to write/read from
-	void* MapData();
-	//call this to free mapped data and write data to opengl (apply it)
-	void UnMapData();
 	//call this to resize, will copy data from old data to new data (will truncate if needed) - new data is initialized to zero
 	//returns old size - use this to write to end of old data
 	//unsigned int ResizeData(unsigned int newSize);
 
 	//will rewrite the last element of the storage buffer IF IT IS AN ARRAY!!! (must be an unsized array in GLSL, check it)
-	void AdjustVarElement(unsigned int newElementNum,void* data);
+	void AdjustVarElement(unsigned int newElementNum, void * data);
+	void SendData(unsigned int types[][2],unsigned int typesNum, void** data);
 };
-
-void* ToStd140(unsigned int types[][2],unsigned int typesNum, void** data,unsigned int* size);
+//arrayOffset is an offset for the last element
+void* ToStd140(unsigned int types[][2],unsigned int typesNum, void** data,unsigned int* size, unsigned int* arrayOffset);

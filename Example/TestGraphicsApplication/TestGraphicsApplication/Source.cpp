@@ -13,36 +13,36 @@ int main(int argv, char* argc[]) {
 	Object* skull = new Object("../Models/Skull/BigJaw.fbx");
 	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
 
-	Object* plane = new Object("../Models/Plane/plane.fbx",(Node*)skull);
+	Object* plane = new Object("../Models/Plane/plane.fbx", (Node*)skull);
 	plane->Translate(glm::vec3(0, -.1f, 0));
 
 	Dot* zero = new Dot(glm::vec3(0, 0, 0));
 	zero->color = glm::vec3(1, 0, 0);
 
-	Light* mainLight = new Light(glm::vec3(1,1,1),.25);
+	Light* mainLight = new Light(glm::vec3(1, 1, 1), .25);
 	mainLight->translate = TranslateVec(&mainLight->translate, glm::vec3(0, 1, .25));
 	glm::vec3* ambientResult = new glm::vec3(mainLight->color * mainLight->intensity);
-	glm::vec2* lightRamp1 = new glm::vec2(.33f,0.f);
-	glm::vec2* lightRamp2 = new glm::vec2(0.878f,.586f);
+	glm::vec2* lightRamp1 = new glm::vec2(.33f, 0.f);
+	glm::vec2* lightRamp2 = new glm::vec2(0.878f, .586f);
 
 	int renderSwitch = 0;
-	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl","../Shaders/MeshFs.glsl",NULL);
+	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
 
-	Camera* cam = new Camera(glm::vec3(0.0f,0.0f,1.0));
+	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
 
 	float value = 1.0f;
 	glm::vec3 vector = glm::vec3(1, 0, 0);
 	glm::mat4 matrix = glm::identity<glm::mat4>();
-	matrix = glm::rotate(matrix, glm::radians(50.0f), glm::vec3(1, 0, 0));
 	float array[3] = { 1,2,3 };
 	bool boolie = false;
 	int integer = 69;
+	float target[3] = { 1,1,1 };
 
-	void* uniData[] = { &vector[0],&value};
-	unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1} };
-	StorageBuffer* uni = new StorageBuffer(types,2, (void**)uniData, 0, &meshShad, 1, "Test");
+	void* uniData[] = { &vector[0],&value,&matrix[0]};
+	unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
+	StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
 
 	float tick = 0;
 
@@ -68,6 +68,21 @@ int main(int argv, char* argc[]) {
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
+		static int tmpInt = 1;
+		if (ImGui::Button("Target Length++")) {
+			glm::mat4* tmp = (glm::mat4*)malloc(sizeof(glm::mat4) * tmpInt);
+			for (int i = 0; i < tmpInt; i++) {
+				tmp[i] = glm::identity<glm::mat4>();
+				tmp[i] = glm::translate(tmp[i], glm::vec3(1, 0, 0));
+			}
+			uni->AdjustVarElement(tmpInt, tmp);
+			std::cout << tmpInt << "\n";
+			tmpInt++;
+			free(tmp);
+		}
+		if (ImGui::ColorEdit3("color",&vector[0])) {
+			uni->SendData(types, 4, uniData);
+		}
 		UpdateNodes();
 
 		ImGui::End();

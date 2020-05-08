@@ -8,13 +8,30 @@ int SizeofGlEnum(int type)
 	case GL_FLOAT_VEC3: size = sizeof(glm::vec3); break;
 	case GL_FLOAT_VEC4: size = sizeof(glm::vec4); break;
 	case GL_FLOAT: size = sizeof(float); break;
-	case GL_INT: size = sizeof(float); break;
-	case GL_BOOL: size = sizeof(float); break;
-	case GL_FLOAT_MAT4: size = sizeof(glm::vec4); break; 
+	case GL_INT: size = sizeof(int); break;
+	case GL_BOOL: size = sizeof(bool); break;
+	case GL_FLOAT_MAT4: size = sizeof(glm::mat4); break;
 	default: printf("invalid input to 'SizeofGLEnum'!\n"); return NULL;//-----------------------------------
 	}
 	return size;
 }
+
+int SizeofGLSLEnum(int type) {
+	int size;
+	switch (type) {
+	case GL_FLOAT_VEC2: size = sizeof(glm::vec2); break;
+	case GL_FLOAT_VEC3: size = sizeof(glm::vec3); break;
+	case GL_FLOAT_VEC4: size = sizeof(glm::vec4); break;
+	case GL_FLOAT: size = sizeof(float); break;
+	case GL_INT: size = sizeof(float); break;
+	case GL_BOOL: size = sizeof(float); break;
+	case GL_FLOAT_MAT4: size = sizeof(glm::vec4); break; 
+	default: printf("invalid input to 'SizeofGLSLEnum'!\n"); return NULL;//-----------------------------------
+	}
+	return size;
+
+}
+
 //use ONLY for std140 layout
 int GetAlignmentOf(int type) {
 	int N = 4; // 4 bytes
@@ -156,7 +173,7 @@ UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, voi
 	Bind();
 
 	unsigned int size;
-	void* newData = ToStd140(types,typesNum, data,&size);
+	void* newData = ToStd140(types,typesNum, data,&size,nullptr);
 	
 
 	GLCall(glBufferData(GL_UNIFORM_BUFFER, size, newData, GL_STATIC_DRAW));
@@ -187,7 +204,7 @@ void UniformBuffer::UnBind()
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER,0));
 }
 
-void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int* size)
+void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int* size, unsigned int* arrayOffset)
 {
 	//finds the number of total elements
 	unsigned int alignNum = 0;
@@ -215,7 +232,7 @@ void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsi
 		if(u[0] == GL_FLOAT_MAT4) {
 			_size += sizeof(glm::mat4)*u[1];
 		}
-		else _size += SizeofGlEnum(u[0])*u[1]; // *u[1] because sometimes size of zero
+		else _size += SizeofGLSLEnum(u[0])*u[1]; // *u[1] because sometimes size of zero
 
 		int elementNum = u[1];
 		if (u[0] == GL_FLOAT_MAT4) elementNum = 4*u[1];
@@ -228,39 +245,42 @@ void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsi
 			//ajust offset
 			if (offset % alignments[inc] != 0) { //if the offset is incorrect
 				unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
-				offset += SizeofGlEnum(u[0]) + fix;
+				offset += SizeofGLSLEnum(u[0]) + fix;
 				_size += fix;
-				offsets[inc] = offset - SizeofGlEnum(u[0]);
+				offsets[inc] = offset - SizeofGLSLEnum(u[0]);
 			}
 			else {
 				offsets[inc] = offset;
-				offset += SizeofGlEnum(u[0]);
+				offset += SizeofGLSLEnum(u[0]);
 			}
-
+			if (i == typesNum-1 && q == 0 && arrayOffset != nullptr) {
+				*arrayOffset = offsets[inc];
+			}
 			inc++;
 		}
 		//variable after array is fixed to start at base alignmnet multiple of array
-		if (u[1] > 1) {
+		//memory size should be a multiple of vec4, so it is extendable
+		if (u[1] > 1 || i == typesNum-1) {
 			//ajust offset
-			if (offset % alignments[inc] != 0) { //if the offset is incorrect
-				inc--;
-				unsigned int fix = (alignments[inc] - (offset % alignments[inc]));
-				inc++;
+			inc--;
+			if (offset % GetAlignmentOf(GL_FLOAT_VEC4) != 0) { //if the offset is incorrect
+				unsigned int fix = (GetAlignmentOf(GL_FLOAT_VEC4) - (offset % GetAlignmentOf(GL_FLOAT_VEC4)));
 				offset += fix;
 				_size += fix;
 			}
-
+			if (u[1] == 0 && arrayOffset != nullptr) *arrayOffset = offset;
+			inc++;
 		}
 	}
 
 	//allocate and write to newData
 	int lastTypeIndex = 0;
-	unsigned int lastElementNum =types[lastTypeIndex][1];
+	unsigned int lastElementNum =types[lastTypeIndex][0] == GL_FLOAT_MAT4 ? 4*types[lastTypeIndex][1] : types[lastTypeIndex][1];
 	int currentElement = 1;
 	//int lastIndex=0;
 	newData = (char*)malloc(_size);
 	for (int i = 0; (unsigned int)i < alignNum; i++) {
-		int typeSize = SizeofGlEnum(types[lastTypeIndex][0]);
+		int typeSize = SizeofGLSLEnum(types[lastTypeIndex][0]);
 		int byteOffsetElement = (currentElement - 1) * typeSize;//array element * typeSize
 		if (offsets[i] + typeSize > _size) {
 			printf("Whaooo!");
@@ -290,6 +310,7 @@ void* ToStd140(unsigned int types[][2], unsigned int typesNum, void** data, unsi
 }
 
 unsigned int StorageBufferBind = 0;
+
 StorageBuffer::StorageBuffer()
 {
 }
@@ -298,7 +319,7 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 {
 	//converts data to std140
 	unsigned int size;
-	void* newData = ToStd140(types,typesNum, data, &size);
+	void* newData = ToStd140(types,typesNum, data, &size,&arrayOffset);
 
 	GLCall(glGenBuffers(1, &bufferId));
 	Bind();
@@ -307,9 +328,11 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 	bindingPoint = StorageBufferBind;
 	StorageBufferBind++;
 	
+	name = storageName;
 	
 	//this *should* say "get the last types type"
 	//arrayType = *(types.begin() + (types.size() - 1))[0];
+	arrayElementSize = SizeofGlEnum(types[typesNum - 1][0]);
 	arrayType = types[typesNum - 1][0];
 
 	//bind the uniform blocks in shader code to a binding point
@@ -324,7 +347,7 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 
 	}
 	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingPoint, bufferId));
-	this->data = (char*)newData;
+	_data = (char*)newData;
 	this->size = size;
 	UnBind();
 }
@@ -365,9 +388,37 @@ void StorageBuffer::UnMapData()
 //	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_DRAW));
 //	return oldSize;
 //}
-void StorageBuffer::AdjustVarElement(unsigned int newElementNum, void* data)
+void StorageBuffer::AdjustVarElement(unsigned int newElementNum, void * data)
 {
+	unsigned int newSize;
+	unsigned int types[][2] = { {arrayType,newElementNum} };
+	void* stdData = ToStd140(types, 1, &data, &newSize, nullptr);
+	//size of stdData must be a multiple of sizeof(glm::vec4)
+	newSize += arrayOffset;
 
+	void* newData = calloc(newSize, 1);
+
+	//only copies up to the array
+	memcpy(newData, _data, arrayOffset);
+	memcpy(&((char*)newData)[arrayOffset], stdData, newSize-arrayOffset);
+	free(_data);
+	free(stdData);
+	_data = newData;
+	size = newSize;
+
+	Bind();
+	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, size, _data, GL_DYNAMIC_DRAW));
+}
+void StorageBuffer::SendData(unsigned int types[][2],unsigned int typesNum, void** data)
+{
+	unsigned int newSize;
+	void* newData = ToStd140(types, typesNum, data, &newSize,nullptr);
+
+	void* oldData = MapData();
+	memcpy(oldData, newData, size);
+	UnMapData();
+	free(_data);
+	_data = newData;
 }
 unsigned int StorageBuffer::GetSize() {
 	return size;
