@@ -27,22 +27,17 @@ int main(int argv, char* argc[]) {
 
 	int renderSwitch = 0;
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
+	glm::mat4 identity = glm::identity<glm::mat4>();
+	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1);
 
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
 
-	float value = 1.0f;
-	glm::vec3 vector = glm::vec3(1, 0, 0);
-	glm::mat4 matrix = glm::identity<glm::mat4>();
-	float array[3] = { 1,2,3 };
-	bool boolie = false;
-	int integer = 69;
-	float target[3] = { 1,1,1 };
 
-	void* uniData[] = { &vector[0],&value,&matrix[0]};
-	unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
-	StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
+	//void* uniData[] = { &vector[0],&value,&matrix[0]};
+	//unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
+	//StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
 
 	float tick = 0;
 
@@ -69,20 +64,6 @@ int main(int argv, char* argc[]) {
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
 		static int tmpInt = 1;
-		if (ImGui::Button("Target Length++")) {
-			glm::mat4* tmp = (glm::mat4*)malloc(sizeof(glm::mat4) * tmpInt);
-			for (int i = 0; i < tmpInt; i++) {
-				tmp[i] = glm::identity<glm::mat4>();
-				tmp[i] = glm::translate(tmp[i], glm::vec3(1, 0, 0));
-			}
-			uni->AdjustVarElement(tmpInt, tmp);
-			std::cout << tmpInt << "\n";
-			tmpInt++;
-			free(tmp);
-		}
-		if (ImGui::ColorEdit3("color",&vector[0])) {
-			uni->SendData(types, 4, uniData);
-		}
 		UpdateNodes();
 
 		ImGui::End();
@@ -93,6 +74,7 @@ int main(int argv, char* argc[]) {
 		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
 		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
 		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1);
+
 		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
@@ -125,7 +107,7 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		//skull->mesh->skelly->Animate(double(tick));
+		skull->mesh->skelly->Animate(double(tick));
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);

@@ -50,8 +50,8 @@ public:
 	void Bind();
 	VertexArray();
 	void BindVertexBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
-	void BindIntVertexBuffer(VertexBuffer* buffer);
-	void BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
+	void BindIntVertexBuffer(VertexBuffer* buffer,unsigned int vecX);
+	//void BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize);
 };
 
 class FrameBuffer {

@@ -11,7 +11,12 @@
 #include <GLFW/glfw3.h>
 #include "GLCall.h"
  
+//SPRIV-VM
+#include <spvm/context.h>
+#include <spvm/state.h>
 
+//shaderc
+#include <shaderc/shaderc.hpp>
 
 #define TYPE_NULL 0
 #define TYPE_PROJECTION 1
@@ -25,6 +30,17 @@ private:
 	std::string fragmentContent;
 	std::string geometryContent; //might fail
 	//list<string> inputTypes;
+
+	//SPIRV-VM -- for debugging
+	spvm_context_t spvContext;
+	size_t spvSLength;
+	spvm_source spvSource;
+	//--
+	spvm_program_t spvProgram;
+	spvm_state_t spvState;
+
+
+
 	unsigned int shader_Program;
 	std::string ReadShader(const char* path);
 	unsigned int CompileShader(unsigned int type, const char* source);
@@ -44,9 +60,10 @@ public:
 	//Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 	void UniformEquals(const char* uniform_Name, unsigned int type, void* value,unsigned int count);
 	void ArrayUniformEquals(const char* uniformName, unsigned int type, void* value,unsigned int count);
-	//Don't use!
-	void UniformMatrix(std::string uniform_Name,glm::mat4* matrix,unsigned int type);
-	//Don't use!
-	void UniformVector(std::string uniform_Name, glm::vec3* vec);
+	//void UniformMatrix(std::string uniform_Name,glm::mat4* matrix,unsigned int type);
+	//void UniformVector(std::string uniform_Name, glm::vec3* vec);
+
+	//-- spriv-vm debugging
+	void StartSPIRVVMDebug();
 };
 extern Shader* defaultShader;

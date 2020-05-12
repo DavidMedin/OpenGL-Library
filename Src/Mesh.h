@@ -67,6 +67,7 @@ private:
 	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
 	VertexBuffer* boneIdBuffer; //contains a bone index for each vertex
+	VertexBuffer* weightBuffer;
 	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
 	VertexArray* VA;
 	IndexBuffer* index;
@@ -77,7 +78,7 @@ private:
 	float* textureUVs;
 	unsigned int* indices;
 	int* boneIds;
-
+	float* weights;
 public:
 	Skeleton* skelly;
 

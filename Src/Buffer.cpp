@@ -141,23 +141,23 @@ void VertexArray::BindVertexBuffer(VertexBuffer* buffer, unsigned int vecX, unsi
 	nextIndex++;
 }
 
-void VertexArray::BindIntVertexBuffer(VertexBuffer* buffer)
+void VertexArray::BindIntVertexBuffer(VertexBuffer* buffer,unsigned int vecX)
 {
 	buffer->Bind();
 	Bind();
 	GLCall(glEnableVertexAttribArray(nextIndex));
-	GLCall(glVertexAttribIPointer(nextIndex, 1, GL_INT, 0, NULL));
+	GLCall(glVertexAttribIPointer(nextIndex, vecX, GL_INT, 0, NULL));
 	nextIndex++;
 }
 
-void VertexArray::BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize)
-{
-	buffer->Bind();
-	Bind();
-	GLCall(glEnableVertexAttribArray(nextCustomIndex + MANDNUM));
-	GLCall(glVertexAttribPointer(nextCustomIndex + MANDNUM, vecX, type, normalize, 0, NULL));
-	nextCustomIndex++;
-}
+//void VertexArray::BindCustomBuffer(VertexBuffer* buffer, unsigned int vecX, unsigned int type, bool normalize)
+//{
+//	buffer->Bind();
+//	Bind();
+//	GLCall(glEnableVertexAttribArray(nextCustomIndex + MANDNUM));
+//	GLCall(glVertexAttribPointer(nextCustomIndex + MANDNUM, vecX, type, normalize, 0, NULL));
+//	nextCustomIndex++;
+//}
 
 
 unsigned int nextBinding=0;

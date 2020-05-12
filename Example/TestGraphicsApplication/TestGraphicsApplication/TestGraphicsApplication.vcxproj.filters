@@ -163,11 +163,5 @@
     <None Include="..\..\..\DefaultShaders\DotVs.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="TestVs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="TestFs.glsl">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

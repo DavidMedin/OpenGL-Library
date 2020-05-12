@@ -87,13 +87,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;$(ProjectDir)\..\..\..\Libs\shaderc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;$(ProjectDir)..\..\..\Libs\shaderc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;SPIRVVM.lib;shaderc_shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <PerUserRedirection>true</PerUserRedirection>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -102,10 +103,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;SPIRVVM.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -190,8 +194,6 @@
     <None Include="..\..\..\DefaultShaders\LineVs.glsl" />
     <None Include="..\Shaders\MeshFs.glsl" />
     <None Include="..\Shaders\MeshVs.glsl" />
-    <None Include="TestFs.glsl" />
-    <None Include="TestVs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,7 @@
 
 int drawFlags = 1;
 
+#define MAXBONEIDS 4
 
 Texture::Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned int h) {
 	openglID = NULL;
@@ -313,15 +314,18 @@ Mesh::Mesh(std::string path)
 	VA->BindVertexBuffer(textureUVBuffer, 2, GL_FLOAT, false);
 	this->textureUVs = UVs;
 
-	boneIds = (int*)malloc(pointCount * sizeof(int));
-	for (unsigned int i = 0; i < pointCount; i++) {
+
+	//bones
+	boneIds = (int*)malloc(pointCount * sizeof(int)*MAXBONEIDS);
+	weights = (float*)calloc(pointCount * sizeof(float) * MAXBONEIDS, 1);//zeroed out
+	for (unsigned int i = 0; i < pointCount*MAXBONEIDS; i++) {
 		boneIds[i] = -1;
 	}
 	skelly = nullptr;
 	if (mesh->HasBones()) {
 		boneCount = mesh->mNumBones;
 		if (boneCount > 32) {
-			printf("WARNING - too many bones, things will be broken! (32 max, you have %d\n", boneCount);
+			printf("WARNING - too many bones, things will be broken! (32 max, you have %d)\n", boneCount);
 		}
 		for (unsigned int i = 0; i < boneCount; i++) {
 			const aiBone* bone = mesh->mBones[i];
@@ -330,8 +334,12 @@ Mesh::Mesh(std::string path)
 				aiVertexWeight weight = bone->mWeights[u];
 				unsigned int vertexId = weight.mVertexId;
 				if (weight.mWeight >= 0.3) {
-					boneIds[vertexId] = i; // index through points to get the only bone it is affected by.
-					//because of this boneIds will be spotty
+					for (int q = 0; q < MAXBONEIDS; q++) {
+						if (boneIds[vertexId*MAXBONEIDS + q] != -1) continue;
+						boneIds[vertexId*MAXBONEIDS+q] = i; // index through points to get the only bone it is affected by.
+						weights[vertexId * MAXBONEIDS + q] = weight.mWeight;
+						break;
+					}
 				}
 			}
 		}
@@ -340,8 +348,10 @@ Mesh::Mesh(std::string path)
 	else {
 		printf("	No bones!\n");
 	}
-	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int));
-	VA->BindIntVertexBuffer(boneIdBuffer);
+	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int)*MAXBONEIDS);
+	VA->BindIntVertexBuffer(boneIdBuffer,4);
+	weightBuffer = new VertexBuffer(weights, pointCount * sizeof(float) * MAXBONEIDS);
+	VA->BindVertexBuffer(weightBuffer, 4, GL_FLOAT, GL_FALSE);
 
 	//texture loading
 	unsigned int num_textures = scene->mNumTextures;
@@ -415,9 +425,9 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	}
 		GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, nullptr));
 }
-void Mesh::BindCustomData(VertexBuffer* data, unsigned int type,unsigned int vecX) {
-	VA->BindCustomBuffer(data, vecX, type, false);
-}
+//void Mesh::BindCustomData(VertexBuffer* data, unsigned int type,unsigned int vecX) {
+//	VA->BindCustomBuffer(data, vecX, type, false);
+//}
 
 void Mesh::Bind() {
 	VA->Bind();

@@ -279,19 +279,35 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 	}
 }
 
-// make uniform equals for arrays
 
 
-void Shader::UniformMatrix(std::string uniform_Name, glm::mat4* matrix, unsigned int type) {
-	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-	UseShader();
-	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));
+void Shader::StartSPIRVVMDebug()
+{
+	//load glsl to spv
+	
+
+	spvContext = spvm_context_initialize();
+
+
+	size_t size;
+	shaderc::Compiler comp = shaderc::Compiler();
+	shaderc::SpvCompilationResult test = comp.CompileGlslToSpv(vertexContent.c_str(), vertexContent.size(), shaderc_vertex_shader, "vertex Shader\0");
+	spvSLength = 0;
+	//spvSource = load_source()
 }
-void Shader::UniformVector(std::string uniform_Name, glm::vec3* vec) {
-	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-	UseShader();
-	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));
-}
+
+
+
+//void Shader::UniformMatrix(std::string uniform_Name, glm::mat4* matrix, unsigned int type) {
+//	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
+//	UseShader();
+//	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));
+//}
+//void Shader::UniformVector(std::string uniform_Name, glm::vec3* vec) {
+//	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
+//	UseShader();
+//	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));
+//}
 void Shader::Reload() {
 	unsigned int tmpShader = CreateShaderProgram(vertexContent.c_str(), fragmentContent.c_str(), NULL);
 	shader_Program = tmpShader;
