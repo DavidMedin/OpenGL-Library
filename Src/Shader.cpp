@@ -2,7 +2,6 @@
 #include "Shader.h"
 #define GRAPHICSLIBRARY_EXPORTS 1
 
-
 Shader::Shader() {
 	shader_Program = 0;
 }
@@ -315,7 +314,7 @@ void Shader::BindInterfaceBlock(std::string name, unsigned int interfaceType,uns
 
 
 
-bool Shader::GetSPIRVVMInitializer()
+bool Shader::GetSPIRVVMInitialized()
 {
 	return spvInitialized;
 }
@@ -327,16 +326,39 @@ void Shader::StartSPIRVVMDebug()
 
 }
 
-void Shader::InitializeSPIRVVMDebug()
-{
+void Shader::InitializeSPIRVVMDebug(){
 	spvVertex = spvShader(vertexContent, GL_VERTEX_SHADER);
 	spvFragment = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
 	spvInitialized = true;
 }
 
-void Shader::SPIRVVMInterfaceWrite()
-{
+void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, unsigned int localIndex, void* data,unsigned int primitiveType, unsigned int sizeofData,unsigned int shaderType){
+	UseShader();
+	//getting name of member
+	char* nameBuffer = (char*)malloc(30);
+	GLsizei actualSize;
+	GLCall(glGetProgramResourceName(shader_Program, type, localIndex, 30, &actualSize, nameBuffer));
+
+	//hand data over to SPIRV-VM
+	spvShader* shad;
+	if (shaderType == GL_VERTEX_SHADER)
+		shad = &spvVertex;
+	else if (shaderType == GL_FRAGMENT_SHADER)
+		shad = &spvFragment;
+	else shad = nullptr;
 	
+	if (shad != nullptr) {
+		spvm_result_t interfaceBlock = spvm_state_get_result((*shad).spvState, spvm_string(nameBuffer));
+		spvm_member_t member = spvm_state_get_object_member((*shad).spvState, interfaceBlock, spvm_string(nameBuffer));
+	
+		if (primitiveType == GL_FLOAT)
+			spvm_member_set_value_f(member->members, member->member_count, (float*)data);
+		else if (primitiveType == GL_INT)
+			spvm_member_set_value_i(member->members, member->member_count, (int* )data);
+		else printf("invalid primitive type given to SPIRVVMInterfaceWrite!\n");
+	}
+	else printf("shader type given to SPIRVVMInterfaceWrite is invalid!\n");
+	free(nameBuffer);
 }
 
 void Shader::Reload() {

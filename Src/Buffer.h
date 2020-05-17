@@ -74,7 +74,7 @@ public:
 	UniformBuffer();
 	//types = {{GL_FLOAT_MAT4,2},...}
 	//must be according to the layout specifier of the uniform buffer defined in your shader
-	UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint,Shader* shads[],unsigned int shadNum, std::string uniformName);
+	UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint,Shader* shads[],unsigned int shadNum, std::string uniformName, unsigned int shaderType);
 	void Bind();
 	void UnBind();
 };
@@ -98,7 +98,7 @@ private:
 public:
 	StorageBuffer();
 	//last element type is assumed to be the variable length array type if it is an array (always include!)
-	StorageBuffer(unsigned int types[][2],unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName);
+	StorageBuffer(unsigned int types[][2],unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName, unsigned int shaderType);
 	void Bind();
 	void UnBind();
 

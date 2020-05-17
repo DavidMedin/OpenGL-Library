@@ -72,9 +72,10 @@ public:
 	void BindInterfaceBlock(std::string name, unsigned int interfaceType, unsigned int bindingPoint);
 
 	//-- spriv-vm debugging
-	bool GetSPIRVVMInitializer();
+	bool GetSPIRVVMInitialized();
 	void StartSPIRVVMDebug();
 	void InitializeSPIRVVMDebug();
-	void SPIRVVMInterfaceWrite();
+	//not finished, spirvvm needs std140 first
+	void SPIRVVMInterfaceWrite(std::string blockName,unsigned int type,unsigned int localIndex,void* data,unsigned int primitiveType, unsigned int sizeofData,unsigned int shaderType);
 };
 //extern Shader* defaultShader;

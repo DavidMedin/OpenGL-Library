@@ -31,6 +31,20 @@ int SizeofGLSLEnum(int type) {
 	return size;
 
 }
+int GetGLPrimitiveType(int type) {
+	switch (type) {
+	case GL_FLOAT_VEC2:
+	case GL_FLOAT_VEC3:
+	case GL_FLOAT_VEC4:
+	case GL_FLOAT_MAT4:
+	case GL_FLOAT:
+		return GL_FLOAT;
+	case GL_INT:
+	case GL_BOOL:
+		return GL_INT;
+	default: printf("that type isn't supported in GetGLPrimitiveType!\n");
+	}
+}
 
 //use ONLY for std140 layout
 int GetAlignmentOf(int type) {
@@ -167,7 +181,7 @@ UniformBuffer::UniformBuffer()
 	bufferId = NULL;
 }
 
-UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string uniformName)
+UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string uniformName,unsigned int shaderType)
 {
 	GLCall(glGenBuffers(1, &bufferId));
 	Bind();
@@ -183,10 +197,21 @@ UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, voi
 	//bind the uniform blocks in shader code to a binding point
 	for (unsigned int i = 0; i < shadNum;i++) {
 		shads[i]->UseShader();
+		
+		//give data to spirvvm
+		if (shads[i]->GetSPIRVVMInitialized()) {
+			unsigned int localIndex=0;
+			unsigned int dataOffset=0;
+			for (int u = 0; u < typesNum; u++) {
+				shads[i]->SPIRVVMInterfaceWrite(uniformName, GL_UNIFORM_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]), shaderType);
+				localIndex += types[u][1];
+				dataOffset += localIndex * SizeofGlEnum(types[u][1]);
+			}
+		}
+
 		unsigned int index = glGetUniformBlockIndex(shads[i]->GetProgram(), uniformName.c_str());
 		GLCall(glUniformBlockBinding(shads[i]->GetProgram(), index, bindingPoint));
 		GLCall(glUseProgram(0));
-
 	}
 	GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, bufferId));
 	this->data = (char*)newData;
@@ -315,7 +340,7 @@ StorageBuffer::StorageBuffer()
 {
 }
 
-StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName)
+StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName,unsigned int shaderType)
 {
 	//converts data to std140
 	unsigned int size;
@@ -338,6 +363,17 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 	//bind the uniform blocks in shader code to a binding point
 	for (unsigned int i = 0; i < shadNum; i++) {
 		shads[i]->UseShader();
+
+		//give data to spirvvm
+		if (shads[i]->GetSPIRVVMInitialized()) {
+			unsigned int localIndex = 0;
+			unsigned int dataOffset = 0;
+			for (int u = 0; u < typesNum; u++) {
+				shads[i]->SPIRVVMInterfaceWrite(storageName, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]), shaderType);
+				localIndex += types[u][1];
+				dataOffset += localIndex * SizeofGlEnum(types[u][1]);
+			}
+		}
 		unsigned int index = glGetProgramResourceIndex(shads[i]->GetProgram(), GL_SHADER_STORAGE_BLOCK, storageName.c_str());
 		if (index == GL_INVALID_INDEX) {
 			printf("%s is not a valid shader storage block in your shader!\n", storageName.c_str());
