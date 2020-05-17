@@ -1,23 +1,23 @@
 #version 460
-uniform vec3 ambientColor;
-uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
-uniform vec3 lightColor;
+layout(location=37) uniform vec3 ambientColor;
+layout(location=38) uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
+layout(location=39) uniform vec3 lightColor;
 
-uniform vec2 LightRamp1;
-uniform vec2 LightRamp2;
+layout(location=40) uniform vec2 LightRamp1;
+layout(location=41) uniform vec2 LightRamp2;
 
-uniform int renderSwitch;
-in vData{
+layout(location=42) uniform int renderSwitch;
+layout(location=43) uniform vec3 camLoc;
+layout(location=0) in vData{
 	vec3 normals;
 	vec2 texCoords;
 	vec4 fragLoc;
 
 	vec3 idColor;
 }v_frag;
-uniform vec3 camLoc;
 layout(binding = 0) uniform sampler2D diffuse;
 
-out vec4 frag_colour;
+layout(location=0) out vec4 frag_colour;
 
 float Dither(float diff,int rez){
 	float dithX = sin(gl_FragCoord.x);

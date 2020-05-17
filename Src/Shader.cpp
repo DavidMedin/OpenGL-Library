@@ -116,7 +116,7 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	return shader_program;
 }
 
-void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count)
+void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count,const char* uniformName, unsigned int shaderType)
 {
 	UseShader();
 
@@ -130,15 +130,35 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 	case GL_FLOAT_VEC2:
 		GLCall(glUniform2fv(location,count, &(*(glm::vec3*)value)[0]));
 		break;
-	case GL_INT:
-		GLCall(glUniform1iv(location,count, ((int*)value)));
-		break;
 	case GL_FLOAT:
 		GLCall(glUniform1fv(location,count, ((float*)value)));
 		break;
+	case GL_INT:
+		GLCall(glUniform1iv(location,count, ((int*)value)));
+		break;
 	default:
 		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
-		break;
+		return;
+	}
+	if (spvInitialized) {
+		if (shaderType == GL_VERTEX_SHADER) {
+			spvm_result_t uniform = spvm_state_get_result(spvVertex.spvState, spvm_string(uniformName));
+			if (type != GL_INT) { //if debugging
+				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
+			}
+			else {
+				spvm_member_set_value_i(uniform->members, uniform->member_count, (int*)value);
+			}
+		}
+		else if (shaderType == GL_FRAGMENT_SHADER) {
+			spvm_result_t uniform = spvm_state_get_result(spvFragment.spvState, spvm_string(uniformName));
+			if (type != GL_INT) { //if debugging
+				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
+			}
+			else {
+				spvm_member_set_value_i(uniform->members, uniform->member_count, (int*)value);
+			}
+		}
 	}
 }
 
@@ -238,7 +258,7 @@ unsigned int Shader::GetProgram()
 	return shader_Program;
 }
 
-void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count)
+void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count, unsigned int shaderType)
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
 	UseShader(); 
@@ -259,10 +279,11 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		return;
 	}
 	//basicly the same function but whatever
-	_UniformEquals(uni_Pos, value, type,count);
+	_UniformEquals(uni_Pos, value, type,count,uniform_Name,shaderType);
+	
 }
 // value must be an array of values, not an array of pointers
-void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count)
+void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count, unsigned int shaderType)
 {
 	UseShader();
 	//int* locs = (int*)malloc(sizeof(int) * count);
@@ -274,41 +295,107 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 			std::cout << name << " is not a variable in your shader!\n";
 		}
 		else {
-			_UniformEquals(loc, value, type,1);
+			_UniformEquals(loc, value, type,1,uniformName, shaderType);
 		}
 	}
 }
 
-
-
-void Shader::StartSPIRVVMDebug()
+void Shader::BindInterfaceBlock(std::string name, unsigned int interfaceType,unsigned int bindingPoint)
 {
-	//load glsl to spv
-	
-
-	spvContext = spvm_context_initialize();
-
-
-	size_t size;
-	shaderc::Compiler comp = shaderc::Compiler();
-	shaderc::SpvCompilationResult test = comp.CompileGlslToSpv(vertexContent.c_str(), vertexContent.size(), shaderc_vertex_shader, "vertex Shader\0");
-	spvSLength = 0;
-	//spvSource = load_source()
+	//bind shader to point
+	UseShader();
+	unsigned int index = glGetProgramResourceIndex(shader_Program, GL_SHADER_STORAGE_BLOCK, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		printf("%s is not a valid shader storage block in your shader!\n", name.c_str());
+	}
+	GLCall(glShaderStorageBlockBinding(shader_Program, index, bindingPoint));
+	GLCall(glUseProgram(0));
 }
 
 
 
-//void Shader::UniformMatrix(std::string uniform_Name, glm::mat4* matrix, unsigned int type) {
-//	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-//	UseShader();
-//	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));
-//}
-//void Shader::UniformVector(std::string uniform_Name, glm::vec3* vec) {
-//	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-//	UseShader();
-//	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));
-//}
+
+bool Shader::GetSPIRVVMInitializer()
+{
+	return spvInitialized;
+}
+
+void Shader::StartSPIRVVMDebug()
+{
+	printf("Debugging Shader!==============================\n\n\n");
+
+
+}
+
+void Shader::InitializeSPIRVVMDebug()
+{
+	spvVertex = spvShader(vertexContent, GL_VERTEX_SHADER);
+	spvFragment = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
+	spvInitialized = true;
+}
+
+void Shader::SPIRVVMInterfaceWrite()
+{
+	
+}
+
 void Shader::Reload() {
 	unsigned int tmpShader = CreateShaderProgram(vertexContent.c_str(), fragmentContent.c_str(), NULL);
 	shader_Program = tmpShader;
+}
+
+spvShader::spvShader()
+{
+	spvContext = NULL;
+	spvSLength = NULL;
+	spvSource = NULL;
+	spvProgram = NULL;
+	spvState = NULL;
+}
+
+spvShader::spvShader(std::string content, unsigned int shaderType)
+{
+
+	//set options
+	shaderc::CompileOptions ops = shaderc::CompileOptions();
+	ops.SetTargetEnvironment(shaderc_target_env_opengl, 4.5);
+
+	//get spirv code from glsl code
+	shaderc::Compiler comp = shaderc::Compiler();
+	shaderc::SpvCompilationResult vertexResult;
+	if (shaderType == GL_VERTEX_SHADER)
+		vertexResult = comp.CompileGlslToSpv(content.c_str(), content.size(), shaderc_vertex_shader, "vertex Shader", ops);
+	else if (shaderType == GL_FRAGMENT_SHADER)
+		vertexResult = comp.CompileGlslToSpv(content.c_str(), content.size(), shaderc_fragment_shader, "fragment Shader", ops);
+	else printf("spvShader() : No Shader of that type supported! (only vertex and fragment for now!)\n");
+	
+
+	//search errors
+	std::cout << "Num of Errors: " << vertexResult.GetNumErrors() << "\n";
+	for (int e = 0; e < vertexResult.GetNumErrors(); e++)
+		std::cout << "    [" << e << "] " << vertexResult.GetErrorMessage() << "\n";
+	std::cout << "Num of Warnings: " << vertexResult.GetNumWarnings() << "\n";
+	
+	//write
+	spvSLength = vertexResult.end() - vertexResult.begin();
+	auto iter = vertexResult.begin();
+	spvm_source spvSource = (spvm_source)malloc(spvSLength * sizeof(spvm_word));
+	if (spvSource == nullptr) {
+		printf("Couldn't allocate memory for spvShader::spvSource!\n");
+		return;
+	}
+	for (int i = 0; iter != vertexResult.end(); i++) {
+		spvm_word u = *iter;
+		spvSource[i] = u;
+		iter++;
+	}
+
+	//initialize
+	spvContext = spvm_context_initialize();
+	spvProgram = spvm_program_create(spvContext, spvSource, spvSLength);
+	spvState = spvm_state_create(spvProgram);
+	spvm_ext_opcode_func* glsl_ext_data = spvm_build_glsl450_ext();
+	spvm_result_t glsl_std_450 = spvm_state_get_result(spvState, spvm_string("GLSL.std.450"));
+	if (glsl_std_450)
+		glsl_std_450->extension = glsl_ext_data;
 }

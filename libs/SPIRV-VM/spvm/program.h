@@ -50,7 +50,7 @@ typedef struct {
 } spvm_program;
 typedef spvm_program* spvm_program_t;
 
-spvm_program_t spvm_program_create(spvm_context_t ctx, spvm_source spv, size_t spv_length);
+extern "C" spvm_program_t spvm_program_create(spvm_context_t ctx, spvm_source spv, size_t spv_length);
 spvm_string spvm_program_add_extension(spvm_program_t prog, spvm_word length);
 spvm_entry_point* spvm_program_create_entry_point(spvm_program_t prog);
 void spvm_program_add_capability(spvm_program_t prog, SpvCapability cap);

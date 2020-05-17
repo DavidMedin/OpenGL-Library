@@ -404,10 +404,10 @@ Mesh::Mesh(std::string path)
 void Mesh::Draw(Shader* shad,Camera* cam)
 {
 	shad->UseShader();
-	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
-	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
+	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1,GL_VERTEX_SHADER);
+	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1,GL_VERTEX_SHADER); 
 	if (boneCount > 0) {
-		shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount);
+		shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount,GL_VERTEX_SHADER);
 	}
 	VA->Bind();
 	index->Bind();
@@ -558,8 +558,8 @@ Transform::Transform(glm::mat4* transform)
 	 glLineWidth(size);
 	 Shader** shads = GetShaders();
 	 shads[0]->UseShader();
-	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1);
-	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1);
+	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1,GL_VERTEX_SHADER);
+	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1, GL_VERTEX_SHADER);
 	 VA->Bind();
 	 GLCall(glDrawArrays(GL_LINES, 0, 1));
  }
@@ -569,9 +569,9 @@ Transform::Transform(glm::mat4* transform)
 	 glLineWidth(size);
 	 VA->Bind();
 	 shad->UseShader();
-	 shad->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1);
-	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1);
-	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0],1);
+	 shad->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1, GL_VERTEX_SHADER);
+	 shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1, GL_VERTEX_SHADER);
+	 shad->UniformEquals("color", GL_FLOAT_VEC3, &color[0],1, GL_FRAGMENT_SHADER);
 	 GLCall(glDrawArrays(GL_LINES, 0, 2));
  }
 

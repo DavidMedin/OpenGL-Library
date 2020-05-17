@@ -27,8 +27,9 @@ int main(int argv, char* argc[]) {
 
 	int renderSwitch = 0;
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
+	meshShad->InitializeSPIRVVMDebug();
 	glm::mat4 identity = glm::identity<glm::mat4>();
-	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1);
+	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1,GL_VERTEX_SHADER);
 
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
@@ -60,6 +61,9 @@ int main(int argv, char* argc[]) {
 			if (ImGui::Button("Reload Shader")) {
 				meshShad->Reload();
 			}
+			if (ImGui::Button("Debug Shader")) {
+				meshShad->StartSPIRVVMDebug();
+			}
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
@@ -68,12 +72,12 @@ int main(int argv, char* argc[]) {
 
 		ImGui::End();
 
-		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1);
-		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1);
-		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1);
-		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
-		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
-		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1);
+		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1,GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1, GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1, GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1, GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1, GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1, GL_FRAGMENT_SHADER);
 
 		//ImGui::ShowDemoWindow();
 
