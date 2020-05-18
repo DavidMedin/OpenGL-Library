@@ -6,6 +6,27 @@ Shader::Shader() {
 	shader_Program = 0;
 }
 
+std::list<spvShader*>* Shader::SPIRVVMFindUniform(std::string name)
+{
+	std::list<spvShader*>* shads = new std::list<spvShader*>;
+	bool found = false;
+	spvm_result_t interfaceBlock;
+	for (int i = 0; i < 2; i++) {
+		interfaceBlock = spvm_state_get_result(spvShaders[i].spvState, spvm_string(name.c_str()));
+		if (interfaceBlock != NULL) {
+			shads->push_back(&spvShaders[i]);
+			found = true;
+		}
+	}
+	if (found == false) {
+		printf("That interface block isn't in any of the initialized shaders!\n");
+		delete(shads);
+		return nullptr;
+	}
+	
+	return shads;
+}
+
 std::string Shader::ReadShader(const char* path) {
 	std::string tmp;
 	std::ifstream shaderFile;
@@ -115,7 +136,7 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	return shader_program;
 }
 
-void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count,const char* uniformName, unsigned int shaderType)
+void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count,const char* uniformName)
 {
 	UseShader();
 
@@ -140,18 +161,14 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 		return;
 	}
 	if (spvInitialized) {
-		if (shaderType == GL_VERTEX_SHADER) {
-			spvm_result_t uniform = spvm_state_get_result(spvVertex.spvState, spvm_string(uniformName));
-			if (type != GL_INT) { //if debugging
-				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
-			}
-			else {
-				spvm_member_set_value_i(uniform->members, uniform->member_count, (int*)value);
-			}
+		std::list<spvShader*>* shads = SPIRVVMFindUniform(uniformName);
+		if (shads == nullptr) {
+			printf("uniform name : %s isn't in that shader!\n", uniformName);
+			return;
 		}
-		else if (shaderType == GL_FRAGMENT_SHADER) {
-			spvm_result_t uniform = spvm_state_get_result(spvFragment.spvState, spvm_string(uniformName));
-			if (type != GL_INT) { //if debugging
+		for (auto i : *shads) {
+			spvm_result_t uniform = spvm_state_get_result((*i).spvState, spvm_string(uniformName));
+			if (type != GL_INT) {
 				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
 			}
 			else {
@@ -257,7 +274,7 @@ unsigned int Shader::GetProgram()
 	return shader_Program;
 }
 
-void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count, unsigned int shaderType)
+void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count)
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
 	UseShader(); 
@@ -278,11 +295,11 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		return;
 	}
 	//basicly the same function but whatever
-	_UniformEquals(uni_Pos, value, type,count,uniform_Name,shaderType);
+	_UniformEquals(uni_Pos, value, type,count,uniform_Name);
 	
 }
 // value must be an array of values, not an array of pointers
-void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count, unsigned int shaderType)
+void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count)
 {
 	UseShader();
 	//int* locs = (int*)malloc(sizeof(int) * count);
@@ -294,7 +311,7 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 			std::cout << name << " is not a variable in your shader!\n";
 		}
 		else {
-			_UniformEquals(loc, value, type,1,uniformName, shaderType);
+			_UniformEquals(loc, value, type,1,uniformName);
 		}
 	}
 }
@@ -321,18 +338,30 @@ bool Shader::GetSPIRVVMInitialized()
 
 void Shader::StartSPIRVVMDebug()
 {
-	printf("Debugging Shader!==============================\n\n\n");
+	printf("Debugging Shader!==============================\n");
+	bool exit = false;
+	while (exit == false) {
+		char inBuffer[40];
+		//get data
+		fgets(inBuffer, 40, stdin);
+		std::string inString = std::string(inBuffer);
+		//find first space, all chars before are command
+		size_t commandEnd = inString.find(" ", 0);
+		//look for commands
+		size_t cmdGetUniform = inString.find("getuniform", 0, commandEnd);
+		if (cmdGetUniform != std::string::npos) {
 
-
+		}
+	}
 }
 
 void Shader::InitializeSPIRVVMDebug(){
-	spvVertex = spvShader(vertexContent, GL_VERTEX_SHADER);
-	spvFragment = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
+	spvShaders[0] = spvShader(vertexContent, GL_VERTEX_SHADER);
+	spvShaders[1] = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
 	spvInitialized = true;
 }
 
-void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, unsigned int localIndex, void* data,unsigned int primitiveType, unsigned int sizeofData,unsigned int shaderType){
+void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, unsigned int localIndex, void* data, unsigned int primitiveType, unsigned int sizeofData) {
 	UseShader();
 	//getting name of member
 	char* nameBuffer = (char*)malloc(30);
@@ -340,16 +369,11 @@ void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, uns
 	GLCall(glGetProgramResourceName(shader_Program, type, localIndex, 30, &actualSize, nameBuffer));
 
 	//hand data over to SPIRV-VM
-	spvShader* shad;
-	if (shaderType == GL_VERTEX_SHADER)
-		shad = &spvVertex;
-	else if (shaderType == GL_FRAGMENT_SHADER)
-		shad = &spvFragment;
-	else shad = nullptr;
-	
-	if (shad != nullptr) {
-		spvm_result_t interfaceBlock = spvm_state_get_result((*shad).spvState, spvm_string(nameBuffer));
-		spvm_member_t member = spvm_state_get_object_member((*shad).spvState, interfaceBlock, spvm_string(nameBuffer));
+	//find the correct shaders to use
+	std::list<spvShader*>* shads = SPIRVVMFindUniform(blockName);
+	for (auto i : *shads) {
+		spvm_result_t interfaceBlock = spvm_state_get_result((*i).spvState, spvm_string(blockName.c_str()));
+		spvm_member_t member = spvm_state_get_object_member((*i).spvState, interfaceBlock, spvm_string(nameBuffer));
 	
 		if (primitiveType == GL_FLOAT)
 			spvm_member_set_value_f(member->members, member->member_count, (float*)data);
@@ -357,7 +381,7 @@ void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, uns
 			spvm_member_set_value_i(member->members, member->member_count, (int* )data);
 		else printf("invalid primitive type given to SPIRVVMInterfaceWrite!\n");
 	}
-	else printf("shader type given to SPIRVVMInterfaceWrite is invalid!\n");
+
 	free(nameBuffer);
 }
 

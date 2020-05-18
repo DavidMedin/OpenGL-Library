@@ -57,7 +57,7 @@ void Object::UpdateModelMatrix() {
 }
 void Object::Draw(Shader* shad,Camera* cam) {
 	shad->UseShader();
-	shad->UniformEquals("model",GL_FLOAT_MAT4, modelMatrix,1, GL_VERTEX_SHADER);
+	shad->UniformEquals("model",GL_FLOAT_MAT4, modelMatrix,1);
 	
 	
 	if (GetDrawFlags(DRAWFLAG_TRIANGLE)) {
@@ -187,7 +187,7 @@ MetaLine::MetaLine(glm::vec3 point1, glm::vec3 point2)
 void MetaLine::Draw(Camera* cam)
 {
 	Shader** shaders = GetShaders();
-	shaders[0]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1, GL_VERTEX_SHADER);
+	shaders[0]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	GraphicsDisable(Z_TEST);
 	Line::Draw(cam);
 	GraphicsEnable(Z_TEST);
@@ -196,7 +196,7 @@ void MetaLine::Draw(Camera* cam)
 void MetaLine::Draw(Shader* shad, Camera* cam)
 {
 	shad->UseShader();
-	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1, GL_VERTEX_SHADER);
+	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	GraphicsDisable(Z_TEST);
 	Line::Draw(shad,cam);
 	GraphicsEnable(Z_TEST);
@@ -325,8 +325,8 @@ void Dot::Draw(Camera* cam)
 	depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glPointSize(pointSize);
 	Shader** shads = GetShaders();
-	shads[1]->UniformEquals("color", GL_FLOAT_VEC3, &color,1,GL_FRAGMENT_SHADER);
-	shads[1]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1, GL_VERTEX_SHADER);
+	shads[1]->UniformEquals("color", GL_FLOAT_VEC3, &color,1);
+	shads[1]->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	mesh->Draw(shads[1], cam);
 	if (is != depthTest) depthTest ? glDisable(GL_DEPTH_TEST) : glEnable(GL_DEPTH_TEST);
 }
@@ -336,8 +336,8 @@ void Dot::Draw(Shader* shad, Camera* cam)
 	bool is = glIsEnabled(GL_DEPTH_TEST);
 	depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
 	glPointSize(pointSize);
-	shad->UniformEquals("color", GL_FLOAT_VEC3, &color,1,GL_FRAGMENT_SHADER);
-	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1, GL_VERTEX_SHADER);
+	shad->UniformEquals("color", GL_FLOAT_VEC3, &color,1);
+	shad->UniformEquals("model", GL_FLOAT_MAT4, &modelMatrix,1);
 	mesh->Draw(shad, cam);
 	if (is != depthTest) depthTest ? glDisable(GL_DEPTH_TEST) : glEnable(GL_DEPTH_TEST);
 }

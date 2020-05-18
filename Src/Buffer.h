@@ -81,16 +81,22 @@ public:
 
 class StorageBuffer {
 private:
+	std::string name;
+	//stuff for opengl
 	unsigned int bufferId;
 	unsigned int bindingPoint;
+	
 	void* _data;
 	unsigned int size;
 
+	//metadata for writing
 	int arrayElementSize;
 	unsigned int arrayOffset;
 	unsigned int arrayType;
 
-	std::string name;
+	//debug stuff
+	Shader** shads;
+	unsigned int shadCount;
 	//returns pointer to write/read from
 	void* MapData();
 	//call this to free mapped data and write data to opengl (apply it)
@@ -98,7 +104,7 @@ private:
 public:
 	StorageBuffer();
 	//last element type is assumed to be the variable length array type if it is an array (always include!)
-	StorageBuffer(unsigned int types[][2],unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName, unsigned int shaderType);
+	StorageBuffer(unsigned int types[][2],unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName);
 	void Bind();
 	void UnBind();
 

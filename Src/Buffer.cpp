@@ -203,7 +203,7 @@ UniformBuffer::UniformBuffer(unsigned int types[][2], unsigned int typesNum, voi
 			unsigned int localIndex=0;
 			unsigned int dataOffset=0;
 			for (int u = 0; u < typesNum; u++) {
-				shads[i]->SPIRVVMInterfaceWrite(uniformName, GL_UNIFORM_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]), shaderType);
+				shads[i]->SPIRVVMInterfaceWrite(uniformName, GL_UNIFORM_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]));
 				localIndex += types[u][1];
 				dataOffset += localIndex * SizeofGlEnum(types[u][1]);
 			}
@@ -340,7 +340,7 @@ StorageBuffer::StorageBuffer()
 {
 }
 
-StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName,unsigned int shaderType)
+StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, void** data, unsigned int bindingPoint, Shader* shads[], unsigned int shadNum, std::string storageName)
 {
 	//converts data to std140
 	unsigned int size;
@@ -352,13 +352,15 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, size, newData, GL_STATIC_DRAW));
 	bindingPoint = StorageBufferBind;
 	StorageBufferBind++;
-	
 	name = storageName;
 	
+	
 	//this *should* say "get the last types type"
-	//arrayType = *(types.begin() + (types.size() - 1))[0];
 	arrayElementSize = SizeofGlEnum(types[typesNum - 1][0]);
 	arrayType = types[typesNum - 1][0];
+
+	this->shads = shads;
+	shadCount = shadNum;
 
 	//bind the uniform blocks in shader code to a binding point
 	for (unsigned int i = 0; i < shadNum; i++) {
@@ -369,7 +371,7 @@ StorageBuffer::StorageBuffer(unsigned int types[][2], unsigned int typesNum, voi
 			unsigned int localIndex = 0;
 			unsigned int dataOffset = 0;
 			for (int u = 0; u < typesNum; u++) {
-				shads[i]->SPIRVVMInterfaceWrite(storageName, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]), shaderType);
+				shads[i]->SPIRVVMInterfaceWrite(storageName, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]));
 				localIndex += types[u][1];
 				dataOffset += localIndex * SizeofGlEnum(types[u][1]);
 			}
@@ -431,8 +433,8 @@ void StorageBuffer::AdjustVarElement(unsigned int newElementNum, void * data)
 	void* stdData = ToStd140(types, 1, &data, &newSize, nullptr);
 	//size of stdData must be a multiple of sizeof(glm::vec4)
 	newSize += arrayOffset;
-
 	void* newData = calloc(newSize, 1);
+
 
 	//only copies up to the array
 	memcpy(newData, _data, arrayOffset);
@@ -444,6 +446,17 @@ void StorageBuffer::AdjustVarElement(unsigned int newElementNum, void * data)
 
 	Bind();
 	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, size, _data, GL_DYNAMIC_DRAW));
+
+	//write to debug
+	//for (int i = 0; i < shadCount; i++) {
+	//	if (shads[i]->GetSPIRVVMInitialized()) {
+	//		unsigned int localIndex = 0;
+	//		unsigned int dataOffset = 0;
+	//			shads[i]->SPIRVVMInterfaceWrite(name, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(arrayType), types[u][1] * SizeofGlEnum(types[u][1]), shaderType);
+	//		
+
+	//	}
+	//}
 }
 void StorageBuffer::SendData(unsigned int types[][2],unsigned int typesNum, void** data)
 {
@@ -455,6 +468,18 @@ void StorageBuffer::SendData(unsigned int types[][2],unsigned int typesNum, void
 	UnMapData();
 	free(_data);
 	_data = newData;
+
+	for (int i = 0; i < shadCount; i++) {
+		if (shads[i]->GetSPIRVVMInitialized()) {
+			unsigned int localIndex = 0;
+			unsigned int dataOffset = 0;
+			for (int u = 0; u < typesNum; u++) {
+				shads[i]->SPIRVVMInterfaceWrite(name, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]));
+				localIndex += types[u][1];
+				dataOffset += localIndex * SizeofGlEnum(types[u][1]);
+			}
+		}
+	}
 }
 unsigned int StorageBuffer::GetSize() {
 	return size;

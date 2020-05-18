@@ -68,7 +68,7 @@ void spvm_state_jump_to_instruction(spvm_state_t state, spvm_word instruction_co
 spvm_result_t spvm_state_get_builtin(spvm_state_t state, SpvBuiltIn decor);
 extern "C" spvm_result_t spvm_state_get_result(spvm_state_t state, const spvm_string str);
 spvm_result_t spvm_state_get_local_result(spvm_state_t state, spvm_result_t fn, const spvm_string str);
-spvm_member_t spvm_state_get_object_member(spvm_state_t state, spvm_result_t var, const spvm_string member_name);
+extern "C" spvm_member_t spvm_state_get_object_member(spvm_state_t state, spvm_result_t var, const spvm_string member_name);
 void spvm_state_push_function_stack(spvm_state_t state, spvm_result_t func, spvm_word func_res_id);
 void spvm_state_pop_function_stack(spvm_state_t state);
 void spvm_state_delete(spvm_state_t state);

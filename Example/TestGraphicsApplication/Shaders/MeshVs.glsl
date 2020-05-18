@@ -24,11 +24,11 @@ layout(location = 0) out vData{
 void main() {
 
 	mat4 finalBoneMat=identity;
-//	for(int i = 0; i < 4;i++){
-//		if(boneIds[i] != -1){
-//			finalBoneMat *= bones[boneIds[i]];
-//		}
-//	}
+	for(int i = 0; i < 4;i++){
+		if(boneIds[i] != -1){
+			finalBoneMat *= bones[boneIds[i]];
+		}
+	}
 	if(boneIds[0] != -1){
 		finalBoneMat *= bones[boneIds[0]];
 	}

@@ -10,7 +10,7 @@ int main(int argv, char* argc[]) {
 
 	glPointSize(10);
 
-	Object* skull = new Object("../Models/Skull/BigJaw.fbx");
+	Object* skull = new Object("../Models/Character/girl.fbx");
 	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
 
 	Object* plane = new Object("../Models/Plane/plane.fbx", (Node*)skull);
@@ -29,7 +29,7 @@ int main(int argv, char* argc[]) {
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
 	meshShad->InitializeSPIRVVMDebug();
 	glm::mat4 identity = glm::identity<glm::mat4>();
-	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1,GL_VERTEX_SHADER);
+	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1);
 
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
@@ -72,12 +72,12 @@ int main(int argv, char* argc[]) {
 
 		ImGui::End();
 
-		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1,GL_FRAGMENT_SHADER);
-		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1, GL_FRAGMENT_SHADER);
-		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1, GL_FRAGMENT_SHADER);
-		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1, GL_FRAGMENT_SHADER);
-		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1, GL_FRAGMENT_SHADER);
-		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1, GL_FRAGMENT_SHADER);
+		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1);
+		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1);
+		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1);
+		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
+		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
+		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1);
 
 		//ImGui::ShowDemoWindow();
 
@@ -111,7 +111,7 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		skull->mesh->skelly->Animate(double(tick));
+		//skull->mesh->skelly->Animate(double(tick));
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
