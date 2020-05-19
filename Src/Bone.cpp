@@ -147,7 +147,7 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		glm::mat4 trans = glm::translate(glm::identity<glm::mat4>(), *translate);
 		glm::mat4 sca = glm::scale(glm::identity<glm::mat4>(), *scale);
 		glm::mat4 rot = glm::mat4_cast(*rotation);
-		glm::mat4* transform = new glm::mat4(sca*trans*rot);
+		glm::mat4* transform = new glm::mat4(sca);
 		
 		glm::mat4 parentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
 

@@ -9,8 +9,8 @@ layout(location = 4) in vec4 weights;
 layout(location = 0) uniform mat4 proj;
 layout(location = 1) uniform mat4 view;
 layout(location = 2) uniform mat4 model;
-layout(location = 4) uniform mat4 identity;
-layout(location = 5) uniform mat4 bones[32];
+layout(location = 3) uniform mat4 identity;
+layout(location = 4) uniform mat4 bones[32];
 
 
 layout(location = 0) out vData{
@@ -24,13 +24,13 @@ layout(location = 0) out vData{
 void main() {
 
 	mat4 finalBoneMat=identity;
-	for(int i = 0; i < 4;i++){
-		if(boneIds[i] != -1){
-			finalBoneMat *= bones[boneIds[i]];
-		}
-	}
+//	for(int i = 0; i < 4;i++){
+//		if(boneIds[i] != -1){
+//			finalBoneMat *= bones[boneIds[i]];
+//		}
+//	}
 	if(boneIds[0] != -1){
-		finalBoneMat *= bones[boneIds[0]];
+		finalBoneMat = bones[boneIds.x];
 	}
 	gl_Position = proj * view * model * finalBoneMat * vec4(vp,1.0);
 	v_frag.normals = normals;

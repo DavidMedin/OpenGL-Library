@@ -111,7 +111,7 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		//skull->mesh->skelly->Animate(double(tick));
+		skull->mesh->skelly->Animate(double(tick));
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
