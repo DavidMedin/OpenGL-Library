@@ -22,16 +22,17 @@ layout(location = 0) out vData{
 }v_frag;
 
 void main() {
-
+	float weightSum = 0;
 	mat4 finalBoneMat=identity;
-//	for(int i = 0; i < 4;i++){
-//		if(boneIds[i] != -1){
-//			finalBoneMat *= bones[boneIds[i]];
-//		}
-//	}
-	if(boneIds[0] != -1){
-		finalBoneMat = bones[boneIds.x];
+	for(int i = 0; i < 4;i++){
+		if(boneIds[i] != -1){
+			finalBoneMat += bones[boneIds[i]]*weights[i];
+			weightSum += weights[i];
+		}
 	}
+//	if(boneIds[0] != -1){
+//		finalBoneMat = bones[boneIds.x];
+//	}
 	gl_Position = proj * view * model * finalBoneMat * vec4(vp,1.0);
 	v_frag.normals = normals;
 	v_frag.texCoords = texCoords;
@@ -46,7 +47,7 @@ void main() {
 		}
 	}
 
-	if(worthless==1){
+	if(weightSum>1){
 		v_frag.idColor = vec3(1,0,0);
 	}else{
 		v_frag.idColor = vec3(0,1,0);

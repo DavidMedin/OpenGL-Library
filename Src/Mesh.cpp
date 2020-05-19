@@ -316,9 +316,9 @@ Mesh::Mesh(std::string path)
 
 
 	//bones
-	boneIds = (int*)malloc(pointCount * sizeof(int));
-	//weights = (float*)calloc(pointCount * sizeof(float) * MAXBONEIDS, 1);//zeroed out
-	for (unsigned int i = 0; i < pointCount; i++) {
+	boneIds = (int*)malloc(pointCount * sizeof(int)*MAXBONEIDS);
+	weights = (float*)calloc(pointCount * sizeof(float) * MAXBONEIDS, 1);//zeroed out
+	for (unsigned int i = 0; i < pointCount*MAXBONEIDS; i++) {
 		boneIds[i] = -1;
 	}
 	skelly = nullptr;
@@ -334,12 +334,12 @@ Mesh::Mesh(std::string path)
 				aiVertexWeight weight = bone->mWeights[u];
 				unsigned int vertexId = weight.mVertexId;
 				if (weight.mWeight >= 0.3) {
-					//for (int q = 0; q < 1; q++) {
-						//if (boneIds[vertexId + q] != -1) continue;
-						 boneIds[vertexId] = i; // index through points to get the only bone it is affected by.
-						//weights[vertexId * MAXBONEIDS + q] = weight.mWeight;
-						//break;
-					//}
+					for (int q = 0; q < 3; q++) {
+						if (boneIds[vertexId*MAXBONEIDS + q] != -1) continue;
+						 boneIds[vertexId*MAXBONEIDS+q] = (int)i; // index through points to get the only bone it is affected by.
+						weights[vertexId * MAXBONEIDS + q] = weight.mWeight;
+						break;
+					}
 				}
 			}
 		}
@@ -348,10 +348,10 @@ Mesh::Mesh(std::string path)
 	else {
 		printf("	No bones!\n");
 	}
-	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int));
-	VA->BindIntVertexBuffer(boneIdBuffer,1);
-	//weightBuffer = new VertexBuffer(weights, pointCount * sizeof(float) * MAXBONEIDS);
-	//VA->BindVertexBuffer(weightBuffer, 4, GL_FLOAT, GL_FALSE);
+	boneIdBuffer = new VertexBuffer(boneIds, pointCount * sizeof(int)*MAXBONEIDS);
+	VA->BindIntVertexBuffer(boneIdBuffer,4);
+	weightBuffer = new VertexBuffer(weights, pointCount * sizeof(float) * MAXBONEIDS);
+	VA->BindVertexBuffer(weightBuffer, 4, GL_FLOAT, GL_FALSE);
 
 	//texture loading
 	unsigned int num_textures = scene->mNumTextures;

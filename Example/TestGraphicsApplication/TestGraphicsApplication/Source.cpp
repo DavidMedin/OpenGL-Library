@@ -40,8 +40,10 @@ int main(int argv, char* argc[]) {
 	//unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
 	//StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
 
-	float tick = 0;
+	glm::quat* rotation = new glm::quat(glm::identity<glm::quat>());
 
+	float tick = 0;
+	bool animate = false;
 	while (!ShouldCloseWindow()) {
 		float dt = GetDeltaTime();
 		ClearWindow();
@@ -63,6 +65,15 @@ int main(int argv, char* argc[]) {
 			}
 			if (ImGui::Button("Debug Shader")) {
 				meshShad->StartSPIRVVMDebug();
+			}
+			if (ImGui::Button("Toggle Animate")) {
+				animate = !animate;
+			}
+			if (ImGui::Button("Rotate Bone")) {
+				glm::quat* tmp = rotation;
+				rotation = new glm::quat(glm::rotate(*rotation, glm::radians(5.0f), glm::vec3(1, 0, 0)));
+				delete tmp;
+				skull->mesh->skelly->NameSearch(skull->mesh->skelly->rootBone, "Brain2")->Rotate(rotation);
 			}
 			ImGui::TreePop();
 		}
@@ -111,7 +122,7 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		skull->mesh->skelly->Animate(double(tick));
+		if(animate)skull->mesh->skelly->Animate(double(tick));
 
 		skull->Draw(meshShad, cam);
 		plane->Draw(meshShad, cam);
