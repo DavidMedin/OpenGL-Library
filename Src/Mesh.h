@@ -24,9 +24,9 @@
 #define DIFFUSE_SLOT 0
 #define SPECULAR_SLOT 1
 
-#define ATTRIBUTE_MESH 10
-#define ATTRIBUTE_TEXTURE 11
-#define ATTRIBUTE_TRANSFORM 12
+//#define ATTRIBUTE_MESH 10
+//#define ATTRIBUTE_TEXTURE 11
+//#define ATTRIBUTE_TRANSFORM 12
 
 #define DRAWFLAG_TRIANGLE 1
 //00000000
@@ -90,19 +90,19 @@ public:
 	unsigned int pointCount;
 
 	//use this for primitives, index buffer will be generated
-	Mesh(float* data, unsigned int size);
+	Mesh(float* data, unsigned int size, unsigned int* indexData, unsigned int indexCount);
 
 	//main mesh constructor
 	Mesh(std::string path);
 
 	//must be a pointer to a aiMesh!!
 	//not recommended for the user of the Library unless you include AssiImp
-	Mesh(void* mesh);
+	//Mesh(void* mesh);
 
-	unsigned int drawMode; //must be GL_TRIANGLES,GL_POINTS, or the like
+	int drawMode; //must be GL_TRIANGLES,GL_POINTS, or the like
 	void Draw(Shader* shad,Camera* cam);
 	//untested!!!
-	void BindCustomData(VertexBuffer* data, unsigned int type, unsigned int vecX); //untested
+	//void BindCustomData(VertexBuffer* data, unsigned int type, unsigned int vecX); //untested
 	void Bind();
 };
 
@@ -126,5 +126,5 @@ public:
 	void Draw(Camera* cam);
 	void Draw(Shader* shad,Camera* cam);
 	float* OpenWriting();
-	unsigned int ClosedWriting();
+	unsigned int CloseWriting();
 };

@@ -1,13 +1,21 @@
 #version 460
-layout(location=37) uniform vec3 ambientColor;
-layout(location=38) uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
-layout(location=39) uniform vec3 lightColor;
+uniform vec3 ambientColor;
+uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
+uniform vec3 lightColor;
 
-layout(location=40) uniform vec2 LightRamp1;
-layout(location=41) uniform vec2 LightRamp2;
-
-layout(location=42) uniform int renderSwitch;
-layout(location=43) uniform vec3 camLoc;
+uniform vec2 LightRamp1;
+uniform vec2 LightRamp2;
+uniform int renderSwitch;
+uniform vec3 camLoc;
+//layout(location=37) uniform vec3 ambientColor;
+//layout(location=38) uniform vec3 lightPos; // will be only the closest light source (make a transition light animation like tww)
+//layout(location=39) uniform vec3 lightColor;
+//
+//layout(location=40) uniform vec2 LightRamp1;
+//layout(location=41) uniform vec2 LightRamp2;
+//
+//layout(location=42) uniform int renderSwitch;
+//layout(location=43) uniform vec3 camLoc;
 layout(location=0) in vData{
 	vec3 normals;
 	vec2 texCoords;

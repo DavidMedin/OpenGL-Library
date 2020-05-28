@@ -82,126 +82,124 @@ Texture::~Texture() {
 //	//	m.a4, m.b4, m.c4, m.d4
 //	//);
 //}
+//
+//
+//Mesh::Mesh(void* mesh) {
+//	drawMode = GL_TRIANGLES;
+//	for (int i = 0; i < 32; i++) {
+//		texList[i] = nullptr;
+//	}
+//
+//	aiMesh* tmpMesh = (aiMesh*)mesh;
+//
+//	//vertices
+//	unsigned int point_count = tmpMesh->mNumVertices;
+//	float* points = nullptr;
+//	if (tmpMesh->HasPositions()) {
+//		points = (float*)malloc(sizeof(float) * point_count * 3);
+//		if (points != nullptr && point_count != 0) {
+//			for (unsigned int i = 0; i < point_count; i++) {
+//				aiVector3D vector = tmpMesh->mVertices[i];
+//				points[i * 3] = (float)vector.x;
+//				points[i * 3 + 1] = (float)vector.y;
+//				points[i * 3 + 2] = (float)vector.z;
+//			}
+//		}
+//		else {
+//			NewError("Could not allocate memory for (GLFloat* points) in Mesh.cpp\n");
+//			return;
+//		}
+//	}
+//	transform = new glm::mat4(1.0f);
+//	vertexBuffer = new VertexBuffer(points, sizeof(float) * point_count * 3);
+//	pointCount = point_count;
+//	VA = new VertexArray();
+//	VA->BindVertexBuffer(vertexBuffer, 3, GL_FLOAT, false);
+//	vertices = points;
+//
+//
+//	//index buffer
+//	unsigned int* indices = nullptr;
+//	unsigned int face_count = tmpMesh->mNumFaces;
+//	if (tmpMesh->HasFaces() && face_count >= 0) {
+//		indices = (unsigned int*)malloc(sizeof(unsigned int) * face_count * 3);
+//		if (indices != NULL) {
+//			for (int i = 0; i < (int)face_count; i++) {
+//				aiFace face = tmpMesh->mFaces[i];
+//				if (face.mNumIndices == 3) {
+//					indices[i * 3] = face.mIndices[0];
+//					indices[i * 3 + 1] = face.mIndices[1];
+//					indices[i * 3 + 2] = face.mIndices[2];
+//				}
+//				else {
+//					NewError("A face had more than 3 points, is 'aiProcess_Triangulate' not flagged?\n");
+//				}
+//			}
+//		}
+//	}
+//	index = new IndexBuffer(indices, face_count * 3);
+//	this->indexCount = face_count * 3;
+//	this->indices = indices;
+//
+//	//normals
+//	//use point_count for size
+//	float* normals = nullptr;
+//	if (tmpMesh->HasNormals() && point_count >= 0) {
+//		normals = (float*)malloc(sizeof(float) * 3 * point_count);
+//		if (normals != NULL) {
+//			for (unsigned int i = 0; i < point_count; i++) {
+//				aiVector3D vector = tmpMesh->mNormals[i];
+//				normals[i * 3] = (float)vector.x;
+//				normals[i * 3 + 1] = (float)vector.y;
+//				normals[i * 3 + 2] = (float)vector.z;
+//			}
+//		}
+//		else {
+//			NewError("the array normals in Mesh.cpp didn't get memory allocated\n");
+//			return;
+//		}
+//	}
+//	normalBuffer = new VertexBuffer(normals, point_count * 3 * sizeof(float));
+//	VA->BindVertexBuffer(normalBuffer, 3, GL_FLOAT, false);
+//	this->normals = normals;
+//
+//	//texture UVs
+//	float* UVs = nullptr;
+//	if (tmpMesh->HasTextureCoords(0) && point_count >= 0) {
+//		UVs = (float*)malloc(sizeof(float) * 2 * point_count);
+//		if (UVs != NULL) {
+//			for (unsigned int i = 0; i < point_count; i++) {
+//				UVs[i * 2 + 0] = tmpMesh->mTextureCoords[0][i].x;
+//				UVs[i * 2 + 1] = tmpMesh->mTextureCoords[0][i].y;
+//			}
+//		}
+//		else {
+//			NewError("UVs' memory was incorrectly allocated\n");
+//		}
+//	}
+//	textureUVBuffer = new VertexBuffer(UVs, sizeof(float) * point_count * 2);
+//	VA->BindVertexBuffer(textureUVBuffer, 2, GL_FLOAT, false);
+//	this->textureUVs = UVs;
+//
+//	//type = ATTRIBUTE_MESH;
+//}
+//
 
 
-Mesh::Mesh(void* mesh) {
-	drawMode = GL_TRIANGLES;
-	for (int i = 0; i < 32; i++) {
-		texList[i] = nullptr;
-	}
-
-	aiMesh* tmpMesh = (aiMesh*)mesh;
-
-	//vertices
-	unsigned int point_count = tmpMesh->mNumVertices;
-	float* points = nullptr;
-	if (tmpMesh->HasPositions()) {
-		points = (float*)malloc(sizeof(float) * point_count * 3);
-		if (points != nullptr && point_count != 0) {
-			for (unsigned int i = 0; i < point_count; i++) {
-				aiVector3D vector = tmpMesh->mVertices[i];
-				points[i * 3] = (float)vector.x;
-				points[i * 3 + 1] = (float)vector.y;
-				points[i * 3 + 2] = (float)vector.z;
-			}
-		}
-		else {
-			NewError("Could not allocate memory for (GLFloat* points) in Mesh.cpp\n");
-			return;
-		}
-	}
-	transform = new glm::mat4(1.0f);
-	vertexBuffer = new VertexBuffer(points, sizeof(float) * point_count * 3);
-	pointCount = point_count;
-	VA = new VertexArray();
-	VA->BindVertexBuffer(vertexBuffer, 3, GL_FLOAT, false);
-	vertices = points;
 
 
-	//index buffer
-	unsigned int* indices = nullptr;
-	unsigned int face_count = tmpMesh->mNumFaces;
-	if (tmpMesh->HasFaces() && face_count >= 0) {
-		indices = (unsigned int*)malloc(sizeof(unsigned int) * face_count * 3);
-		if (indices != NULL) {
-			for (int i = 0; i < (int)face_count; i++) {
-				aiFace face = tmpMesh->mFaces[i];
-				if (face.mNumIndices == 3) {
-					indices[i * 3] = face.mIndices[0];
-					indices[i * 3 + 1] = face.mIndices[1];
-					indices[i * 3 + 2] = face.mIndices[2];
-				}
-				else {
-					NewError("A face had more than 3 points, is 'aiProcess_Triangulate' not flagged?\n");
-				}
-			}
-		}
-	}
-	index = new IndexBuffer(indices, face_count * 3);
-	this->indexCount = face_count * 3;
-	this->indices = indices;
-
-	//normals
-	//use point_count for size
-	float* normals = nullptr;
-	if (tmpMesh->HasNormals() && point_count >= 0) {
-		normals = (float*)malloc(sizeof(float) * 3 * point_count);
-		if (normals != NULL) {
-			for (unsigned int i = 0; i < point_count; i++) {
-				aiVector3D vector = tmpMesh->mNormals[i];
-				normals[i * 3] = (float)vector.x;
-				normals[i * 3 + 1] = (float)vector.y;
-				normals[i * 3 + 2] = (float)vector.z;
-			}
-		}
-		else {
-			NewError("the array normals in Mesh.cpp didn't get memory allocated\n");
-			return;
-		}
-	}
-	normalBuffer = new VertexBuffer(normals, point_count * 3 * sizeof(float));
-	VA->BindVertexBuffer(normalBuffer, 3, GL_FLOAT, false);
-	this->normals = normals;
-
-	//texture UVs
-	float* UVs = nullptr;
-	if (tmpMesh->HasTextureCoords(0) && point_count >= 0) {
-		UVs = (float*)malloc(sizeof(float) * 2 * point_count);
-		if (UVs != NULL) {
-			for (unsigned int i = 0; i < point_count; i++) {
-				UVs[i * 2 + 0] = tmpMesh->mTextureCoords[0][i].x;
-				UVs[i * 2 + 1] = tmpMesh->mTextureCoords[0][i].y;
-			}
-		}
-		else {
-			NewError("UVs' memory was incorrectly allocated\n");
-		}
-	}
-	textureUVBuffer = new VertexBuffer(UVs, sizeof(float) * point_count * 2);
-	VA->BindVertexBuffer(textureUVBuffer, 2, GL_FLOAT, false);
-	this->textureUVs = UVs;
-
-	//type = ATTRIBUTE_MESH;
-}
-
-
-
-
-
-Mesh::Mesh(float* data, unsigned int size)
+Mesh::Mesh(float* data, unsigned int size,unsigned int* indexData,unsigned int indexCount)
 {
 	drawMode = GL_TRIANGLES;
 	vertices = data;
-	pointCount = size/sizeof(float)*3;
+	pointCount = size / (sizeof(float) * 3);
 	vertexBuffer = new VertexBuffer(data, size);
 	VA = new VertexArray();
 	VA->BindVertexBuffer(vertexBuffer, 3, GL_FLOAT, false);
 	
-	indices = (unsigned int*)malloc(sizeof(unsigned int));
-	*indices = 1;
-	index = new IndexBuffer(indices, 1);
-	indexCount = 1;
-
+	indices = indexData;
+	this->indexCount = indexCount;
+	index = new IndexBuffer(indexData, indexCount);
 	//unused
 	//will want to check if these buffers are defined if you want to use them in your shader
 	textureUVBuffer = nullptr;
@@ -407,7 +405,7 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
 	if (boneCount > 0) {
-		shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount);
+		//shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount);
 	}
 	VA->Bind();
 	index->Bind();
@@ -423,7 +421,8 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 			break;
 		}
 	}
-		GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawElements(drawMode, indexCount, GL_UNSIGNED_INT, nullptr));
+	//GLCall(glDrawArrays(GL_POINTS, 0, pointCount));
 }
 //void Mesh::BindCustomData(VertexBuffer* data, unsigned int type,unsigned int vecX) {
 //	VA->BindCustomBuffer(data, vecX, type, false);
@@ -560,8 +559,10 @@ Transform::Transform(glm::mat4* transform)
 	 shads[0]->UseShader();
 	 shads[0]->UniformEquals("proj", GL_FLOAT_MAT4, cam->projectionMatrix,1);
 	 shads[0]->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1);
+	 shads[0]->UniformEquals("color", GL_FLOAT_VEC3, &color[0], 1);
+
 	 VA->Bind();
-	 GLCall(glDrawArrays(GL_LINES, 0, 1));
+	 GLCall(glDrawArrays(GL_LINES, 0, 2));
  }
 
  void Line::Draw(Shader* shad, Camera* cam)
@@ -581,7 +582,7 @@ Transform::Transform(glm::mat4* transform)
 	return mappedPoints;
  }
 
- unsigned int Line::ClosedWriting()
+ unsigned int Line::CloseWriting()
  {
 	 return VB->UnmapData();
  }

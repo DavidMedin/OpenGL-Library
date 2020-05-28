@@ -124,7 +124,7 @@ int init(int width, int height, std::string name) {
 	glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), framebuffer_size_callback);
 	
 	shaderList[0] = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", nullptr);
-	shaderList[1] = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", nullptr);
+	shaderList[1] = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", NULL);
 	return 1;
 }
 

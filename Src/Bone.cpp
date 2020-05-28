@@ -37,7 +37,9 @@ BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 	bool hasBone=false;
 	for (unsigned int i = 0; i < mesh->mNumBones; i++) {
 		name = node->mName.C_Str();
-		if (strcmp(mesh->mBones[i]->mName.C_Str(), node->mName.C_Str())==0) {//this node is one of our bones!
+		if (name.find("_end", 0) != std::string::npos)
+			leaf = true;
+		if (strcmp(mesh->mBones[i]->mName.C_Str(), node->mName.C_Str())==0 || leaf) {//this node is one of our bones!
 			hasBone = true;
 			index = i;
 			if (index != -1) {
@@ -140,25 +142,25 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		double m = -1 / (rotKeyTimes[beforeKey] - rotKeyTimes[afterKey]);
 		double weight = m * tick - rotKeyTimes[beforeKey];
 		delete rotation;
-		rotation = new glm::quat(glm::slerp(rotKeys[beforeKey], rotKeys[afterKey], (float)weight));
+		rotation = new glm::quat(glm::mix(rotKeys[beforeKey], rotKeys[afterKey], (float)weight));
 	}
 	glm::mat4* childMat = new glm::mat4(glm::identity<glm::mat4>());
 	if (index != -1) {
 		glm::mat4 trans = glm::translate(glm::identity<glm::mat4>(), *translate);
 		glm::mat4 sca = glm::scale(glm::identity<glm::mat4>(), *scale);
 		glm::mat4 rot = glm::mat4_cast(*rotation);
-		glm::mat4* transform = new glm::mat4(rot*trans);
+		glm::mat4* transform = new glm::mat4(trans*rot);
 		
 		glm::mat4 parentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
 
 		delete childMat;
 		childMat = new glm::mat4(*transform * *parMat);
-		GETMATRIX(this) = *parMat * *transform* (GETOFFSET(this));
+		GETMATRIX(this) = parentMat * *transform* (GETOFFSET(this));
 		delete transform;
 	}
 
 	for (BoneNode* child : children) {
-		child->Animate(tick,childMat);
+		child->Animate(tick,&GETMATRIX(this));
 	}
 	delete rotation;
 	delete scale;

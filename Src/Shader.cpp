@@ -175,6 +175,7 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 				spvm_member_set_value_i(uniform->members, uniform->member_count, (int*)value);
 			}
 		}
+		delete shads;
 	}
 }
 
@@ -381,7 +382,7 @@ void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, uns
 			spvm_member_set_value_i(member->members, member->member_count, (int* )data);
 		else printf("invalid primitive type given to SPIRVVMInterfaceWrite!\n");
 	}
-
+	delete shads;
 	free(nameBuffer);
 }
 

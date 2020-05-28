@@ -19,6 +19,7 @@ class BoneNode {
 private:
 public:
 	bool kill;
+	bool leaf;
 
 	std::string name;
 
@@ -52,7 +53,7 @@ class Skeleton {
 private:
 public:
 	//boneOffsets and boneMatrices are boneCount in size
-	glm::mat4* boneOffsets; //this might be a mat4
+	glm::mat4* boneOffsets;
 	glm::mat4* boneMatrices;
 
 	BoneNode* rootBone;

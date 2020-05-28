@@ -8,40 +8,51 @@
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
 
-	glPointSize(10);
-
-	Object* skull = new Object("../Models/Character/girl.fbx");
-	glm::quat* firstRotate = new glm::quat(glm::angleAxis(0.0f, glm::vec3(1, 0, 0)));
-
-	Object* plane = new Object("../Models/Plane/plane.fbx", (Node*)skull);
-	plane->Translate(glm::vec3(0, -.1f, 0));
-
-	Dot* zero = new Dot(glm::vec3(0, 0, 0));
-	zero->color = glm::vec3(1, 0, 0);
-
-	Light* mainLight = new Light(glm::vec3(1, 1, 1), .25);
-	mainLight->translate = TranslateVec(&mainLight->translate, glm::vec3(0, 1, .25));
-	glm::vec3* ambientResult = new glm::vec3(mainLight->color * mainLight->intensity);
-	glm::vec2* lightRamp1 = new glm::vec2(.33f, 0.f);
-	glm::vec2* lightRamp2 = new glm::vec2(0.878f, .586f);
-
+	//load shaders
 	int renderSwitch = 0;
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
-	meshShad->InitializeSPIRVVMDebug();
-	glm::mat4 identity = glm::identity<glm::mat4>();
-	meshShad->UniformEquals("identity", GL_FLOAT_MAT4, &identity, 1);
+	SetDefaultShader(meshShad);
+	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL);
+	Shader* dotShad = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", NULL);
+	//meshShad->InitializeSPIRVVMDebug();
 
+
+	//setup camera
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
+	SetDefalutCamera(cam);
+	glPointSize(10);
+
+	//create girl
+	Object* girl = new Object("../Models/Character/girl.fbx");
+	AddNodeToList(girl);
+
+	//make lines for bone visualization
+	MetaBone* skeletonVisual = new MetaBone(girl->mesh->skelly, girl,lineShad);
+
+	//make the floor
+	Object* plane = new Object("../Models/Plane/plane.fbx", girl);
+	plane->Translate(glm::vec3(0, -.1f, 0));
+
+
+	//create light
+	Light* mainLight = new Light(glm::vec3(1, 1, 1), .25);
+	mainLight->translate = TranslateVec(&mainLight->translate, glm::vec3(0, 1, .25));
+	girl->AddChild(mainLight);
+
+
+	glm::vec3* ambientResult = new glm::vec3(mainLight->color * mainLight->intensity);
+	glm::vec2* lightRamp1 = new glm::vec2(.33f, 0.f);
+	glm::vec2* lightRamp2 = new glm::vec2(0.878f, .586f);
 
 
 	//void* uniData[] = { &vector[0],&value,&matrix[0]};
 	//unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
 	//StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
 
-	glm::quat* rotation = new glm::quat(glm::identity<glm::quat>());
 
+	glm::quat* rotation = new glm::quat(glm::identity<glm::quat>());
 	float tick = 0;
 	bool animate = false;
 	while (!ShouldCloseWindow()) {
@@ -73,18 +84,17 @@ int main(int argv, char* argc[]) {
 				glm::quat* tmp = rotation;
 				rotation = new glm::quat(glm::rotate(*rotation, glm::radians(5.0f), glm::vec3(1, 0, 0)));
 				delete tmp;
-				skull->mesh->skelly->NameSearch(skull->mesh->skelly->rootBone, "Brain2")->Rotate(rotation);
+				girl->mesh->skelly->NameSearch(girl->mesh->skelly->rootBone, "Brain2")->Rotate(rotation);
 			}
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
-		static int tmpInt = 1;
 		UpdateNodes();
-
+		ImGuiUpdateNodes();
 		ImGui::End();
 
 		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1);
-		meshShad->UniformEquals("lightPos",GL_FLOAT_VEC3, &mainLight->translate,1);
+		meshShad->UniformEquals("lightPos", GL_FLOAT_VEC3, &glm::vec3((*mainLight->model)[3]), 1);
 		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1);
 		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
 		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
@@ -122,15 +132,9 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		if(animate)skull->mesh->skelly->Animate(double(tick));
-
-		skull->Draw(meshShad, cam);
-		plane->Draw(meshShad, cam);
-		zero->Draw(cam);
-
+		//if(animate)girl->mesh->skelly->Animate(double(tick));
+		
 		cam->UpdateViewMatrix();
-		
-		
 		//Error Handleing
 		std::string error = PollError();
 		while (error != "Empty") {
