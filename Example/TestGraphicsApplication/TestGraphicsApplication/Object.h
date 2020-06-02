@@ -10,8 +10,9 @@ class Node {
 public:
 	//self
 	std::string name;
-	bool hide; //don't render
 	//rendering
+	bool hide; //don't render
+	bool inFront;
 	Shader* shad;
 	Camera* cam;
 
@@ -129,7 +130,10 @@ public:
 
 void UpdateNodes();
 void ImGuiUpdateNodes();
-//void DrawNodes();
+
+void SetInFront(Node* node);
+//might not work
+void SetNotInFront(Node* node);
 
 void SetDefaultShader(Shader* shad);
 Shader* GetDefaultShader();

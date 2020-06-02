@@ -35,21 +35,33 @@ BoneNode::BoneNode(Skeleton* skelly, aiNode* node,aiMesh* mesh)
 
 	this->skelly = skelly;
 	bool hasBone=false;
-	for (unsigned int i = 0; i < mesh->mNumBones; i++) {
-		name = node->mName.C_Str();
-		if (name.find("_end", 0) != std::string::npos)
-			leaf = true;
-		if (strcmp(mesh->mBones[i]->mName.C_Str(), node->mName.C_Str())==0 || leaf) {//this node is one of our bones!
-			hasBone = true;
-			index = i;
-			if (index != -1) {
-				glm::mat4 parentOff = parent != nullptr && parent->index != -1 ? GETOFFSET(parent) : glm::identity<glm::mat4>();
-				glm::mat4 off;
-				ConvertAssimpMatrix(&off,&mesh->mBones[index]->mOffsetMatrix);
-				GETOFFSET(this) = parentOff * off;
-				GETMATRIX(this) = glm::identity<glm::mat4>();
+	//there are no leaf bones, only leaf nodes
+	//check if node matches with a bone, and continue till end or finds leaf and store it
+	name = node->mName.C_Str();
+	if (name.find("_end") != std::string::npos) {
+		leaf = true;
+		hasBone = true;
+		index = -1;
+		//ConvertAssimpMatrix(&leafTransform, &node->mTransformation);
+	}
+	else {
+		for (unsigned int i = 0; i < mesh->mNumBones; i++) {
+			//if (std::string(mesh->mBones[i]->mName.C_Str()).find("_end") != std::string::npos) {
+			//	printf("wow");
+			//}
+			//no leaf node, so we have to fill the leaf BoneNode manually
+			if (strcmp(mesh->mBones[i]->mName.C_Str(), node->mName.C_Str())==0) {//this node is one of our bones!
+				hasBone = true;
+				index = i;
+				if (index != -1) {
+					glm::mat4 parentOff = parent != nullptr && parent->index != -1 ? GETOFFSET(parent) : glm::identity<glm::mat4>();
+					glm::mat4 off;
+					ConvertAssimpMatrix(&off,&mesh->mBones[index]->mOffsetMatrix);
+					GETOFFSET(this) = parentOff * off;
+					GETMATRIX(this) = glm::identity<glm::mat4>();
+				}
+				break;
 			}
-			break;
 		}
 	}
 	bool hasGoodBone = false;

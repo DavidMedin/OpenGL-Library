@@ -19,6 +19,7 @@ class BoneNode {
 private:
 public:
 	bool kill;
+	
 	bool leaf;
 
 	std::string name;

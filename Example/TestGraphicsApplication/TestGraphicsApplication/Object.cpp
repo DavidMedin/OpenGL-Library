@@ -3,6 +3,7 @@
 float imGuiDragSpeed = 0.0025f;
 
 std::list<Node*> nodeList;
+std::list<Node*> inFrontList;
 
 Shader* defaultShad;
 Camera* defaultCam;
@@ -15,6 +16,11 @@ void UpdateNodes() {
 	for (Node* i : nodeList) {
 		i->Update();
 	}
+	glDisable(GL_DEPTH_TEST);
+	for (Node* i : inFrontList) {
+		i->Draw();
+	}
+	glEnable(GL_DEPTH_TEST);
 }
 void ImGuiUpdateNodes() {
 	for (Node* i : nodeList) {
@@ -26,6 +32,16 @@ void DrawNodes() {
 		i->Draw();
 	}
 }
+
+void SetInFront(Node* node) {
+	inFrontList.push_back(node);
+	node->inFront = true;
+}
+void SetNotInFront(Node* node) {
+	inFrontList.remove(node);
+	node->inFront = false;
+}
+
 
 void SetDefaultShader(Shader* shad)
 {
@@ -146,7 +162,7 @@ void Object::Update()
 {
 	//ImGuiUpdate();
 	UpdateModelMatrix();
-	if(!hide) Draw();
+	if(!hide && !inFront) Draw();
 	UpdateChildren();
 }
 
@@ -215,7 +231,7 @@ Light::Light(glm::vec3 color, float intensity) {
 }
 void Light::Update() {
 	UpdateModelMatrix();
-	if(!hide) Draw();
+	if(!hide && !inFront) Draw();
 	UpdateChildren();
 }
 void Light::UpdateModelMatrix()
@@ -292,7 +308,7 @@ MetaLine::MetaLine(glm::vec3 point1, glm::vec3 point2)
 void MetaLine::Update()
 {
 	//ImGuiUpdate();
-	if(!hide) Draw();
+	if(!hide && !inFront) Draw();
 	UpdateChildren();
 }
 
@@ -363,6 +379,8 @@ void MetaLine::Draw()
 unsigned int dotCount = 0;
 Dot::Dot()
 {
+	SetInFront(this);
+
 	depthTest = false;
 	translate = glm::vec3(0);
 	color = glm::vec3(1);
@@ -378,6 +396,8 @@ Dot::Dot()
 
 Dot::Dot(glm::vec3 pos)
 {
+	SetInFront(this);
+
 	depthTest = false;
 	translate = pos;
 	color = glm::vec3(1);
@@ -398,7 +418,7 @@ Dot::Dot(glm::vec3 pos)
 void Dot::Update()
 {
 	UpdateModelMatrix();
-	if(!hide) Draw();
+	if(!hide && !inFront) Draw();
 	UpdateChildren();
 }
 
@@ -471,7 +491,8 @@ MetaBone::MetaBone(Skeleton* skelly, Node* parent,Shader* shad)
 	//node stuff
 	parent->AddChild(this);
 	this->shad = shad;
-	
+	SetInFront(this);
+
 	//bone stuff
 	includeInvOffset = false;
 	this->skelly = skelly;
@@ -480,9 +501,12 @@ MetaBone::MetaBone(Skeleton* skelly, Node* parent,Shader* shad)
 	
 	//child stuff
 	for (auto i : boneRef->children) {
-		if (!i->leaf) {
+		if (!(*i->children.begin())->leaf) {
 			MetaBone* child = new MetaBone(skelly, this, i,shad);
 			AddChild(child);
+		}
+		else if (!i->leaf) {
+			AddChild(new Dot(glm::vec3(glm::inverse(skelly->boneOffsets[i->index]) * glm::vec4(0, 0, 0, 1))));
 		}
 	}
 
@@ -499,6 +523,7 @@ MetaBone::MetaBone(Skeleton* skelly, Node* parent,Shader* shad)
 MetaBone::MetaBone(Skeleton* skelly, Node* parent, BoneNode* node,Shader* shad) {
 	//this stuff
 	this->shad = shad;
+	SetInFront(this);
 
 	//bone stuff
 	includeInvOffset = false;
@@ -508,9 +533,12 @@ MetaBone::MetaBone(Skeleton* skelly, Node* parent, BoneNode* node,Shader* shad) 
 
 	//child stuff
 	for (auto i : boneRef->children) {
-		if (!i->leaf) {
+		if (!(*i->children.begin())->leaf) {
 			MetaBone* child = new MetaBone(skelly, this, i,shad);
 			AddChild(child);
+		}
+		else if (!i->leaf) {
+			AddChild(new Dot(glm::vec3(glm::inverse(skelly->boneOffsets[i->index]) * glm::vec4(0, 0, 0, 1))));
 		}
 	}
 
@@ -532,12 +560,14 @@ void MetaBone::Update() {
 	glm::vec3* points = (glm::vec3*)OpenWriting();
 	*points = glm::vec3(glm::inverse(*offset) * glm::vec4(0, 0, 0, 1));
 	//get child offset through the first child of our boneRef, taking its index, indexing the skeletons boneoffset with that and inverting it :)
-	glm::mat4 childOffset = glm::inverse(skelly->boneOffsets[(*boneRef->children.begin())->index]);
+	glm::mat4* childMat;
+	childMat = &skelly->boneOffsets[(*boneRef->children.begin())->index];
+	glm::mat4 childOffset = glm::inverse(*childMat);
 	points[1] = glm::vec3(childOffset * glm::vec4(0, 0, 0, 1));
 	*(glm::vec3*)&pos = *points;
 	*(glm::vec3*)& pos[3] = points[1];
 	GLCall(CloseWriting());
-	if(!hide) Draw();
+	if(!hide && !inFront) Draw();
 	UpdateChildren();
 
 }
