@@ -102,6 +102,7 @@ void main() {
 	vec4 pureDitherResult = vec4(ambientColor + pureDitherDiffuse,1);
 
 	if(renderSwitch == 0){
+//		frag_colour = ditherResult * vec4(1,0,1,1);
 		frag_colour = ditherResult * texture(diffuse, v_frag.texCoords);
 	}
 	else if(renderSwitch == 1){

@@ -358,6 +358,7 @@ void MetaLine::ImGuiUpdate()
 
 void MetaLine::UpdateModelMatrix()
 {
+
 	glm::mat4* sacrificeMat = model;
 	glm::mat4* tmpMat = new glm::mat4(glm::scale(glm::identity<glm::mat4>(),scale));
 	model = new glm::mat4(glm::translate(*tmpMat, translate) * (parent!= nullptr&&parent->model != nullptr ? *parent->model : glm::identity<glm::mat4>()));
@@ -569,7 +570,12 @@ void MetaBone::Update() {
 	GLCall(CloseWriting());
 	if(!hide && !inFront) Draw();
 	UpdateChildren();
-
+	//manually update first level children's model matrices
+	//for (Node* i : children) {
+	//	glm::mat4* tmpMat = i->model;
+	//	//parentMat * offset * point
+	//	delete tmpMat;
+	//}
 }
 
 void MetaBone::ImGuiUpdate()

@@ -14,65 +14,30 @@
 
  
 #include "Maths.h"
+#include "Init.h"
 #include "Buffer.h"
 #include "Shader.h"
 #include "Error.h"
-#include <vector>
+#include "Texture.h"
 #include "Camera.h"
+#include <vector>
 #include <Bone.h>
 
-#define DIFFUSE_SLOT 0
-#define SPECULAR_SLOT 1
 
-//#define ATTRIBUTE_MESH 10
-//#define ATTRIBUTE_TEXTURE 11
-//#define ATTRIBUTE_TRANSFORM 12
-
-#define DRAWFLAG_TRIANGLE 1
-//00000000
-//       ^-draw triangles; else points
-
-class Transform /*: Attribute*/ {
-private:
-
-public:
-	glm::mat4* data;
-
-	Transform();
-	Transform(glm::mat4* transform);
-
-};
-
-
-class Texture {
-private:
-	unsigned int openglID;
-	unsigned int height, width;
-	unsigned char* data;
-	unsigned int slot;
-public:
-	Texture(unsigned int slot,unsigned char* data, unsigned int w, unsigned int h);
-	Texture(unsigned int slot, std::string path);
-	Texture();
-	~Texture();
-	void Bind(unsigned int slot = NULL);
-};
-
- void DrawFlags(int flag/*toggle*/);
- bool GetDrawFlags(int flag/*toggle*/);
 
 class Mesh {
 private:
+	//for opengl
 	VertexBuffer* vertexBuffer;
 	VertexBuffer* textureUVBuffer;
 	VertexBuffer* normalBuffer;
 	VertexBuffer* boneIdBuffer; //contains a bone index for each vertex
 	VertexBuffer* weightBuffer;
-	//inc mandNum whenever a built-in buffer is added! (in VertexBuffer.h)
+
 	VertexArray* VA;
 	IndexBuffer* index;
-	glm::mat4* transform;// not used in drawing
 
+	//for us
 	float* vertices;
 	float* normals;
 	float* textureUVs;
@@ -80,51 +45,19 @@ private:
 	int* boneIds;
 	float* weights;
 public:
+	//you can change these and nothing bad will happen
 	Skeleton* skelly;
-
-	//A reference to the textures
-	Texture* texList[32];
+	Texture* textures[32];
 
 	unsigned int boneCount;
 	unsigned int indexCount; //called 'elements'
 	unsigned int pointCount;
 
-	//use this for primitives, index buffer will be generated
+	//use this for primitives
 	Mesh(float* data, unsigned int size, unsigned int* indexData, unsigned int indexCount);
 
 	//main mesh constructor
 	Mesh(std::string path);
-
-	//must be a pointer to a aiMesh!!
-	//not recommended for the user of the Library unless you include AssiImp
-	//Mesh(void* mesh);
-
 	int drawMode; //must be GL_TRIANGLES,GL_POINTS, or the like
 	void Draw(Shader* shad,Camera* cam);
-	//untested!!!
-	//void BindCustomData(VertexBuffer* data, unsigned int type, unsigned int vecX); //untested
-	void Bind();
-};
-
-class Line {
-private:
-	VertexBuffer* VB;
-	VertexArray* VA;
-	//xyz,xyz - ONLY TWO VERTECIES (6 floats)
-	float* points;
-	float* mappedPoints;
-public:
-	glm::vec3 color;
-	float size;
-	Line();
-	Line(glm::vec3 point1, glm::vec3 point2);
-	Line(glm::vec3 point1, glm::vec3 point2, glm::vec3 color);
-	void SetPoint1(glm::vec3 point);
-	void SetPoint2(glm::vec3 point);
-	glm::vec3 GetPoint1();
-	glm::vec3 GetPoint2();
-	void Draw(Camera* cam);
-	void Draw(Shader* shad,Camera* cam);
-	float* OpenWriting();
-	unsigned int CloseWriting();
 };

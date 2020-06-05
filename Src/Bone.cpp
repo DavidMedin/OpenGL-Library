@@ -95,7 +95,7 @@ void BoneNode::Rotate(glm::quat* quat) {
 			delete tmp;
 		}
 	}
-	else printf("This node isn't a bone! (index: %u)\n",index);
+	else if(!leaf) printf("This node isn't a bone! (index: %d)\n",index);
 }
 
 void BoneNode::Animate(double tick, glm::mat4* parMat)

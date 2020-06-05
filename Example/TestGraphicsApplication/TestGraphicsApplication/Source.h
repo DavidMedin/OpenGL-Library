@@ -1,7 +1,7 @@
 #pragma once
 #include "GraphicsLibrary.h"
 #include <iostream>
-#include "Object.h"
+//#include "Object.h"
 #include <imgui.h>
 #include <examples/imgui_impl_opengl3.h>
 #include <examples/imgui_impl_glfw.h>

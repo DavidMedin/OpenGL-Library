@@ -11,42 +11,31 @@ int main(int argv, char* argc[]) {
 	//load shaders
 	int renderSwitch = 0;
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
-	SetDefaultShader(meshShad);
+	//SetDefaultShader(meshShad);
 	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL);
 	Shader* dotShad = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", NULL);
 	//meshShad->InitializeSPIRVVMDebug();
 
+	//girl model
+	Mesh* girl_model = new Mesh("../Models/Girl/Girl.fbx");
 
 	//setup camera
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
-	SetDefalutCamera(cam);
+	//SetDefalutCamera(cam);
 	glPointSize(10);
 
-	//create girl
-	Object* girl = new Object("../Models/Character/girl.fbx");
-	AddNodeToList(girl);
-
-	//make lines for bone visualization
-	MetaBone* skeletonVisual = new MetaBone(girl->mesh->skelly, girl,lineShad);
-
-	//make the floor
-	Object* plane = new Object("../Models/Plane/plane.fbx", girl);
-	plane->Translate(glm::vec3(0, -.1f, 0));
+	//mainLight
+	glm::vec3 color_mainLight = glm::vec3(1,1,1);
+	float intensity_mainLight = .5f;
+	glm::vec3 pos_mainLight = glm::vec3(0, .5f, .5f);
 
 
-	//create light
-	Light* mainLight = new Light(glm::vec3(1, 1, 1), .25);
-	mainLight->translate = TranslateVec(&mainLight->translate, glm::vec3(0, 1, .25));
-	girl->AddChild(mainLight);
-
-
-	glm::vec3* ambientResult = new glm::vec3(mainLight->color * mainLight->intensity);
 	glm::vec2* lightRamp1 = new glm::vec2(.33f, 0.f);
 	glm::vec2* lightRamp2 = new glm::vec2(0.878f, .586f);
 
-
+	//example of storagebuffer and uniformbuffer (basically the same)
 	//void* uniData[] = { &vector[0],&value,&matrix[0]};
 	//unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
 	//StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
@@ -65,6 +54,12 @@ int main(int argv, char* argc[]) {
 		ImGui::Begin("Variables");
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::TreeNode("shader")) {
+			if (ImGui::TreeNode("light")) {
+				ImGui::ColorEdit3("light color##light", &color_mainLight[0]);
+				ImGui::DragFloat3("light pos##light", &pos_mainLight[0],.02f);
+				ImGui::SliderFloat("light intensity##light", &intensity_mainLight,0,1);
+				ImGui::TreePop();
+			}
 			if (ImGui::TreeNode("LightRamp")) {
 				ImGui::SliderFloat2("LightRamp1", (float*)lightRamp1,0,1);
 				ImGui::SliderFloat2("LightRamp2", (float*)lightRamp2,0,1);
@@ -84,18 +79,17 @@ int main(int argv, char* argc[]) {
 				glm::quat* tmp = rotation;
 				rotation = new glm::quat(glm::rotate(*rotation, glm::radians(5.0f), glm::vec3(1, 0, 0)));
 				delete tmp;
-				girl->mesh->skelly->NameSearch(girl->mesh->skelly->rootBone, "Brain2")->Rotate(rotation);
+				//girl->mesh->skelly->NameSearch(girl->mesh->skelly->rootBone, "Braid2")->Rotate(rotation);
 			}
 			ImGui::TreePop();
 		}
 		ImGui::SliderFloat("frame",&tick, 0, 5);
-		UpdateNodes();
-		ImGuiUpdateNodes();
 		ImGui::End();
 
-		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, ambientResult,1);
-		meshShad->UniformEquals("lightPos", GL_FLOAT_VEC3, &glm::vec3((*mainLight->model)[3]), 1);
-		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &mainLight->color,1);
+		glm::vec3 ambientResult = glm::vec3(color_mainLight * intensity_mainLight);
+		meshShad->UniformEquals("ambientColor",GL_FLOAT_VEC3, &ambientResult,1);
+		meshShad->UniformEquals("lightPos", GL_FLOAT_VEC3, &pos_mainLight, 1);
+		meshShad->UniformEquals("lightColor",GL_FLOAT_VEC3, &color_mainLight,1);
 		meshShad->UniformEquals("LightRamp1", GL_FLOAT_VEC2, lightRamp1,1);
 		meshShad->UniformEquals("LightRamp2", GL_FLOAT_VEC2, lightRamp2,1);
 		meshShad->UniformEquals("renderSwitch", GL_INT, &renderSwitch,1);
@@ -133,7 +127,9 @@ int main(int argv, char* argc[]) {
 		}
 
 		//if(animate)girl->mesh->skelly->Animate(double(tick));
-		
+		girl_model->Draw(meshShad, cam);
+
+
 		cam->UpdateViewMatrix();
 		//Error Handleing
 		std::string error = PollError();

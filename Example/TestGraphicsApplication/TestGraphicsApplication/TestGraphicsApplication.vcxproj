@@ -161,7 +161,7 @@
     <ClCompile Include="..\..\..\Src\Maths.cpp" />
     <ClCompile Include="..\..\..\Src\Mesh.cpp" />
     <ClCompile Include="..\..\..\Src\Shader.cpp" />
-    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="..\..\..\Src\Texture.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +184,7 @@
     <ClInclude Include="..\..\..\Src\Maths.h" />
     <ClInclude Include="..\..\..\Src\Mesh.h" />
     <ClInclude Include="..\..\..\Src\Shader.h" />
-    <ClInclude Include="Object.h" />
+    <ClInclude Include="..\..\..\Src\Texture.h" />
     <ClInclude Include="Source.h" />
   </ItemGroup>
   <ItemGroup>

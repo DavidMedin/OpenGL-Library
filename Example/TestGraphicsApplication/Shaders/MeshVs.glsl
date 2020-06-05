@@ -8,7 +8,7 @@ layout(location = 4) in vec4 weights;
 //uniforms
 layout(location = 0) uniform mat4 proj;
 layout(location = 1) uniform mat4 view;
-layout(location = 2) uniform mat4 model;
+//layout(location = 2) uniform mat4 model;
 //layout(location = 3) uniform mat4 identity;
 //layout(location = 4) uniform mat4 bones[32];
 //
@@ -33,15 +33,15 @@ void main() {
 //			hasBones=true;
 //		}
 //	}
-
+////
 //	if(hasBones){
 //		gl_Position = proj * view * model * finalPos;
 //		v_frag.normals = finalNormal;
 //	}else{
-		gl_Position = proj* view * model * vec4(vp,1);
+		gl_Position = proj* view * vec4(vp,1);
 		v_frag.normals = normals;
-//	}
+	//}
 	v_frag.texCoords = texCoords;
-	v_frag.fragLoc = model * vec4(vp,1);
+	v_frag.fragLoc = vec4(vp,1);
 
 }
