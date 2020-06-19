@@ -27,9 +27,6 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Src\Init.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
     <ClCompile Include="..\..\..\Src\Shader.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Src\VertexBuffer.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Src\Camera.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
@@ -55,9 +49,6 @@
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Src\GlCall.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\IndexBuffer.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Libs\imgui\imgui.cpp">
@@ -78,12 +69,18 @@
     <ClCompile Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Bone.cpp">
+      <Filter>GraphicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Src\Buffer.cpp">
+      <Filter>GraphicsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Src\Texture.cpp">
+      <Filter>GraphicsLibrary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Src\Init.h">
@@ -101,9 +98,6 @@
     <ClInclude Include="..\..\..\Src\Shader.h">
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Src\VertexBuffer.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Src\Camera.h">
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
@@ -114,9 +108,6 @@
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Src\GraphicsLibrary.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\IndexBuffer.h">
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Libs\imgui\imgui.h">
@@ -142,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.h">
       <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Src\Bone.h">
+      <Filter>GraphicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Src\Buffer.h">
+      <Filter>GraphicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Src\Texture.h">
+      <Filter>GraphicsLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

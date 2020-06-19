@@ -1,21 +1,40 @@
  
 #include "Shader.h"
 #define GRAPHICSLIBRARY_EXPORTS 1
-using namespace std;
-
 
 Shader::Shader() {
 	shader_Program = 0;
 }
 
-string Shader::ReadShader(const char* path) {
-	string tmp;
-	ifstream shaderFile;
-	shaderFile.open(path, ios::in);
-	string input;
+std::list<spvShader*>* Shader::SPIRVVMFindUniform(std::string name)
+{
+	std::list<spvShader*>* shads = new std::list<spvShader*>;
+	bool found = false;
+	spvm_result_t interfaceBlock;
+	for (int i = 0; i < 2; i++) {
+		interfaceBlock = spvm_state_get_result(spvShaders[i].spvState, spvm_string(name.c_str()));
+		if (interfaceBlock != NULL) {
+			shads->push_back(&spvShaders[i]);
+			found = true;
+		}
+	}
+	if (found == false) {
+		printf("That interface block isn't in any of the initialized shaders!\n");
+		delete(shads);
+		return nullptr;
+	}
+	
+	return shads;
+}
+
+std::string Shader::ReadShader(const char* path) {
+	std::string tmp;
+	std::ifstream shaderFile;
+	shaderFile.open(path, std::ios::in);
+	std::string input;
 	while (!shaderFile.eof()) {
 		getline(shaderFile, input);
-		if (input.find("uniform") != string::npos) {
+		if (input.find("uniform") != std::string::npos) {
 
 		}
 		tmp.append(input);
@@ -60,7 +79,7 @@ unsigned int Shader::CompileShader(unsigned int type, const char* source) {
 			}
 		}
 		printf("failed to compile %s shader: ", message);
-		cout << error << "\n";
+		std::cout << error << "\n";
 		
 		free(error);
 		GLCall(glDeleteShader(id));
@@ -92,9 +111,9 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLchar* log = (GLchar*)malloc(sizeof(GLchar) * logSize);
 		GLsizei actualSize = 0;
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
-		cout << actualSize << "\n";
-		cout << log << "\n";
-		delete log;
+		std::cout << actualSize << "\n";
+		std::cout << log << "\n";
+		free(log);
 	}
 
 	GLCall(glValidateProgram(shader_program));
@@ -105,9 +124,9 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 		GLchar* log = (GLchar*)malloc(sizeof(GLchar)*logSize);
 		GLsizei actualSize=0;
 		GLCall(glGetProgramInfoLog(shader_program, 255, &actualSize, log));
-		cout << actualSize << "\n";
-		cout << log << "\n";
-		delete log;
+		std::cout << actualSize << "\n";
+		std::cout << log << "\n";
+		free(log);
 	}
 	GLCall(glDeleteShader(vertex_shader));
 	GLCall(glDeleteShader(fragment_shader));
@@ -117,29 +136,46 @@ unsigned int Shader::CreateShaderProgram(const char* vertexShader, const char* f
 	return shader_program;
 }
 
-void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count)
+void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigned int count,const char* uniformName)
 {
 	UseShader();
 
 	switch (type) {
 	case GL_FLOAT_MAT4:
-		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(*(mat4*)value)));
+		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(*(glm::mat4*)value)));
 		break;
 	case GL_FLOAT_VEC3:
-		GLCall(glUniform3fv(location,count, &(*(vec3*)value)[0]));
+		GLCall(glUniform3fv(location,count, &(*(glm::vec3*)value)[0]));
 		break;
 	case GL_FLOAT_VEC2:
-		GLCall(glUniform2fv(location,count, &(*(vec3*)value)[0]));
-		break;
-	case GL_INT:
-		GLCall(glUniform1iv(location,count, ((int*)value)));
+		GLCall(glUniform2fv(location,count, &(*(glm::vec3*)value)[0]));
 		break;
 	case GL_FLOAT:
 		GLCall(glUniform1fv(location,count, ((float*)value)));
 		break;
+	case GL_INT:
+		GLCall(glUniform1iv(location,count, ((int*)value)));
+		break;
 	default:
 		printf("not a valid type\n"); //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
-		break;
+		return;
+	}
+	if (spvInitialized) {
+		std::list<spvShader*>* shads = SPIRVVMFindUniform(uniformName);
+		if (shads == nullptr) {
+			printf("uniform name : %s isn't in that shader!\n", uniformName);
+			return;
+		}
+		for (auto i : *shads) {
+			spvm_result_t uniform = spvm_state_get_result((*i).spvState, spvm_string(uniformName));
+			if (type != GL_INT) {
+				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
+			}
+			else {
+				spvm_member_set_value_i(uniform->members, uniform->member_count, (int*)value);
+			}
+		}
+		delete shads;
 	}
 }
 
@@ -166,33 +202,33 @@ Shader::Shader(const char* shaderPath) {
 	char flags = 0;
 
 	//parse the file for identifiers
-	string tmp;
-	ifstream shaderFile;
-	shaderFile.open(shaderPath, ios::in);
-	string input;
+	std::string tmp;
+	std::ifstream shaderFile;
+	shaderFile.open(shaderPath, std::ios::in);
+	std::string input;
 
-	string vertexText;
-	string fragmentText;
-	string geometryText;
+	std::string vertexText;
+	std::string fragmentText;
+	std::string geometryText;
 
 	while (!shaderFile.eof()) {
 		getline(shaderFile, input);
-		if (input.find("uniform") != string::npos) {
+		if (input.find("uniform") != std::string::npos) {
 
 		}
 
-		if (input.find("@vertex") != string::npos) {//should be after the vertex shader
+		if (input.find("@vertex") != std::string::npos) {//should be after the vertex shader
 			vertexText = tmp;
 			tmp.clear();
 			//might clear VertexText
 			continue;
 		}
-		else if (input.find("@fragment") != string::npos) {
+		else if (input.find("@fragment") != std::string::npos) {
 			fragmentText = tmp;
 			tmp.clear();
 			continue;
 		}
-		else if (input.find("@geometry") != string::npos) {
+		else if (input.find("@geometry") != std::string::npos) {
 			geometryText = tmp;
 			tmp.clear();
 			continue;
@@ -234,6 +270,11 @@ void Shader::UseShader()
 	GLCall(glUseProgram(shader_Program));
 }
 
+unsigned int Shader::GetProgram()
+{
+	return shader_Program;
+}
+
 void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* value,unsigned int count)
 //Type should be GL_FLOAT_MAT4,GL_FLOAT_VEC3 and the like
 {
@@ -248,14 +289,15 @@ void Shader::UniformEquals(const char* uniform_Name,unsigned int type,void* valu
 		GLint size; //sizeof the variable
 		GLenum type;
 		GLchar buffer[64]; //= (char*)malloc(sizeof(char)*64)
-		for (GLuint i = 0; i < rez; i++) {
+		for (GLuint i = 0; i < (unsigned int)rez; i++) {
 			GLCall(glGetActiveUniform(shader_Program, i, sizeof(buffer), &length, &size, &type, buffer));
 			printf("	Uniform: #%d | Type: %u | Name : %s\n", i, type, buffer);
 		}
 		return;
 	}
 	//basicly the same function but whatever
-	_UniformEquals(uni_Pos, value, type,count);
+	_UniformEquals(uni_Pos, value, type,count,uniform_Name);
+	
 }
 // value must be an array of values, not an array of pointers
 void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void* value, unsigned int count)
@@ -267,28 +309,140 @@ void Shader::ArrayUniformEquals(const char* uniformName, unsigned int type, void
 		sprintf_s(name, "%s[%i]", uniformName, i);
 		int loc = glGetUniformLocation(shader_Program, name);
 		if (loc == -1) {
-			cout << name << " is not a variable in your shader!\n";
+			std::cout << name << " is not a variable in your shader!\n";
 		}
 		else {
-			_UniformEquals(loc, value, type,1);
+			_UniformEquals(loc, value, type,1,uniformName);
 		}
 	}
 }
 
-// make uniform equals for arrays
+void Shader::BindInterfaceBlock(std::string name, unsigned int interfaceType,unsigned int bindingPoint)
+{
+	//bind shader to point
+	UseShader();
+	unsigned int index = glGetProgramResourceIndex(shader_Program, GL_SHADER_STORAGE_BLOCK, name.c_str());
+	if (index == GL_INVALID_INDEX) {
+		printf("%s is not a valid shader storage block in your shader!\n", name.c_str());
+	}
+	GLCall(glShaderStorageBlockBinding(shader_Program, index, bindingPoint));
+	GLCall(glUseProgram(0));
+}
 
 
-void Shader::UniformMatrix(string uniform_Name, mat4* matrix, unsigned int type) {
-	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-	UseShader();
-	GLCall(glUniformMatrix4fv(uni_Pos, 1, GL_FALSE, glm::value_ptr(*matrix)));
+
+
+bool Shader::GetSPIRVVMInitialized()
+{
+	return spvInitialized;
 }
-void Shader::UniformVector(string uniform_Name, vec3* vec) {
-	int uni_Pos = glGetUniformLocation(shader_Program, uniform_Name.c_str());
-	UseShader();
-	GLCall(glUniform3f(uni_Pos, (*vec)[0], (*vec)[1], (*vec)[2]));
+
+void Shader::StartSPIRVVMDebug()
+{
+	printf("Debugging Shader!==============================\n");
+	bool exit = false;
+	while (exit == false) {
+		char inBuffer[40];
+		//get data
+		fgets(inBuffer, 40, stdin);
+		std::string inString = std::string(inBuffer);
+		//find first space, all chars before are command
+		size_t commandEnd = inString.find(" ", 0);
+		//look for commands
+		size_t cmdGetUniform = inString.find("getuniform", 0, commandEnd);
+		if (cmdGetUniform != std::string::npos) {
+
+		}
+	}
 }
+
+void Shader::InitializeSPIRVVMDebug(){
+	spvShaders[0] = spvShader(vertexContent, GL_VERTEX_SHADER);
+	spvShaders[1] = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
+	spvInitialized = true;
+}
+
+void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, unsigned int localIndex, void* data, unsigned int primitiveType, unsigned int sizeofData) {
+	UseShader();
+	//getting name of member
+	char* nameBuffer = (char*)malloc(30);
+	GLsizei actualSize;
+	GLCall(glGetProgramResourceName(shader_Program, type, localIndex, 30, &actualSize, nameBuffer));
+
+	//hand data over to SPIRV-VM
+	//find the correct shaders to use
+	std::list<spvShader*>* shads = SPIRVVMFindUniform(blockName);
+	for (auto i : *shads) {
+		spvm_result_t interfaceBlock = spvm_state_get_result((*i).spvState, spvm_string(blockName.c_str()));
+		spvm_member_t member = spvm_state_get_object_member((*i).spvState, interfaceBlock, spvm_string(nameBuffer));
+	
+		if (primitiveType == GL_FLOAT)
+			spvm_member_set_value_f(member->members, member->member_count, (float*)data);
+		else if (primitiveType == GL_INT)
+			spvm_member_set_value_i(member->members, member->member_count, (int* )data);
+		else printf("invalid primitive type given to SPIRVVMInterfaceWrite!\n");
+	}
+	delete shads;
+	free(nameBuffer);
+}
+
 void Shader::Reload() {
 	unsigned int tmpShader = CreateShaderProgram(vertexContent.c_str(), fragmentContent.c_str(), NULL);
 	shader_Program = tmpShader;
+}
+
+spvShader::spvShader()
+{
+	spvContext = NULL;
+	spvSLength = NULL;
+	spvSource = NULL;
+	spvProgram = NULL;
+	spvState = NULL;
+}
+
+spvShader::spvShader(std::string content, unsigned int shaderType)
+{
+
+	//set options
+	shaderc::CompileOptions ops = shaderc::CompileOptions();
+	ops.SetTargetEnvironment(shaderc_target_env_opengl, 4.5);
+
+	//get spirv code from glsl code
+	shaderc::Compiler comp = shaderc::Compiler();
+	shaderc::SpvCompilationResult vertexResult;
+	if (shaderType == GL_VERTEX_SHADER)
+		vertexResult = comp.CompileGlslToSpv(content.c_str(), content.size(), shaderc_vertex_shader, "vertex Shader", ops);
+	else if (shaderType == GL_FRAGMENT_SHADER)
+		vertexResult = comp.CompileGlslToSpv(content.c_str(), content.size(), shaderc_fragment_shader, "fragment Shader", ops);
+	else printf("spvShader() : No Shader of that type supported! (only vertex and fragment for now!)\n");
+	
+
+	//search errors
+	std::cout << "Num of Errors: " << vertexResult.GetNumErrors() << "\n";
+	for (int e = 0; e < vertexResult.GetNumErrors(); e++)
+		std::cout << "    [" << e << "] " << vertexResult.GetErrorMessage() << "\n";
+	std::cout << "Num of Warnings: " << vertexResult.GetNumWarnings() << "\n";
+	
+	//write
+	spvSLength = vertexResult.end() - vertexResult.begin();
+	auto iter = vertexResult.begin();
+	spvm_source spvSource = (spvm_source)malloc(spvSLength * sizeof(spvm_word));
+	if (spvSource == nullptr) {
+		printf("Couldn't allocate memory for spvShader::spvSource!\n");
+		return;
+	}
+	for (int i = 0; iter != vertexResult.end(); i++) {
+		spvm_word u = *iter;
+		spvSource[i] = u;
+		iter++;
+	}
+
+	//initialize
+	spvContext = spvm_context_initialize();
+	spvProgram = spvm_program_create(spvContext, spvSource, spvSLength);
+	spvState = spvm_state_create(spvProgram);
+	spvm_ext_opcode_func* glsl_ext_data = spvm_build_glsl450_ext();
+	spvm_result_t glsl_std_450 = spvm_state_get_result(spvState, spvm_string("GLSL.std.450"));
+	if (glsl_std_450)
+		glsl_std_450->extension = glsl_ext_data;
 }

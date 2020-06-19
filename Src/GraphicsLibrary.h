@@ -9,4 +9,5 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Input.h"
+#include "Texture.h"
 //#include "SceneTree.h"

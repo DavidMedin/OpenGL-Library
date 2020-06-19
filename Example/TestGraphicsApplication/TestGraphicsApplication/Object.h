@@ -4,18 +4,35 @@
 #include "Maths.h"
 #include "../../../Src/GraphicsLibrary.h"
 
-class Node {
-private:
 
+
+class Node {
 public:
+	//self
+	std::string name;
+	//rendering
+	bool hide; //don't render
+	bool inFront;
+	Shader* shad;
+	Camera* cam;
+
+	glm::mat4* model;
+
+	//relationship
+	std::list<Node*> children;
+	Node* parent=nullptr;
 	Node();
 	void AddChild(Node* child);
-	std::list<Node*> children;
-	Node* parent;
-	string name;
+	
 	virtual void Update() = 0;
+	void UpdateChildren();
+	
+	virtual void ImGuiUpdate() = 0;
+	void ImGuiUpdateChildren();
+	
+	virtual void Draw()=0;
 };
-
+void AddNodeToList(Node* node);
 
 
 class Object : public Node {
@@ -24,69 +41,102 @@ private:
 public:
 	glm::vec3* translate;
 	glm::vec3* scale;
-	glm::mat4* modelMatrix;
 	glm::quat* orien;
+
+
 	Mesh* mesh;
 	Object();
-	Object(string path);
-	Object(string path, Node* parent);
+	Object(std::string path);
+	Object(std::string path, Node* parent);
 	//will want to add a variadic function to take in as many shaders as mesh objects
-	void Draw(Shader* shad,Camera* cam);
-	void Translate(vec3 vector);
-	void Rotate(vec3 axis, float angle);
+	void Translate(glm::vec3 vector);
+	void Rotate(glm::vec3 axis, float angle);
 	void Update();
 	void ImGuiUpdate();
 	void UpdateModelMatrix();
+	void Draw();
+	void Draw(Shader* shad,Camera* cam);
 };
 
-class Light : Node {
-private:
-
-public:
-	vec3 translate;
-	vec3 color;
-	float intensity;
-
-	Light(vec3 color, float intensity);
-	void Update();
-	void ImGuiUpdate();
-};
 
 class MetaLine :public Line,public Node {
 private:
 	float* lastEdit;
 public:
-	vec3 translate;
-	vec3 scale;
-	mat4 modelMatrix;
+	glm::vec3 translate;
+	glm::vec3 scale;
+
 	MetaLine();
-	MetaLine(vec3 point1, vec3 point2);
-	void Draw(Camera* cam);
-	void Draw(Shader* shad, Camera* cam);
+	MetaLine(glm::vec3 point1, glm::vec3 point2);
 	void Update();
 	void ImGuiUpdate();
 	void UpdateModelMatrix();
+	void Draw();
+	//void Draw(Shader* shad, Camera* cam);
 };
 
-class Dot :public Node {
+class Dot : public Node {
 private:
 	float pointSize = 10;
 public:
 	bool depthTest;
 
-	vec3 translate;
-	vec3 color;
-	mat4 modelMatrix;
-	string name;
+	glm::vec3 translate;
+
+	glm::vec3 color;
+	std::string name;
 	Mesh* mesh;
 	Dot();
-	Dot(vec3 pos);
+	Dot(glm::vec3 pos);
 	void Update();
 	void ImGuiUpdate();
 	void UpdateModelMatrix();
-	void Draw(Camera* cam);
-	void Draw(Shader* shad, Camera* cam);
+	void Draw();
+	//void Draw(Shader* shad, Camera* cam);
+};
+
+class Light : public Dot {
+private:
+public:
+	float intensity;
+
+	Light(glm::vec3 color, float intensity);
+	void Update();
+	void UpdateModelMatrix();
+	void ImGuiUpdate();
+};
+
+
+class MetaBone : public MetaLine {
+private:
+
+	Skeleton* skelly;
+	BoneNode* boneRef;
+
+	glm::mat4* offset;
+
+	float pos[6];
+	MetaBone(Skeleton* skelly, Node* parent, BoneNode* node,Shader* shad);
+public:
+	bool includeInvOffset;
+
+	MetaBone();
+	MetaBone(Skeleton* skelly,Node* parent,Shader* shad);
+
+
+	void Update();
+	void ImGuiUpdate();
 };
 
 void UpdateNodes();
+void ImGuiUpdateNodes();
 
+void SetInFront(Node* node);
+//might not work
+void SetNotInFront(Node* node);
+
+void SetDefaultShader(Shader* shad);
+Shader* GetDefaultShader();
+
+void SetDefalutCamera(Camera* cam);
+Camera* GetDefaultCamera();

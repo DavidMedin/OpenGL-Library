@@ -2,25 +2,25 @@
 #include "Maths.h"
 
 
- void Translate(mat4* matrix, std::initializer_list<float> offset)
+ void Translate(glm::mat4* matrix, std::initializer_list<float> offset)
 {
 	matrix[4][0] += *(offset.begin());
 	matrix[4][1] += *(offset.begin()+1);
 	matrix[4][2] += *(offset.begin()+2);
 }
- void Translate(mat4* matrix, vec3* offset)
+ void Translate(glm::mat4* matrix, glm::vec3* offset)
 {
 	matrix[3][0] += offset->x;
 	matrix[3][1] += offset->y;
 	matrix[3][2] += offset->z;
 }
 
- vec3 TranslateVec(vec3* input, vec3 offset)
+ glm::vec3 TranslateVec(glm::vec3* input, glm::vec3 offset)
 {
 	return *input + offset;
 }
 
- mat4* NewProjection(double fov, double nearRange, double farRange) {
+ glm::mat4* NewProjection(double fov, double nearRange, double farRange) {
 	int height, width;
 	glfwGetWindowSize(glfwGetCurrentContext(), &width, &height);
 	//mat4* matrix = new mat4(perspectiveFov<double>(radians(fov), width, height, nearRange, farRange));
@@ -40,11 +40,11 @@
 		0,0,Sz,-1,
 		0,0,Pz,0
 	};
-	mat4* matrix = new mat4(make_mat4(data));
+	glm::mat4* matrix = new glm::mat4(glm::make_mat4(data));
 	return matrix;
 }
- vec3 GetRightAxis(quat* quater) {
-	mat4 mat = mat4_cast(*quater);
-	vec3 tmpVec = vec3(mat[0][0], mat[0][1], mat[0][2]);
+ glm::vec3 GetRightAxis(glm::quat* quater) {
+	 glm::mat4 mat = mat4_cast(*quater);
+	 glm::vec3 tmpVec = glm::vec3(mat[0][0], mat[0][1], mat[0][2]);
 	return tmpVec;
 }

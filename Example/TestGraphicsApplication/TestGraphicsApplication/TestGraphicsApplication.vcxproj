@@ -87,13 +87,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;$(ProjectDir)\..\..\..\Libs\shaderc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;$(ProjectDir)..\..\..\Libs\shaderc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;SPIRVVM.lib;shaderc_shared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <PerUserRedirection>true</PerUserRedirection>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -102,10 +103,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;SPIRVVM.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,17 +151,17 @@
     <ClCompile Include="..\..\..\Libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\..\Src\Bone.cpp" />
+    <ClCompile Include="..\..\..\Src\Buffer.cpp" />
     <ClCompile Include="..\..\..\Src\Camera.cpp" />
     <ClCompile Include="..\..\..\Src\Error.cpp" />
     <ClCompile Include="..\..\..\Src\GlCall.cpp" />
-    <ClCompile Include="..\..\..\Src\IndexBuffer.cpp" />
     <ClCompile Include="..\..\..\Src\Init.cpp" />
     <ClCompile Include="..\..\..\Src\Input.cpp" />
     <ClCompile Include="..\..\..\Src\Maths.cpp" />
     <ClCompile Include="..\..\..\Src\Mesh.cpp" />
     <ClCompile Include="..\..\..\Src\Shader.cpp" />
-    <ClCompile Include="..\..\..\Src\VertexBuffer.cpp" />
-    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="..\..\..\Src\Texture.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,18 +173,18 @@
     <ClInclude Include="..\..\..\Libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\..\Src\Bone.h" />
+    <ClInclude Include="..\..\..\Src\Buffer.h" />
     <ClInclude Include="..\..\..\Src\Camera.h" />
     <ClInclude Include="..\..\..\Src\Error.h" />
     <ClInclude Include="..\..\..\Src\GlCall.h" />
     <ClInclude Include="..\..\..\Src\GraphicsLibrary.h" />
-    <ClInclude Include="..\..\..\Src\IndexBuffer.h" />
     <ClInclude Include="..\..\..\Src\Init.h" />
     <ClInclude Include="..\..\..\Src\Input.h" />
     <ClInclude Include="..\..\..\Src\Maths.h" />
     <ClInclude Include="..\..\..\Src\Mesh.h" />
     <ClInclude Include="..\..\..\Src\Shader.h" />
-    <ClInclude Include="..\..\..\Src\VertexBuffer.h" />
-    <ClInclude Include="Object.h" />
+    <ClInclude Include="..\..\..\Src\Texture.h" />
     <ClInclude Include="Source.h" />
   </ItemGroup>
   <ItemGroup>
