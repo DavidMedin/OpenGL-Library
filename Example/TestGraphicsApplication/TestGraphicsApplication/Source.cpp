@@ -3,8 +3,6 @@
 #define HEIGHT 1100
 
 
-
-
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
 
@@ -23,7 +21,6 @@ int main(int argv, char* argc[]) {
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
-	//SetDefalutCamera(cam);
 	glPointSize(10);
 
 	//mainLight
@@ -40,10 +37,10 @@ int main(int argv, char* argc[]) {
 	//unsigned int types[][2] = { {GL_FLOAT_VEC3,1},{GL_FLOAT,1},{GL_FLOAT_MAT4,1},{GL_FLOAT_MAT4,0} };
 	//StorageBuffer* uni = new StorageBuffer(types,4, uniData, 0, &meshShad, 1, "Test");
 
-
 	glm::quat* rotation = new glm::quat(glm::identity<glm::quat>());
 	float tick = 0;
-	bool animate = false;
+	bool animate = true;
+	float speed = 1;
 	while (!ShouldCloseWindow()) {
 		float dt = GetDeltaTime();
 		ClearWindow();
@@ -74,16 +71,19 @@ int main(int argv, char* argc[]) {
 			}
 			if (ImGui::Button("Toggle Animate")) {
 				animate = !animate;
+				glm::quat tmpQuat = glm::identity<glm::quat>();
+				girl_model->skelly->Rotate(0, &tmpQuat);
 			}
 			if (ImGui::Button("Rotate Bone")) {
 				glm::quat* tmp = rotation;
 				rotation = new glm::quat(glm::rotate(*rotation, glm::radians(5.0f), glm::vec3(1, 0, 0)));
 				delete tmp;
-				//girl->mesh->skelly->NameSearch(girl->mesh->skelly->rootBone, "Braid2")->Rotate(rotation);
+				girl_model->skelly->NameSearch(girl_model->skelly->rootBone, "Braid2")->Rotate(rotation);
 			}
 			ImGui::TreePop();
 		}
-		ImGui::SliderFloat("frame",&tick, 0, 5);
+		//ImGui::SliderFloat("frame",&tick, 0, 35);
+		ImGui::DragFloat("Cam Speed", &speed, .01f);
 		ImGui::End();
 
 		glm::vec3 ambientResult = glm::vec3(color_mainLight * intensity_mainLight);
@@ -97,23 +97,23 @@ int main(int argv, char* argc[]) {
 		//ImGui::ShowDemoWindow();
 
 		if (GetKey(keys::A_KEY)) {
-			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt));
+			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt) * speed);
 		}
 		if (GetKey(keys::D_KEY)) {
-			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt));
+			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt, 0.0f, -sin(-glm::radians(cam->GetY()) + glm::radians(90.0f)) * dt) * speed);
 		}
 		if (GetKey(keys::W_KEY)) {
-			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt));
+			cam->Translate(glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt) * speed);
 		}
 		if (GetKey(keys::S_KEY)) {
-			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt));
+			cam->Translate(-glm::vec3(cos(-glm::radians(cam->GetY())) * dt, 0.0f, -sin(-glm::radians(cam->GetY())) * dt) * speed);
 		}
 		if (GetKey(keys::CTRL_KEY)) {
-			cam->Translate(glm::vec3(0, -1, 0)*dt);
+			cam->Translate(glm::vec3(0, -1, 0)*dt * speed);
 		}
 
 		if (GetKey(keys::SPACE_KEY)) {
-			cam->Translate(glm::vec3(0, 1, 0) * dt);
+			cam->Translate(glm::vec3(0, 1, 0) * dt*speed);
 		}
 		float x, y;
 		GetMousePos(&x, &y);
@@ -126,7 +126,10 @@ int main(int argv, char* argc[]) {
 			SetDisabledMouse(false);
 		}
 
-		//if(animate)girl->mesh->skelly->Animate(double(tick));
+		if (animate) {
+			girl_model->skelly->Animate(double(std::fmod(tick,35.0f)));
+			tick += dt*(35.0f/5.0f);
+		}
 		girl_model->Draw(meshShad, cam);
 
 

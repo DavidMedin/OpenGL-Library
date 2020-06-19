@@ -137,6 +137,7 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		double weight = m * tick - scaKeyTimes[beforeKey];
 		delete scale;
 		scale = new glm::vec3(glm::mix(scaKeys[beforeKey], scaKeys[afterKey],weight));
+		//scale = new glm::vec3(scaKeys[beforeKey]);
 	}
 
 	glm::quat* rotation = new glm::quat(glm::identity<glm::quat>());
@@ -155,24 +156,23 @@ void BoneNode::Animate(double tick, glm::mat4* parMat)
 		double weight = m * tick - rotKeyTimes[beforeKey];
 		delete rotation;
 		rotation = new glm::quat(glm::mix(rotKeys[beforeKey], rotKeys[afterKey], (float)weight));
+		//rotation = new glm::quat(rotKeys[beforeKey]);
 	}
 	glm::mat4* childMat = new glm::mat4(glm::identity<glm::mat4>());
 	if (index != -1) {
 		glm::mat4 trans = glm::translate(glm::identity<glm::mat4>(), *translate);
 		glm::mat4 sca = glm::scale(glm::identity<glm::mat4>(), *scale);
 		glm::mat4 rot = glm::mat4_cast(*rotation);
-		glm::mat4* transform = new glm::mat4(trans*rot);
-		
-		glm::mat4 parentMat = parent->index != -1 ? GETMATRIX(parent) : glm::identity<glm::mat4>();
+		glm::mat4* transform = new glm::mat4(trans*rot*sca);
 
 		delete childMat;
-		childMat = new glm::mat4(*transform * *parMat);
-		GETMATRIX(this) = parentMat * *transform* (GETOFFSET(this));
+		childMat = new glm::mat4(*parMat * *transform);
+		GETMATRIX(this) = *parMat * *transform* (GETOFFSET(this));
 		delete transform;
 	}
 
 	for (BoneNode* child : children) {
-		child->Animate(tick,&GETMATRIX(this));
+		child->Animate(tick,childMat);
 	}
 	delete rotation;
 	delete scale;

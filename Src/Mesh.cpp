@@ -215,7 +215,7 @@ void Mesh::Draw(Shader* shad,Camera* cam)
 	shad->UniformEquals("proj",GL_FLOAT_MAT4, cam->projectionMatrix,1);
 	shad->UniformEquals("view", GL_FLOAT_MAT4, cam->viewMat,1); 
 	if (boneCount > 0) {
-		//shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount);
+		shad->UniformEquals("bones", GL_FLOAT_MAT4, skelly->boneMatrices,skelly->boneCount);
 	}
 	VA->Bind();
 	index->Bind();
