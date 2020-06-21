@@ -23,6 +23,7 @@
     <ProjectGuid>{4EF4AA97-6C1F-4EC2-A013-553AEE8E1EEE}</ProjectGuid>
     <RootNamespace>TestGraphicsApplication</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>TestGraphicsApplication</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -39,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -155,17 +156,6 @@
     <ClCompile Include="..\..\..\Libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\..\..\Src\Bone.cpp" />
-    <ClCompile Include="..\..\..\Src\Buffer.cpp" />
-    <ClCompile Include="..\..\..\Src\Camera.cpp" />
-    <ClCompile Include="..\..\..\Src\Error.cpp" />
-    <ClCompile Include="..\..\..\Src\GlCall.cpp" />
-    <ClCompile Include="..\..\..\Src\Init.cpp" />
-    <ClCompile Include="..\..\..\Src\Input.cpp" />
-    <ClCompile Include="..\..\..\Src\Maths.cpp" />
-    <ClCompile Include="..\..\..\Src\Mesh.cpp" />
-    <ClCompile Include="..\..\..\Src\Shader.cpp" />
-    <ClCompile Include="..\..\..\Src\Texture.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -177,18 +167,6 @@
     <ClInclude Include="..\..\..\Libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h" />
-    <ClInclude Include="..\..\..\Src\Bone.h" />
-    <ClInclude Include="..\..\..\Src\Buffer.h" />
-    <ClInclude Include="..\..\..\Src\Camera.h" />
-    <ClInclude Include="..\..\..\Src\Error.h" />
-    <ClInclude Include="..\..\..\Src\GlCall.h" />
-    <ClInclude Include="..\..\..\Src\GraphicsLibrary.h" />
-    <ClInclude Include="..\..\..\Src\Init.h" />
-    <ClInclude Include="..\..\..\Src\Input.h" />
-    <ClInclude Include="..\..\..\Src\Maths.h" />
-    <ClInclude Include="..\..\..\Src\Mesh.h" />
-    <ClInclude Include="..\..\..\Src\Shader.h" />
-    <ClInclude Include="..\..\..\Src\Texture.h" />
     <ClInclude Include="Source.h" />
   </ItemGroup>
   <ItemGroup>

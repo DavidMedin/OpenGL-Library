@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="GraphicsLibrary">
-      <UniqueIdentifier>{b2548b62-3076-43b7-b552-7f7c000783b0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{1d5b96c2-af90-42b4-a6f6-ace1a7b67551}</UniqueIdentifier>
     </Filter>
@@ -27,27 +24,6 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Src\Init.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Maths.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Mesh.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Shader.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Camera.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Error.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\GlCall.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Libs\imgui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -57,57 +33,30 @@
     <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Libs\imgui\examples\imgui_impl_glfw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Src\Bone.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Buffer.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Texture.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Src\Input.cpp">
-      <Filter>GraphicsLibrary</Filter>
+    <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Src\Init.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Maths.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Mesh.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Shader.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Camera.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Error.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\GlCall.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\GraphicsLibrary.h">
-      <Filter>GraphicsLibrary</Filter>
+    <ClInclude Include="..\..\..\Libs\imgui\imconfig.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Libs\imgui\imgui.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_glfw.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.h">
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Libs\imgui\imgui_internal.h">
@@ -121,27 +70,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h">
       <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imconfig.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_glfw.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Bone.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Buffer.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Texture.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Input.h">
-      <Filter>GraphicsLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
