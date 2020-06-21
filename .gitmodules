@@ -1,0 +1,9 @@
+[submodule "CedarGL/libs/imgui"]
+	path = CedarGL/libs/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "CedarGL/libs/stb"]
+	path = CedarGL/libs/stb
+	url = https://github.com/nothings/stb.git
+[submodule "CedarGL/libs/glm"]
+	path = CedarGL/libs/glm
+	url = https://github.com/g-truc/glm.git
