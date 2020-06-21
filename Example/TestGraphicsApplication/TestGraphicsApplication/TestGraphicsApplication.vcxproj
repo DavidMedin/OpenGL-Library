@@ -74,12 +74,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,13 +107,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\Libs\stb;$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)\..\..\..\Libs\glm\glm;$(ProjectDir)\..\..\..\Libs\Assimp;$(ProjectDir)\..\..\..\Libs\imgui;$(ProjectDir)\..\..\..\Src;$(ProjectDir)\..\..\..\Libs\SPIRV-VM;$(ProjectDir)\..\..\..\Libs\shaderc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;glfw3.lib;Opengl32.lib;assimp-vc141-mt.lib;SPIRVVM.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\Libs\glew;$(ProjectDir)\..\..\..\Libs\glfw;$(ProjectDir)..\..\..\Libs\Assimp;$(ProjectDir)..\..\..\Libs\SPIRV-VM;$(ProjectDir)..\..\..\Libs\shaderc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp_x64.lib;glew_x64.lib;glfw3_x64.lib;spirvvm_x64.lib;opengl32.lib;shaderc_x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -30,9 +30,6 @@
     <ClCompile Include="..\..\..\Src\Init.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Src\Input.cpp">
-      <Filter>GraphicsLibrary</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Src\Maths.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
@@ -78,15 +75,15 @@
     <ClCompile Include="..\..\..\Src\Texture.cpp">
       <Filter>GraphicsLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Src\Input.cpp">
+      <Filter>GraphicsLibrary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Src\Init.h">
-      <Filter>GraphicsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Src\Input.h">
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Src\Maths.h">
@@ -141,6 +138,9 @@
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Src\Texture.h">
+      <Filter>GraphicsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Src\Input.h">
       <Filter>GraphicsLibrary</Filter>
     </ClInclude>
   </ItemGroup>
