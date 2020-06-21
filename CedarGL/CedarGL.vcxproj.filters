@@ -131,5 +131,8 @@
     <ClInclude Include="libs\imgui\examples\imgui_impl_opengl3.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Export.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

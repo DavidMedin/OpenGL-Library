@@ -16,29 +16,31 @@
 #include "imgui.h"
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
-void WindowSizeCallback(GLFWwindow* window, int width, int height);
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
  
-
+#include "Export.h"
 #define GRAPHICS_FLAG_CULL 1
 
 #define Z_TEST 1
+namespace Cedar {
+    //class ImplWindow;
+    //void WindowSizeCallback(ImplWindow* window, int width, int height);
+    void GL_EXPORT FramebufferSizeCallback(int width, int height);
+    //void  SetGraphicsFlag(int flag);
+    //bool  GetGraphicsFlag(int flag);
+    void GL_EXPORT GraphicsEnable(unsigned int what);
+    void GL_EXPORT GraphicsDisable(unsigned int what);
 
-void  SetGraphicsFlag(int flag);
-bool  GetGraphicsFlag(int flag);
-void GraphicsEnable(unsigned int what);
-void GraphicsDisable(unsigned int what);
+    int GL_EXPORT init(int width, int height, std::string name);
+    void GL_EXPORT PollEvents();
+    void GL_EXPORT ClearWindow();
+    void GL_EXPORT DrawWindow();
+    int GL_EXPORT ShouldCloseWindow();
+    float GL_EXPORT GetDeltaTime();
 
-int init(int width, int height, std::string name);
-void PollEvents();
-void ClearWindow();
-void DrawWindow();
-int ShouldCloseWindow();
-float GetDeltaTime();
+    void GL_EXPORT ImGuiNewFrame();
+    void GL_EXPORT ImGuiRender();
 
-void ImGuiNewFrame();
-void ImGuiRender();
-
-//[0] = LineShader
-//[1] = DotShader
-Shader** GetShaders();
+    //[0] = LineShader
+    //[1] = DotShader
+    Shader** GL_EXPORT GetShaders();
+}

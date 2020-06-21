@@ -1,20 +1,38 @@
  
 #include "Shader.h"
-#define GRAPHICSLIBRARY_EXPORTS 1
+#define GETSPV(x) (*(*x).shad)
+//used for debugging, one per shader, not program
+struct SpvShader {
+	spvm_context_t spvContext;
+	unsigned int spvSLength;
+	spvm_source spvSource;
+	//--
+	spvm_program_t spvProgram;
+	spvm_state_t spvState;
+	//shaderType is 
+	SpvShader();
+	SpvShader(std::string content, unsigned int shaderType);
+};
+class Shader::ImplSpvShader {
+public:
+	SpvShader* shad;
+	ImplSpvShader() {};
+	ImplSpvShader(SpvShader* in) :shad(in) {};
+};
 
 Shader::Shader() {
 	shader_Program = 0;
 }
 
-std::list<spvShader*>* Shader::SPIRVVMFindUniform(std::string name)
+std::list<Shader::ImplSpvShader*>* Shader::SPIRVVMFindUniform(std::string name)
 {
-	std::list<spvShader*>* shads = new std::list<spvShader*>;
+	std::list<Shader::ImplSpvShader*>* shads = new std::list<Shader::ImplSpvShader*>;
 	bool found = false;
 	spvm_result_t interfaceBlock;
 	for (int i = 0; i < 2; i++) {
-		interfaceBlock = spvm_state_get_result(spvShaders[i].spvState, spvm_string(name.c_str()));
+		interfaceBlock = spvm_state_get_result(GETSPV(spvShaders[i]).spvState, spvm_string(name.c_str()));
 		if (interfaceBlock != NULL) {
-			shads->push_back(&spvShaders[i]);
+			shads->push_back(spvShaders[i]);
 			found = true;
 		}
 	}
@@ -161,13 +179,13 @@ void Shader::_UniformEquals(int location, void* value, unsigned int type,unsigne
 		return;
 	}
 	if (spvInitialized) {
-		std::list<spvShader*>* shads = SPIRVVMFindUniform(uniformName);
+		std::list<Shader::ImplSpvShader*>* shads = SPIRVVMFindUniform(uniformName);
 		if (shads == nullptr) {
 			printf("uniform name : %s isn't in that shader!\n", uniformName);
 			return;
 		}
 		for (auto i : *shads) {
-			spvm_result_t uniform = spvm_state_get_result((*i).spvState, spvm_string(uniformName));
+			spvm_result_t uniform = spvm_state_get_result((*(*i).shad).spvState, spvm_string(uniformName));
 			if (type != GL_INT) {
 				spvm_member_set_value_f(uniform->members, uniform->member_count, (float*)value);
 			}
@@ -357,8 +375,8 @@ void Shader::StartSPIRVVMDebug()
 }
 
 void Shader::InitializeSPIRVVMDebug(){
-	spvShaders[0] = spvShader(vertexContent, GL_VERTEX_SHADER);
-	spvShaders[1] = spvShader(fragmentContent, GL_FRAGMENT_SHADER);
+	spvShaders[0] = new Shader::ImplSpvShader(new SpvShader(vertexContent, GL_VERTEX_SHADER));
+	spvShaders[1] = new Shader::ImplSpvShader(new SpvShader(fragmentContent, GL_FRAGMENT_SHADER));
 	spvInitialized = true;
 }
 
@@ -371,10 +389,10 @@ void Shader::SPIRVVMInterfaceWrite(std::string blockName, unsigned int type, uns
 
 	//hand data over to SPIRV-VM
 	//find the correct shaders to use
-	std::list<spvShader*>* shads = SPIRVVMFindUniform(blockName);
+	std::list<Shader::ImplSpvShader*>* shads = SPIRVVMFindUniform(blockName);
 	for (auto i : *shads) {
-		spvm_result_t interfaceBlock = spvm_state_get_result((*i).spvState, spvm_string(blockName.c_str()));
-		spvm_member_t member = spvm_state_get_object_member((*i).spvState, interfaceBlock, spvm_string(nameBuffer));
+		spvm_result_t interfaceBlock = spvm_state_get_result(GETSPV(i).spvState, spvm_string(blockName.c_str()));
+		spvm_member_t member = spvm_state_get_object_member(GETSPV(i).spvState, interfaceBlock, spvm_string(nameBuffer));
 	
 		if (primitiveType == GL_FLOAT)
 			spvm_member_set_value_f(member->members, member->member_count, (float*)data);
@@ -391,7 +409,7 @@ void Shader::Reload() {
 	shader_Program = tmpShader;
 }
 
-spvShader::spvShader()
+SpvShader::SpvShader()
 {
 	spvContext = NULL;
 	spvSLength = NULL;
@@ -400,7 +418,7 @@ spvShader::spvShader()
 	spvState = NULL;
 }
 
-spvShader::spvShader(std::string content, unsigned int shaderType)
+SpvShader::SpvShader(std::string content, unsigned int shaderType)
 {
 
 	//set options

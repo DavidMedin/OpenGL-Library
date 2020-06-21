@@ -86,7 +86,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILING_GL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\Assimp;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\glew;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\glfw;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\glm\glm;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\imgui;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\shaderc;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\SPIRV-VM;C:\Users\david\Documents\Github\CedarGL\CedarGL\libs\stb;C:\Users\david\Documents\Github\CedarGL\CedarGL\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -173,6 +173,7 @@
     <ClInclude Include="Src\Buffer.h" />
     <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\Error.h" />
+    <ClInclude Include="Src\Export.h" />
     <ClInclude Include="Src\GlCall.h" />
     <ClInclude Include="Src\GraphicsLibrary.h" />
     <ClInclude Include="Src\Init.h" />

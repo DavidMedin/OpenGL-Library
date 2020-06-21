@@ -24,19 +24,7 @@
 #define TYPE_MODEL 2
 #define TYPE_VIEW 3
 
-//used for debugging, one per shader, not program
-struct spvShader {
-	spvm_context_t spvContext;
-	unsigned int spvSLength;
-	spvm_source spvSource;
-	//--
-	spvm_program_t spvProgram;
-	spvm_state_t spvState;
-	//shaderType is 
-	spvShader();
-	spvShader(std::string content, unsigned int shaderType);
-};
-
+#include <memory>
 class Shader {
 private:
 	std::string vertexContent;
@@ -44,11 +32,12 @@ private:
 	std::string geometryContent; //might fail
 
 	//SPIRV-VM -- for debugging
-	spvShader spvShaders[2];
+	class ImplSpvShader;
+	ImplSpvShader* spvShaders[2];
 	unsigned int spvShaderNum = 2;
 	bool spvInitialized=false;
 	//you must delete when you're done with it btw
-	std::list<spvShader*>* SPIRVVMFindUniform(std::string name);
+	std::list<ImplSpvShader*>* SPIRVVMFindUniform(std::string name);
 
 	unsigned int shader_Program;
 
