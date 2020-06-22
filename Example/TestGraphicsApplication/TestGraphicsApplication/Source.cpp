@@ -1,15 +1,14 @@
 #include "Source.h"
 #define WIDTH 1500
 #define HEIGHT 1100
-
-
+#include <Windows.h>
+using namespace Cedar;
 int main(int argv, char* argc[]) {
 	init(WIDTH, HEIGHT, "Default");
-
+	ImGui::SetCurrentContext((ImGuiContext*)ImGuiInit());
 	//load shaders
 	int renderSwitch = 0;
 	Shader* meshShad = new Shader("../Shaders/MeshVs.glsl", "../Shaders/MeshFs.glsl", NULL);
-	//SetDefaultShader(meshShad);
 	Shader* lineShad = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", NULL);
 	Shader* dotShad = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", NULL);
 	//meshShad->InitializeSPIRVVMDebug();
@@ -21,7 +20,7 @@ int main(int argv, char* argc[]) {
 	Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 1.0));
 	cam->NewProjection(33, .1f, 100);
 	cam->UpdateViewMatrix();
-	glPointSize(10);
+	//glPointSize(10);
 
 	//mainLight
 	glm::vec3 color_mainLight = glm::vec3(1,1,1);
@@ -82,7 +81,6 @@ int main(int argv, char* argc[]) {
 			}
 			ImGui::TreePop();
 		}
-		//ImGui::SliderFloat("frame",&tick, 0, 35);
 		ImGui::DragFloat("Cam Speed", &speed, .01f);
 		ImGui::End();
 
@@ -147,8 +145,6 @@ int main(int argv, char* argc[]) {
 		DrawWindow();
 		PollEvents();
 	}
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	ImGUiShutdown();
 	return 0;
 }

@@ -1,30 +1,32 @@
- 
 #include "Input.h"
 
-namespace DataKeys {
-	unsigned int A_KEY=0;
-	unsigned int W_KEY=0;
-	unsigned int D_KEY=0;
-	unsigned int S_KEY=0;
-	unsigned int Q_KEY=0;
-	unsigned int E_KEY=0;
-	unsigned int ESC_KEY = 0;
-	unsigned int CTRL_KEY = 0;
-	unsigned int SPACE_KEY = 0;
-};
-namespace DataMouseButton {
-	unsigned int MIDDLE_KEY = 0;
-	unsigned int LEFT_KEY = 0;
-	unsigned int RIGHT_KEY = 0;
-};
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+namespace Cedar {
+	namespace DataKeys {
+		unsigned int A_KEY = 0;
+		unsigned int W_KEY = 0;
+		unsigned int D_KEY = 0;
+		unsigned int S_KEY = 0;
+		unsigned int Q_KEY = 0;
+		unsigned int E_KEY = 0;
+		unsigned int ESC_KEY = 0;
+		unsigned int CTRL_KEY = 0;
+		unsigned int SPACE_KEY = 0;
+	};
+	namespace DataMouseButton {
+		unsigned int MIDDLE_KEY = 0;
+		unsigned int LEFT_KEY = 0;
+		unsigned int RIGHT_KEY = 0;
+	};
 
 
 
-void Key(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	bool active = 0;
-	if (action == GLFW_RELEASE) active = 0;
-	else if (action == GLFW_PRESS || action == GLFW_REPEAT) active = 1; else active = 0;
-	switch (key) {
+	void Key(GLFWwindow* window, int key, int scancode, int action, int mods) {
+		bool active = 0;
+		if (action == GLFW_RELEASE) active = 0;
+		else if (action == GLFW_PRESS || action == GLFW_REPEAT) active = 1; else active = 0;
+		switch (key) {
 		case GLFW_KEY_A: {
 			DataKeys::A_KEY = active;
 			break;
@@ -61,22 +63,22 @@ void Key(GLFWwindow* window, int key, int scancode, int action, int mods) {
 			DataKeys::SPACE_KEY = active;
 			break;
 		}
+		}
 	}
-}
 
-float mouseX = 0;
-float mouseY = 0;
+	float mouseX = 0;
+	float mouseY = 0;
 
-void Mouse(GLFWwindow* window, double xpos, double ypos) {
-	mouseX = (float)xpos;
-	mouseY = (float)ypos;
-}
+	void Mouse(GLFWwindow* window, double xpos, double ypos) {
+		mouseX = (float)xpos;
+		mouseY = (float)ypos;
+	}
 
-void MouseButton(GLFWwindow* window, int button, int action, int mods) {
-	bool active = 0;
-	if (action == GLFW_RELEASE) active = 0;
-	else if (action == GLFW_PRESS || action == GLFW_REPEAT) active = 1; else active = 0;
-	switch (button) {
+	void MouseButton(GLFWwindow* window, int button, int action, int mods) {
+		bool active = 0;
+		if (action == GLFW_RELEASE) active = 0;
+		else if (action == GLFW_PRESS || action == GLFW_REPEAT) active = 1; else active = 0;
+		switch (button) {
 		case GLFW_MOUSE_BUTTON_MIDDLE: {
 			DataMouseButton::MIDDLE_KEY = active;
 			break;
@@ -87,11 +89,11 @@ void MouseButton(GLFWwindow* window, int button, int action, int mods) {
 		case GLFW_MOUSE_BUTTON_RIGHT: {
 			DataMouseButton::RIGHT_KEY = active;
 		}
+		}
 	}
-}
 
- bool GetKey(keys key) {
-	switch (key) {
+	bool GetKey(keys key) {
+		switch (key) {
 		case keys::A_KEY: {
 			return DataKeys::A_KEY;
 		}
@@ -122,10 +124,10 @@ void MouseButton(GLFWwindow* window, int button, int action, int mods) {
 			NewError("That key has not been implemented yet!\n");
 			return 0;
 		}
+		}
 	}
-}
- bool GetMouseButton(mouseButton button) {
-	switch (button) {
+	bool GetMouseButton(mouseButton button) {
+		switch (button) {
 		case mouseButton::MIDDLE_KEY: {
 			return DataMouseButton::MIDDLE_KEY;
 		}
@@ -133,25 +135,26 @@ void MouseButton(GLFWwindow* window, int button, int action, int mods) {
 			NewError("That is not a Button");
 			return NULL;
 		}
+		}
 	}
-}
 
- void GetMousePos(float* xpos, float* ypos) {
-	static float prev_x = mouseX;
-	static float prev_y = mouseY;
-	//printf("%f\n", prev_x);
-	(*xpos) = mouseX - prev_x;
-	(*ypos) = mouseY - prev_y;
-	prev_x = mouseX;
-	prev_y = mouseY;
-}
-
- void SetDisabledMouse(bool disabled)
-{
-	if (disabled){
-	glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	void GetMousePos(float* xpos, float* ypos) {
+		static float prev_x = mouseX;
+		static float prev_y = mouseY;
+		//printf("%f\n", prev_x);
+		(*xpos) = mouseX - prev_x;
+		(*ypos) = mouseY - prev_y;
+		prev_x = mouseX;
+		prev_y = mouseY;
 	}
-	else {
-		glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	void SetDisabledMouse(bool disabled)
+	{
+		if (disabled) {
+			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+		else {
+			glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	}
 }

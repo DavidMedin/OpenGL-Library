@@ -1,75 +1,67 @@
-//assimp
-#include <assImp/Importer.hpp>
-#include <assImp/scene.h>
-#include <assimp/postprocess.h>
-
+#include <list>
 //glm
 #include <glm.hpp>
 #include <ext.hpp>
 #include <gtx/string_cast.hpp>
 
-//std
-#include <stdio.h>
-#include <string>
-#include <list>
-#include <iostream>
 
-class Skeleton;
-class BoneNode {
-private:
-public:
-	bool kill;
-	
-	bool leaf;
+#include "Export.h"
+namespace Cedar {
+	class GL_EXPORT Skeleton;
+	class GL_EXPORT BoneNode {
+	private:
+	public:
+		//bool kill;
 
-	std::string name;
+		bool leaf;
 
-	Skeleton* skelly;
-	int index;
+		std::string name;
 
-	std::list<BoneNode*> children;
-	BoneNode* parent;
+		Skeleton* skelly;
+		int index;
 
-	//will need a new set of these for each animation
-	glm::vec3* posKeys;
-	double* posKeyTimes;
-	unsigned int posKeyNum;
+		std::list<BoneNode*> children;
+		BoneNode* parent;
 
-	glm::quat* rotKeys;
-	double* rotKeyTimes;
-	unsigned int rotKeyNum;
+		//will need a new set of these for each animation
+		glm::vec3* posKeys;
+		double* posKeyTimes;
+		unsigned int posKeyNum;
 
-	glm::vec3* scaKeys;
-	double* scaKeyTimes;
-	unsigned int scaKeyNum;
+		glm::quat* rotKeys;
+		double* rotKeyTimes;
+		unsigned int rotKeyNum;
 
-	BoneNode();
-	//recursivly goes through scene node
-	BoneNode(Skeleton* skelly, aiNode* node, aiMesh* mesh);
-	void Rotate(glm::quat* quat);
-	void Animate(double tick,glm::mat4* parMat);
-};
+		glm::vec3* scaKeys;
+		double* scaKeyTimes;
+		unsigned int scaKeyNum;
 
-class Skeleton {
-private:
-public:
-	//boneOffsets and boneMatrices are boneCount in size
-	glm::mat4* boneOffsets;
-	glm::mat4* boneMatrices;
+		BoneNode();
+		//recursivly goes through scene node
+		void Rotate(glm::quat* quat);
+		void Animate(double tick, glm::mat4* parMat);
+	};
 
-	BoneNode* rootBone;
-	unsigned int boneCount;
+	class GL_EXPORT Skeleton {
+	private:
+	public:
+		//boneOffsets and boneMatrices are boneCount in size
+		glm::mat4* boneOffsets;
+		glm::mat4* boneMatrices;
 
-	
+		BoneNode* rootBone;
+		unsigned int boneCount;
 
-	Skeleton();
-	Skeleton(aiNode* node, aiMesh* mesh, aiScene* scene);
-	
-	void Rotate(unsigned int index, glm::quat* quat);
 
-	void Animate(double tick);
 
-	//searches
-	BoneNode* IndexSearch(BoneNode* node, int index);
-	BoneNode* NameSearch(BoneNode* node, std::string name);
-};
+		Skeleton();
+
+		void Rotate(unsigned int index, glm::quat* quat);
+
+		void Animate(double tick);
+
+		//searches
+		BoneNode* IndexSearch(BoneNode* node, int index);
+		BoneNode* NameSearch(BoneNode* node, std::string name);
+	};
+}

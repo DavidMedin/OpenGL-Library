@@ -24,22 +24,16 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\imgui.cpp">
+    <ClCompile Include="..\..\..\CedarGL\libs\imgui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\imgui_demo.cpp">
+    <ClCompile Include="..\..\..\CedarGL\libs\imgui\imgui_demo.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\imgui_draw.cpp">
+    <ClCompile Include="..\..\..\CedarGL\libs\imgui\imgui_draw.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\examples\imgui_impl_glfw.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Libs\imgui\imgui_widgets.cpp">
+    <ClCompile Include="..\..\..\CedarGL\libs\imgui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,28 +41,22 @@
     <ClInclude Include="Source.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imconfig.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imconfig.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imgui.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imgui.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_glfw.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imgui_internal.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\examples\imgui_impl_opengl3.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imstb_rectpack.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imgui_internal.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imstb_textedit.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imstb_rectpack.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imstb_textedit.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Libs\imgui\imstb_truetype.h">
+    <ClInclude Include="..\..\..\CedarGL\libs\imgui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
   </ItemGroup>

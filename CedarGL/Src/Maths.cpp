@@ -1,5 +1,7 @@
  
 #include "Maths.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 
  void Translate(glm::mat4* matrix, std::initializer_list<float> offset)

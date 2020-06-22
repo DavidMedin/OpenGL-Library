@@ -1,4 +1,15 @@
 #include "Init.h"
+
+//hiden deps
+#define GLFW_DLL
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+//imgui
+#include "imgui.h"
+#include "examples/imgui_impl_glfw.h"
+#include "examples/imgui_impl_opengl3.h"
+
+
 namespace Cedar {
 
 
@@ -6,12 +17,11 @@ namespace Cedar {
 
 	Shader* shaderList[2];
 
+	//externing to avoid visibility to user
+	extern void Key(GLFWwindow* window, int key, int scancode, int action, int mods);
+	extern void Mouse(GLFWwindow* window, double xpos, double ypos);
+	extern void MouseButton(GLFWwindow* window, int button, int action, int mods);
 
-	//class ImplWindow {
-	//public:
-	//	GLFWwindow* win;
-	//	ImplWindow(GLFWwindow* in) : win(in) {};
-	//};
 
 	static void glfw_error_callback(int error, const char* description)
 	{
@@ -109,19 +119,9 @@ namespace Cedar {
 		glFrontFace(GL_CCW);
 		//glEnable(GL_BLEND);
 
-		//Imgui stuff
 		int width_w, height_w;
 		glfwGetFramebufferSize(window, &width_w, &height_w);
 		glViewport(0, 0, width_w, height_w);
-
-		ImGui::CreateContext();
-
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-		ImGui::StyleColorsDark();
-
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init(NULL);
 
 
 
@@ -160,6 +160,22 @@ namespace Cedar {
 	}
 
 
+	GL_EXPORT ImGuiContext* ImGuiInit()
+	{
+//#pragma data_seg(.shared)
+		ImGui::CreateContext();
+
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+		ImGui::StyleColorsDark();
+
+		ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
+		ImGui_ImplOpenGL3_Init(NULL);
+
+		return ImGui::GetCurrentContext();
+//#pragma data_seg
+	}
+
 	void ImGuiNewFrame() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -180,6 +196,13 @@ namespace Cedar {
 		//glViewport(0, 0, display_w, display_h);
 		//glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
+
+	void ImGUiShutdown()
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	Shader** GetShaders()

@@ -1,6 +1,17 @@
 #include "Mesh.h"
+//glew
+#include <GL/glew.h>
+
+//assimp
+#include <assImp/Importer.hpp>
+#include <assImp/scene.h>
+#include <assimp/postprocess.h>
+
+
 #define MAXBONEIDS 4
 namespace Cedar {
+	//need to have this hidden creator of skeleton becuase we are hiding the assimp types
+	extern Skeleton* CreateSkeleton(aiNode* node, aiMesh* mesh, aiScene* scene);
 	Mesh::Mesh(float* data, unsigned int size,unsigned int* indexData,unsigned int indexCount)
 	{
 		drawMode = GL_TRIANGLES;
@@ -152,7 +163,7 @@ namespace Cedar {
 					}
 				}
 			}
-			skelly = new Skeleton((aiNode*)scene->mRootNode, (aiMesh*)mesh,(aiScene*)scene);
+			skelly = CreateSkeleton((aiNode*)scene->mRootNode, (aiMesh*)mesh,(aiScene*)scene);
 		}
 		else {
 			printf("	No bones!\n");

@@ -1,16 +1,10 @@
 #pragma once
- 
-//assimp
-#include <assImp/Importer.hpp>
-#include <assImp/scene.h>
-#include <assimp/postprocess.h>
-
+#include <vector>
 
 //glm
 #include <glm.hpp>
 #include <ext.hpp>
-//glew
-#include <GL/glew.h>
+
 
  
 #include "Maths.h"
@@ -20,7 +14,6 @@
 #include "Error.h"
 #include "Texture.h"
 #include "Camera.h"
-#include <vector>
 #include "Bone.h"
 #include "Export.h"
 namespace Cedar {

@@ -1,5 +1,5 @@
 #include "Buffer.h"
-
+#include "GL/glew.h"
 int SizeofGlEnum(int type)
 {
 	int size;
@@ -203,7 +203,7 @@ namespace Cedar {
 			if (shads[i]->GetSPIRVVMInitialized()) {
 				unsigned int localIndex = 0;
 				unsigned int dataOffset = 0;
-				for (int u = 0; u < typesNum; u++) {
+				for (unsigned int u = 0; u < typesNum; u++) {
 					shads[i]->SPIRVVMInterfaceWrite(uniformName, GL_UNIFORM_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]));
 					localIndex += types[u][1];
 					dataOffset += localIndex * SizeofGlEnum(types[u][1]);
@@ -371,7 +371,7 @@ namespace Cedar {
 			if (shads[i]->GetSPIRVVMInitialized()) {
 				unsigned int localIndex = 0;
 				unsigned int dataOffset = 0;
-				for (int u = 0; u < typesNum; u++) {
+				for (unsigned int u = 0; u < typesNum; u++) {
 					shads[i]->SPIRVVMInterfaceWrite(storageName, GL_SHADER_STORAGE_BLOCK, localIndex, data + dataOffset, GetGLPrimitiveType(types[u][0]), types[u][1] * SizeofGlEnum(types[u][1]));
 					localIndex += types[u][1];
 					dataOffset += localIndex * SizeofGlEnum(types[u][1]);
@@ -470,7 +470,7 @@ namespace Cedar {
 		free(_data);
 		_data = newData;
 
-		for (int i = 0; i < shadCount; i++) {
+		for (unsigned int i = 0; i < shadCount; i++) {
 			if (shads[i]->GetSPIRVVMInitialized()) {
 				unsigned int localIndex = 0;
 				unsigned int dataOffset = 0;

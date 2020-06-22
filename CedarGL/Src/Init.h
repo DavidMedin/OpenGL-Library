@@ -1,27 +1,27 @@
 #pragma once
 #include <stdio.h>
 #include <string>
+
 #include "Error.h"
 #include "Input.h"
 #include "Shader.h"
-
-#include <GLFW/glfw3.h>
- 
-#include <glm.hpp>
-#include <ext.hpp>
-#include <GL/glew.h>
-#define GLFW_DLL
 #include "GlCall.h"
 #include "Camera.h"
-#include "imgui.h"
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
- 
 #include "Export.h"
+
+#include <glm.hpp>
+#include <ext.hpp>
+
+#include "imgui.h"
+//#include <Windows.h> 
 #define GRAPHICS_FLAG_CULL 1
 
 #define Z_TEST 1
+
+
 namespace Cedar {
+
+
     //class ImplWindow;
     //void WindowSizeCallback(ImplWindow* window, int width, int height);
     void GL_EXPORT FramebufferSizeCallback(int width, int height);
@@ -36,11 +36,13 @@ namespace Cedar {
     void GL_EXPORT DrawWindow();
     int GL_EXPORT ShouldCloseWindow();
     float GL_EXPORT GetDeltaTime();
-
+    //returns ptr offset from module start to imgui context
+    GL_EXPORT ImGuiContext* ImGuiInit();
     void GL_EXPORT ImGuiNewFrame();
     void GL_EXPORT ImGuiRender();
-
+    void GL_EXPORT ImGUiShutdown();
     //[0] = LineShader
     //[1] = DotShader
-    Shader** GL_EXPORT GetShaders();
+    GL_EXPORT Shader** GetShaders();
+    //#define IMGUIINIT(...) ImGui::SetCurrentContext(GetModuleHandleA("CedarGL.dll")+ImGuiInit())
 }
