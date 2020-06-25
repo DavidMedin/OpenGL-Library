@@ -134,8 +134,8 @@ namespace Cedar {
 		glfwSetWindowSizeCallback(glfwGetCurrentContext(), _WindowSizeCallback);
 		//glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), FramebufferSizeCallback);
 
-		shaderList[0] = new Shader("../../../DefaultShaders/LineVs.glsl", "../../../DefaultShaders/LineFs.glsl", nullptr);
-		shaderList[1] = new Shader("../../../DefaultShaders/DotVs.glsl", "../../../DefaultShaders/DotFs.glsl", NULL);
+		shaderList[0] = new Shader("C:/Users/david/Documents/github/CedarGL/DefaultShaders/LineVs.glsl", "C:/Users/david/Documents/github/CedarGL/DefaultShaders/LineFs.glsl", nullptr);
+		shaderList[1] = new Shader("C:/Users/david/Documents/github/CedarGL/DefaultShaders/DotVs.glsl", "C:/Users/david/Documents/github/CedarGL/DefaultShaders/DotFs.glsl", NULL);
 		return 1;
 	}
 
