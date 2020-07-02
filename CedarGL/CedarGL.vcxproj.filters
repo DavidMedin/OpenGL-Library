@@ -36,9 +36,6 @@
     <ClCompile Include="Src\Init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Maths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\Init.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Input.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Src\Maths.h">

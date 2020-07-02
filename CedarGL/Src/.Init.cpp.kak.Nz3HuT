@@ -11,24 +11,18 @@
 
 
 namespace Cedar {
-	class GL_EXPORT Context {
-	public:
-		GLFWwindow* win;
-		Context(GLFWwindow* win) : win(win) {};
-	};
 
-	std::list<Context*> contextList;
 
 	int graphicsFlag = 1;
 
 	Shader* shaderList[2];
 
 	//externing to avoid visibility to user
-	//extern void Key(GLFWwindow* window, int key, int scancode, int action, int mods);
-	//extern void Mouse(GLFWwindow* window, double xpos, double ypos);
-	//extern void MouseButton(GLFWwindow* window, int button, int action, int mods);
+	extern void Key(GLFWwindow* window, int key, int scancode, int action, int mods);
+	extern void Mouse(GLFWwindow* window, double xpos, double ypos);
+	extern void MouseButton(GLFWwindow* window, int button, int action, int mods);
 
-//contexts ------------
+
 	static void glfw_error_callback(int error, const char* description)
 	{
 		fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -62,7 +56,7 @@ namespace Cedar {
 	//{
 	//	return graphicsFlag & flag;
 	//}
-//shit----------------------
+
 	void GraphicsEnable(unsigned int what) {
 		switch (what) {
 			//z_test
@@ -91,8 +85,7 @@ namespace Cedar {
 	}
 
 
-void CreateContext(int width, int height, std::string name);
-//------------------------------
+	//------------------------------
 	int init(int width, int height, std::string name) {
 		glfwSetErrorCallback(glfw_error_callback);
 
@@ -106,10 +99,13 @@ void CreateContext(int width, int height, std::string name);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		//GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-		CreateContext(width,height,name);
-		
-		//glfwMakeContextCurrent(window);
+		GLFWwindow* window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
+		if (!window) {
+			NewError("window didn't open (glfw)\n");
+			glfwTerminate();
+			return 0;
+		}
+		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 
 
@@ -123,13 +119,18 @@ void CreateContext(int width, int height, std::string name);
 		glFrontFace(GL_CCW);
 		//glEnable(GL_BLEND);
 
+		int width_w, height_w;
+		glfwGetFramebufferSize(window, &width_w, &height_w);
+		glViewport(0, 0, width_w, height_w);
+
+
 
 
 		//-------Input------------//
 
-		//glfwSetKeyCallback(glfwGetCurrentContext(), Key);
-		//glfwSetCursorPosCallback(glfwGetCurrentContext(), Mouse);
-		//glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
+		glfwSetKeyCallback(glfwGetCurrentContext(), Key);
+		glfwSetCursorPosCallback(glfwGetCurrentContext(), Mouse);
+		glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
 		glfwSetWindowSizeCallback(glfwGetCurrentContext(), _WindowSizeCallback);
 		//glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), FramebufferSizeCallback);
 
@@ -151,39 +152,6 @@ void CreateContext(int width, int height, std::string name);
 	int ShouldCloseWindow() {
 		return glfwWindowShouldClose(glfwGetCurrentContext());
 	}
-
-	//context ---------------------------------
-	void SetCurrentContext(Context* context) {
-		glfwMakeContextCurrent(context->win);
-	}
-	Context* GetCurrentContext() {
-		if (contextList.empty()) {
-			printf("No Context has been created!\n"); //really bad error messages! should push to error stack and read in engine with logger
-		}
-		for (auto i : contextList) {
-			if (i->win == glfwGetCurrentContext()) {
-				return i;
-			}
-		}
-		printf("This function sucks!\n");
-		return nullptr;
-	}
-	void CreateContext(int width, int height, std::string name) {
-		GLFWwindow* win = glfwCreateWindow(width, height, name.c_str(),NULL,NULL);
-		if (!win) {
-			NewError("window didn't open (glfw)\n");
-			glfwTerminate();
-			return;
-		}
-		Context* cont = new Context(win);
-		contextList.push_back(cont);
-		int width_w, height_w;
-		glfwGetFramebufferSize(win, &width_w, &height_w);
-		glViewport(0, 0, width_w, height_w);
-		SetCurrentContext(cont);
-	}
-	//end context ------------------------------------
-
 	float GetDeltaTime() {
 		static float prev_dt = (float)glfwGetTime();
 		float dt = (float)((float)glfwGetTime() - prev_dt);

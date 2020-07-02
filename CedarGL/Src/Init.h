@@ -20,7 +20,7 @@
 
 
 namespace Cedar {
-
+    class GL_EXPORT Context;
 
     //class ImplWindow;
     //void WindowSizeCallback(ImplWindow* window, int width, int height);
@@ -41,6 +41,11 @@ namespace Cedar {
     void GL_EXPORT ImGuiNewFrame();
     void GL_EXPORT ImGuiRender();
     void GL_EXPORT ImGUiShutdown();
+
+    void GL_EXPORT CreateContext(int width, int height, std::string name);
+    GL_EXPORT Context* GetCurrentContext();
+    void GL_EXPORT SetCurrentContext(Context* context);
+
     //[0] = LineShader
     //[1] = DotShader
     GL_EXPORT Shader** GetShaders();

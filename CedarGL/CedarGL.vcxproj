@@ -156,7 +156,6 @@
     <ClCompile Include="Src\Error.cpp" />
     <ClCompile Include="Src\GlCall.cpp" />
     <ClCompile Include="Src\Init.cpp" />
-    <ClCompile Include="Src\Input.cpp" />
     <ClCompile Include="Src\Maths.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
@@ -179,7 +178,6 @@
     <ClInclude Include="Src\GlCall.h" />
     <ClInclude Include="Src\GraphicsLibrary.h" />
     <ClInclude Include="Src\Init.h" />
-    <ClInclude Include="Src\Input.h" />
     <ClInclude Include="Src\Maths.h" />
     <ClInclude Include="Src\Mesh.h" />
     <ClInclude Include="Src\Shader.h" />
