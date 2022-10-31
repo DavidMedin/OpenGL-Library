@@ -9,8 +9,12 @@
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
 
-
 namespace Cedar {
+
+	void Key(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void Mouse(GLFWwindow* window, double xpos, double ypos);
+	void MouseButton(GLFWwindow* window, int button, int action, int mods);
+
 	class GL_EXPORT Context {
 	public:
 		GLFWwindow* win;
@@ -127,9 +131,9 @@ void CreateContext(int width, int height, std::string name);
 
 		//-------Input------------//
 
-		//glfwSetKeyCallback(glfwGetCurrentContext(), Key);
-		//glfwSetCursorPosCallback(glfwGetCurrentContext(), Mouse);
-		//glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
+		glfwSetKeyCallback(glfwGetCurrentContext(), Key);
+		glfwSetCursorPosCallback(glfwGetCurrentContext(), Mouse);
+		glfwSetMouseButtonCallback(glfwGetCurrentContext(), MouseButton);
 		glfwSetWindowSizeCallback(glfwGetCurrentContext(), _WindowSizeCallback);
 		//glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), FramebufferSizeCallback);
 

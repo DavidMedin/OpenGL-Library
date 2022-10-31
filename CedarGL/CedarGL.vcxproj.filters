@@ -66,6 +66,9 @@
     <ClCompile Include="libs\imgui\examples\imgui_impl_opengl3.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Bone.h">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="Src\Export.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Input.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

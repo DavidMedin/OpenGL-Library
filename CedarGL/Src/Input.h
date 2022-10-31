@@ -3,9 +3,9 @@
 #include "Export.h" 
 
 namespace Cedar {
-	//void GL_EXPORT Key(int key, int scancode, int action, int mods);
-	//void GL_EXPORT Mouse(double xpos, double ypos);
-	//void GL_EXPORT MouseButton(int button, int action, int mods);
+	//void Key(int key, int scancode, int action, int mods);
+	//void Mouse(double xpos, double ypos);
+	//void MouseButton(int button, int action, int mods);
 
 
 
